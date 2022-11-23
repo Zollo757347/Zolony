@@ -1,7 +1,18 @@
 import Axis from "../../../utils/Axis";
 import Vector3 from "../../../utils/Vector3";
 
+/**
+ * 代表一個不透明的單位方塊
+ */
 class SolidBlock {
+  /**
+   * 取得此方塊指定平面的資訊
+   * @param {Vector3} x 此方塊的 x 座標
+   * @param {Vector3} y 此方塊的 y 座標
+   * @param {Vector3} z 此方塊的 z 座標
+   * @param {Vector3} a 指定平面的單位法向量
+   * @returns 
+   */
   surface(x, y, z, a) {
     const baseX = a === Axis.PX ? x + 1 : x;
     const baseY = a === Axis.PY ? y + 1 : y;
@@ -20,6 +31,11 @@ class SolidBlock {
     };
   }
 
+  /**
+   * 取得此方塊指定平面的材質
+   * @param {Vector3} a 指定平面的單位法向量
+   * @returns 
+   */
   surfaceColor(a) {
     switch (a) {
       case Axis.PX:

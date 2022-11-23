@@ -10,7 +10,7 @@ function getPosition(canvas, event) {
 }
 
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
-  const canvasRef = useRef();
+  const canvasRef = useRef(<canvas></canvas>);
   const spanRef = useRef();
 
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen }));

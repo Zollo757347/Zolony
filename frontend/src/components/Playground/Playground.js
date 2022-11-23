@@ -2,52 +2,156 @@ import Axis from "../../utils/Axis";
 import Vector3 from "../../utils/Vector3";
 import SolidBlock from "./Blocks/SolidBlock";
 
+/**
+ * @typedef PlaygroundAngles 記錄觀察點的角度
+ * @type {object}
+ * @property {number} theta 觀察點的水平轉角
+ * @property {number} phi 觀察點的鉛直轉角
+ */
+
+/**
+ * @typedef PlaygroundOptions
+ * @type {object}
+ * @property {number} canvasWidth 畫布的寬度，單位為像素
+ * @property {number} canvasHeight 畫布的高度，單位為像素
+ * @property {number} xLen 畫布中物體的 x 軸長度，單位為格
+ * @property {number} yLen 畫布中物體的 y 軸長度，單位為格
+ * @property {number} zLen 畫布中物體的 z 軸長度，單位為格
+ * @property {PlaygroundAngles} 觀察點的初始角度
+ */
+
+/**
+ * @typedef TargetBlock 目標方塊的資訊
+ * @type {object}
+ * @property {Vector3} cords 目標方塊在旋轉前的三維坐標
+ * @property {Vector3} norm 目標平面在旋轉前的單位法向量
+ */
+
+/**
+ * @typedef Surface 代表一個有限大小的有向表面
+ * @type {object}
+ * @property {Vector3} cords 表面的所屬方塊在旋轉前的三維坐標
+ * @property {Vector3} norm 表面在旋轉前的法向量
+ * @property {Vector3[]} points 表面的所有頂點座標
+ * @property {string} color 表面的材質
+ */
+
+/**
+ * 3D 渲染的邏輯實作
+ */
 class Playground {
   constructor({ canvasWidth, canvasHeight, xLen, yLen, zLen, angles }) {
+    /**
+     * 畫布中物體的 x 軸長度，單位為格
+     * @type {number}
+     */
     this.xLen = xLen;
+    
+    /**
+     * 畫布中物體的 y 軸長度，單位為格
+     * @type {number}
+     */
     this.yLen = yLen;
+    
+    /**
+     * 畫布中物體的 z 軸長度，單位為格
+     * @type {number}
+     */
     this.zLen = zLen;
+
+    /**
+     * 畫布的中心點位置
+     * @type {Vector3}
+     */
     this.center = new Vector3(xLen / 2, yLen / 2, zLen / 2);
+
+    /**
+     * 觀察點的角度
+     * @type {PlaygroundAngles}
+     */
     this.angles = {
       theta: angles?.theta || 0, 
       phi: angles?.phi || 0
     };
 
+    /**
+     * 畫布的寬度，單位為像素
+     * @type {number}
+     */
     this.canvasWidth = canvasWidth;
+
+    /**
+     * 畫布的高度，單位為像素
+     * @type {number}
+     */
     this.canvasHeight = canvasHeight;
+
+    /**
+     * 物體的縮放倍率
+     * @type {number}
+     */
     this.stretchMult = Math.min(canvasWidth, canvasHeight) / Math.max(xLen, yLen, zLen);
+
+    /**
+     * 投影面的 z 座標
+     * @type {number}
+     */
     this.screenZ = Math.min(canvasWidth, canvasHeight);
+
+    /**
+     * 觀察點的 z 座標
+     * @type {number}
+     */
     this.cameraZ = Math.min(canvasWidth, canvasHeight) * 2;
+
+    /**
+     * 投影面與觀察點的距離
+     * @type {number}
+     */
     this.distance = this.cameraZ - this.screenZ;
 
+    /**
+     * 所有方塊
+     * @type {Block[][][]}
+     */
     this._pg = Array.from({ length: xLen }, () => 
       Array.from({ length: yLen }, () => 
         Array.from({ length: zLen }, () => new SolidBlock())
       )
     );
-    this._cursorAt = { x: 0, y: 0 };
-
     this._pg[1][2][3] = this._pg[5][3][1] = this._pg[2][4][5] = null;
   }
 
   _prevRefX = 0;
   _prevRefY = 0;
+
+  /**
+   * 根據當前游標與先前座標的差距來調整觀察者角度
+   * @param {number} cursorX 游標在網頁上的 x 座標
+   * @param {number} cursorY 游標在網頁上的 y 座標
+   * @param {boolean} init 是否僅初始化
+   */
   adjustAngles(cursorX, cursorY, init) {
     if (!init) {
       this.angles = {
-        theta: this.angles.theta - (cursorX - this._prevRefX) * 0.0087, 
+        theta: this.angles.theta + (cursorX - this._prevRefX) * 0.0087, 
         phi: Math.max(Math.min(this.angles.phi + (cursorY - this._prevRefY) * 0.0087, Math.PI / 2), -(Math.PI / 2))
-      }
+      };
     }
 
     this._prevRefX = cursorX;
     this._prevRefY = cursorY;
   }
 
+  /**
+   * 在游標指定的位置上放置一個方塊
+   * @param {Block} block 要放置的方塊
+   * @param {number} cursorX 游標在畫布上的 x 座標
+   * @param {number} cursorY 游標在畫布上的 y 座標
+   * @returns {void}
+   */
   place(block, canvasX, canvasY) {
-    this._cursorAt = { x: canvasX, y: canvasY };
-
-    const target = this._target;
+    const target = this._getTarget(canvasX, canvasY);
     if (!target) return;
 
     let { cords: { x, y, z }, norm } = target;
@@ -59,19 +163,34 @@ class Playground {
     this._pg[x][y][z] = new SolidBlock();
   }
 
+  /**
+   * 破壞游標所指向的方塊
+   * @param {number} cursorX 游標在畫布上的 x 座標
+   * @param {number} cursorY 游標在畫布上的 y 座標
+   * @returns {Block} 被破壞的方塊
+   */
   destroy(canvasX, canvasY) {
-    this._cursorAt = { x: canvasX, y: canvasY };
-
-    const target = this._target;
+    const target = this._getTarget(canvasX, canvasY);
     if (!target) return;
 
     const { cords: { x, y, z } } = target;
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
+    const block = this._pg[x][y][z];
     this._pg[x][y][z] = null;
+    return block;
   }
 
+  /**
+   * 在指定畫布上渲染物體，畫布的大小需與初始值相同
+   * @param {JSX.IntrinsicElements.canvas} canvas 
+   * @returns {void}
+   */
   renderOn(canvas) {
+    if (canvas.width !== this.canvasWidth || canvas.height !== this.canvasHeight) {
+      throw new Error('The dimension of the canvas does not correspond to the initial value.');
+    }
+
     const context = canvas.getContext('2d');
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -79,12 +198,12 @@ class Playground {
     const surfaces = this._exposedSurfaces();
     const projectedSurfaces = this._projectSurfaces(surfaces);
 
-    projectedSurfaces.sort(({ surface: { points: p1 } }, { surface: { points: p2 } }) => 
+    projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => 
       Math.min(...p1.map(p => p.z)) - 
       Math.min(...p2.map(p => p.z))
     );
 
-    projectedSurfaces.forEach(({ surface : { points: [p1, p2, p3, p4], color } }) => {
+    projectedSurfaces.forEach(({ points: [p1, p2, p3, p4], color }) => {
       context.fillStyle = color;
       context.beginPath();
       context.moveTo(p1.x, p1.y);
@@ -96,14 +215,20 @@ class Playground {
     });
   }
 
-  get _target() {
+  /**
+   * 取得游標指向方塊的資訊
+   * @param {number} cursorX 游標在畫布上的 x 座標
+   * @param {number} cursorY 游標在畫布上的 y 座標
+   * @returns {TargetBlock}
+   */
+  _getTarget(canvasX, canvasY) {
     const surfaces = this._exposedSurfaces();
     const projectedSurfaces = this._projectSurfaces(surfaces);
 
     let maxZ = -Infinity;
     let target = null;
 
-    projectedSurfaces.forEach(({ cords, surface: { points, points: [p1, p2, p3, p4] }, norm }) => {
+    projectedSurfaces.forEach(({ cords, points, norm }) => {
       const min = Math.min(...points.map(p => p.z));
       if (maxZ >= min) return;
 
@@ -113,7 +238,7 @@ class Playground {
         const { x: x2, y: y2 } = points[(i + 1) & 3];
 
         v1 = { x: x2 - x1, y: y2 - y1 };
-        v2 = { x: this._cursorAt.x - x1, y: this._cursorAt.y - y1 };
+        v2 = { x: canvasX - x1, y: canvasY - y1 };
         cross = v1.x * v2.y - v2.x * v1.y;
         if (cross * sign < 0) return;
         sign = cross > 0 ? 1 : (cross === 0 ? 0 : -1);
@@ -126,6 +251,10 @@ class Playground {
     return target;
   }
 
+  /**
+   * 尋找所有與空氣接觸的表面
+   * @returns {Surface[]}
+   */
   _exposedSurfaces() {
     const surfaces = [];
 
@@ -147,15 +276,15 @@ class Playground {
             if (prevExist) {
               surfaces.push({
                 cords: new Vector3(i, j, k), 
-                surface: this._pg[i][j][k].surface(i, j, k, posDir), 
-                norm: posDir
+                norm: posDir, 
+                ...this._pg[i][j][k].surface(i, j, k, posDir)
               });
             }
             else if (nextExist) {
               surfaces.push({
                 cords: new Vector3(p, q, r), 
-                surface: this._pg[p][q][r].surface(p, q, r, negDir), 
-                norm: negDir
+                norm: negDir, 
+                ...this._pg[p][q][r].surface(p, q, r, negDir)
               });
             }
           }
@@ -166,10 +295,15 @@ class Playground {
     return surfaces;
   }
 
+  /**
+   * 將所有平面投影在螢幕上，傳入參數的部分值會被改動
+   * @param {Surface[]} surfaces 投影前的平面
+   * @returns {Surface[]} 投影後的平面
+   */
   _projectSurfaces(surfaces) {
     const offset = new Vector3(this.canvasWidth / 2, this.canvasHeight / 2, 0);
 
-    surfaces.forEach(({ surface }) => {
+    surfaces.forEach(surface => {
       surface.points = surface.points.map(vec => 
         vec.subtract(this.center)
           .multiply(this.stretchMult)
