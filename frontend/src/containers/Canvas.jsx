@@ -48,6 +48,10 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     playgroundRef.current.place(p.x, p.y);
     playgroundRef.current.renderOn(canvas);
   }
+
+  function handleScroll(e) {
+    playgroundRef.current.scrollHotbar(e.deltaY);
+  }
   
   return (
     <>
@@ -62,6 +66,8 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
 
         onClick={handleClick}
         onContextMenu={handleContextMenu}
+
+        onWheelCapture={handleScroll}
       />
       <span ref={spanRef} />
     </>

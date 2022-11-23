@@ -119,14 +119,24 @@ class Playground {
      */
     this._pg = Array.from({ length: xLen }, (_, x) => 
       Array.from({ length: yLen }, (_, y) => 
-        Array.from({ length: zLen }, (_, z) => new AirBlock({ x, y, z }))
+        Array.from({ length: zLen }, (_, z) => x === 0 || x === xLen - 1 || y === 0 || y === yLen - 1 || z === 0 || z === zLen - 1 ? new TransparentBlock({ x, y, z }) : new OpaqueBlock({ x, y, z }))
       )
     );
-    this._pg[3][3][3] = new OpaqueBlock({ x: 3, y: 3, z: 3 });
+
+    /**
+     * 快捷欄上的方塊
+     */
+    this.hotbar = [OpaqueBlock, TransparentBlock];
+
+    /**
+     * 快捷欄當前方塊的駐標
+     */
+    this.hotbarTarget = 0;
   }
 
   _prevRefX = 0;
   _prevRefY = 0;
+  _prevRefWheel = 0;
 
   /**
    * 根據當前游標與先前座標的差距來調整觀察者角度
@@ -147,6 +157,14 @@ class Playground {
   }
 
   /**
+   * 
+   */
+  scrollHotbar(deltaY) {
+    this._prevRefWheel += deltaY;
+    this.hotbarTarget = ((this._prevRefWheel / 100) % this.hotbar.length + this.hotbar.length) % this.hotbar.length;
+  }
+
+  /**
    * 在游標指定的位置上放置一個方塊
    * @param {number} cursorX 游標在畫布上的 x 座標
    * @param {number} cursorY 游標在畫布上的 y 座標
@@ -162,7 +180,7 @@ class Playground {
     z += norm.z;
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
-    this._pg[x][y][z] = new TransparentBlock({ x, y, z });
+    this._pg[x][y][z] = new this.hotbar[this.hotbarTarget]({ x, y, z });
   }
 
   /**
@@ -200,10 +218,11 @@ class Playground {
     const surfaces = this._visibleSurfaces();
     const projectedSurfaces = this._projectSurfaces(surfaces);
 
-    projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => 
-      Math.min(...p1.map(p => p.z)) - 
-      Math.min(...p2.map(p => p.z))
-    );
+    projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => {
+      const dif = Math.min(...p1.map(p => p.z)) - Math.min(...p2.map(p => p.z));
+      if (dif !== 0) return dif;
+      return Math.max(...p1.map(p => p.z)) - Math.max(...p2.map(p => p.z));
+    });
 
     projectedSurfaces.forEach(({ points: [p1, p2, p3, p4], color }) => {
       context.fillStyle = color;
