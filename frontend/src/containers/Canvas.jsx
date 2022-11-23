@@ -45,7 +45,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     const canvas = canvasRef.current;
     const p = getPosition(canvas, e);
     
-    playgroundRef.current.place(true, p.x, p.y);
+    playgroundRef.current.place(p.x, p.y);
     playgroundRef.current.renderOn(canvas);
   }
   

@@ -1,43 +1,45 @@
 import Axis from "../../../utils/Axis";
 import Vector3 from "../../../utils/Vector3";
+import Block from "./Block";
 
 /**
  * 代表一個不透明的單位方塊
  */
-class SolidBlock {
+class TransparentBlock extends Block {
+  constructor({ x, y, z }) {
+    super({ x, y, z, type: 2 });
+  }
+
   /**
    * 取得此方塊指定平面的資訊
-   * @param {Vector3} x 此方塊的 x 座標
-   * @param {Vector3} y 此方塊的 y 座標
-   * @param {Vector3} z 此方塊的 z 座標
-   * @param {Vector3} a 指定平面的單位法向量
+   * @param {Vector3} norm 指定平面的單位法向量
    * @returns 
    */
-  surface(x, y, z, a) {
-    const baseX = a === Axis.PX ? x + 1 : x;
-    const baseY = a === Axis.PY ? y + 1 : y;
-    const baseZ = a === Axis.PZ ? z + 1 : z;
+  surface(norm) {
+    const baseX = norm === Axis.PX ? this.x + 1 : this.x;
+    const baseY = norm === Axis.PY ? this.y + 1 : this.y;
+    const baseZ = norm === Axis.PZ ? this.z + 1 : this.z;
 
     const relativePoints = 
-      a === Axis.PX || a === Axis.NX ? 
+      norm === Axis.PX || norm === Axis.NX ? 
         [[0, 0, 0], [0, 0, 1], [0, 1, 1], [0, 1, 0]] :
-        a === Axis.PY || a === Axis.NY ? 
+        norm === Axis.PY || norm === Axis.NY ? 
           [[0, 0, 0], [0, 0, 1], [1, 0, 1], [1, 0, 0]] :
           [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]];
 
     return {
       points: relativePoints.map(([dx, dy, dz]) => new Vector3(baseX + dx, baseY + dy, baseZ + dz)), 
-      color: this.surfaceColor(a)
+      color: this.surfaceColor(norm)
     };
   }
 
   /**
    * 取得此方塊指定平面的材質
-   * @param {Vector3} a 指定平面的單位法向量
+   * @param {Vector3} norm 指定平面的單位法向量
    * @returns 
    */
-  surfaceColor(a) {
-    switch (a) {
+  surfaceColor(norm) {
+    switch (norm) {
       case Axis.PX:
         return 'rgba(240, 120, 120, 0.3)';
 
@@ -62,4 +64,4 @@ class SolidBlock {
   }
 }
 
-export default SolidBlock;
+export default TransparentBlock;

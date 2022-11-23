@@ -1,6 +1,9 @@
 import Axis from "../../utils/Axis";
 import Vector3 from "../../utils/Vector3";
-import SolidBlock from "./Blocks/SolidBlock";
+import AirBlock from "./Blocks/AirBlock";
+import Block from "./Blocks/Block";
+import OpaqueBlock from "./Blocks/OpaqueBlock";
+import TransparentBlock from "./Blocks/TransparentBlock";
 
 /**
  * @typedef PlaygroundAngles 記錄觀察點的角度
@@ -114,12 +117,12 @@ class Playground {
      * 所有方塊
      * @type {Block[][][]}
      */
-    this._pg = Array.from({ length: xLen }, () => 
-      Array.from({ length: yLen }, () => 
-        Array.from({ length: zLen }, () => new SolidBlock())
+    this._pg = Array.from({ length: xLen }, (_, x) => 
+      Array.from({ length: yLen }, (_, y) => 
+        Array.from({ length: zLen }, (_, z) => new AirBlock({ x, y, z }))
       )
     );
-    this._pg[1][2][3] = this._pg[5][3][1] = this._pg[2][4][5] = null;
+    this._pg[3][3][3] = new OpaqueBlock({ x: 3, y: 3, z: 3 });
   }
 
   _prevRefX = 0;
@@ -145,12 +148,11 @@ class Playground {
 
   /**
    * 在游標指定的位置上放置一個方塊
-   * @param {Block} block 要放置的方塊
    * @param {number} cursorX 游標在畫布上的 x 座標
    * @param {number} cursorY 游標在畫布上的 y 座標
    * @returns {void}
    */
-  place(block, canvasX, canvasY) {
+  place(canvasX, canvasY) {
     const target = this._getTarget(canvasX, canvasY);
     if (!target) return;
 
@@ -160,7 +162,7 @@ class Playground {
     z += norm.z;
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
-    this._pg[x][y][z] = new SolidBlock();
+    this._pg[x][y][z] = new TransparentBlock({ x, y, z });
   }
 
   /**
@@ -177,7 +179,7 @@ class Playground {
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
     const block = this._pg[x][y][z];
-    this._pg[x][y][z] = null;
+    this._pg[x][y][z] = new AirBlock({ x, y, z });
     return block;
   }
 
@@ -195,7 +197,7 @@ class Playground {
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvas.width, canvas.height);
     
-    const surfaces = this._exposedSurfaces();
+    const surfaces = this._visibleSurfaces();
     const projectedSurfaces = this._projectSurfaces(surfaces);
 
     projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => 
@@ -222,7 +224,7 @@ class Playground {
    * @returns {TargetBlock}
    */
   _getTarget(canvasX, canvasY) {
-    const surfaces = this._exposedSurfaces();
+    const surfaces = this._visibleSurfaces();
     const projectedSurfaces = this._projectSurfaces(surfaces);
 
     let maxZ = -Infinity;
@@ -252,10 +254,11 @@ class Playground {
   }
 
   /**
-   * 尋找所有與空氣接觸的表面
+   * 尋找所有需要渲染的表面
    * @returns {Surface[]}
    */
-  _exposedSurfaces() {
+  _visibleSurfaces() {
+    const air = new AirBlock({ x: -1, y: -1, z: -1 });
     const surfaces = [];
 
     [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(([dx, dy, dz]) => {
@@ -267,24 +270,24 @@ class Playground {
           for (let k = -1; k < this.zLen; k++) {
             const p = i + dx, q = j + dy, r = k + dz;
 
-            const prevExist = 0 <= i && i < this.xLen && 0 <= j && j < this.yLen && 0 <= k && k < this.zLen && !!this._pg[i][j][k];
-            const nextExist = 0 <= p && p < this.xLen && 0 <= q && q < this.yLen && 0 <= r && r < this.zLen && !!this._pg[p][q][r];
-            
-            // ASSUME: All blocks are opaque full blocks
-            if (prevExist === nextExist) continue;
+            const prevInRange = 0 <= i && i < this.xLen && 0 <= j && j < this.yLen && 0 <= k && k < this.zLen;
+            const nextInRange = 0 <= p && p < this.xLen && 0 <= q && q < this.yLen && 0 <= r && r < this.zLen;
 
-            if (prevExist) {
+            const [prevRender, nextRender] =
+              Block.toRender(prevInRange ? this._pg[i][j][k] : air, nextInRange ? this._pg[p][q][r] : air)
+            
+            if (prevRender) {
               surfaces.push({
                 cords: new Vector3(i, j, k), 
                 norm: posDir, 
-                ...this._pg[i][j][k].surface(i, j, k, posDir)
+                ...this._pg[i][j][k].surface(posDir)
               });
             }
-            else if (nextExist) {
+            if (nextRender) {
               surfaces.push({
                 cords: new Vector3(p, q, r), 
                 norm: negDir, 
-                ...this._pg[p][q][r].surface(p, q, r, negDir)
+                ...this._pg[p][q][r].surface(negDir)
               });
             }
           }
