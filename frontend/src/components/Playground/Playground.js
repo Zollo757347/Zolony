@@ -119,7 +119,7 @@ class Playground {
      */
     this._pg = Array.from({ length: xLen }, (_, x) => 
       Array.from({ length: yLen }, (_, y) => 
-        Array.from({ length: zLen }, (_, z) => x === 0 || x === xLen - 1 || y === 0 || y === yLen - 1 || z === 0 || z === zLen - 1 ? new TransparentBlock({ x, y, z }) : new OpaqueBlock({ x, y, z }))
+        Array.from({ length: zLen }, (_, z) => new TransparentBlock({ x, y, z }))
       )
     );
 
@@ -175,9 +175,10 @@ class Playground {
     if (!target) return;
 
     let { cords: { x, y, z }, norm } = target;
-    x += norm.x;
-    y += norm.y;
-    z += norm.z;
+    let normVector = Axis.VECTOR[norm];
+    x += normVector.x;
+    y += normVector.y;
+    z += normVector.z;
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
     this._pg[x][y][z] = new this.hotbar[this.hotbarTarget]({ x, y, z });
@@ -218,11 +219,9 @@ class Playground {
     const surfaces = this._visibleSurfaces();
     const projectedSurfaces = this._projectSurfaces(surfaces);
 
-    projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => {
-      const dif = Math.min(...p1.map(p => p.z)) - Math.min(...p2.map(p => p.z));
-      if (dif !== 0) return dif;
-      return Math.max(...p1.map(p => p.z)) - Math.max(...p2.map(p => p.z));
-    });
+    projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => 
+      Math.min(...p1.map(p => p.z)) - Math.min(...p2.map(p => p.z))
+    );
 
     projectedSurfaces.forEach(({ points: [p1, p2, p3, p4], color }) => {
       context.fillStyle = color;
@@ -293,7 +292,7 @@ class Playground {
             const nextInRange = 0 <= p && p < this.xLen && 0 <= q && q < this.yLen && 0 <= r && r < this.zLen;
 
             const [prevRender, nextRender] =
-              Block.toRender(prevInRange ? this._pg[i][j][k] : air, nextInRange ? this._pg[p][q][r] : air)
+              Block.toRender(prevInRange ? this._pg[i][j][k] : air, nextInRange ? this._pg[p][q][r] : air);
             
             if (prevRender) {
               surfaces.push({
@@ -324,19 +323,38 @@ class Playground {
    */
   _projectSurfaces(surfaces) {
     const offset = new Vector3(this.canvasWidth / 2, this.canvasHeight / 2, 0);
+    const camera = new Vector3(0, 0, this.cameraZ);
+
+    const newAxes = Object.assign({}, Axis.VECTOR);
+    for (const key in newAxes) {
+      newAxes[key] = newAxes[key]
+        .rotateY(this.angles.theta)
+        .rotateX(this.angles.phi);
+    }
 
     surfaces.forEach(surface => {
-      surface.points = surface.points.map(vec => 
-        vec.subtract(this.center)
+      let checked = false;
+      for (let i = 0; i < surface.points.length; i++) {
+        const newPoint = surface.points[i]
+          .subtract(this.center)
           .multiply(this.stretchMult)
           .rotateY(this.angles.theta)
-          .rotateX(this.angles.phi)
+          .rotateX(this.angles.phi);
+
+        if (!checked && newPoint.subtract(camera).dot(newAxes[surface.norm]) > 0) {
+          surface.points = [];
+          return;
+        }
+        checked = true;
+
+        surface.points[i] = newPoint
           .projectZ(this.cameraZ, this.distance)
           .mirrorY()
-          .add(offset)
-      );
+          .add(offset);
+      }
     });
-    return surfaces;
+
+    return surfaces.filter(s => s.points.length);
   }
 }
 
