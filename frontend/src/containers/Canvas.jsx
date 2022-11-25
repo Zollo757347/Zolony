@@ -69,7 +69,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
 
         onWheelCapture={handleScroll}
       />
-      <span ref={spanRef} />
+      <span ref={spanRef} style={{ display: 'none' }} />
     </>
   )
 }

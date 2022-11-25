@@ -4,17 +4,19 @@ import Block from "./Block";
  * 代表一個空氣方塊
  */
 class AirBlock extends Block {
-  constructor({ x, y, z }) {
-    super({ x, y, z, type: 0 });
+  constructor({ x, y, z, engine }) {
+    super({ x, y, z, engine, type: 0 });
   }
 
-  surface(norm) {
+  surfaces() {
     throw new Error('Air block does not have any surfaces.');
   }
 
-  surfaceTexture(norm) {
+  surfaceTexture() {
     throw new Error('Air block does not have any surface textures.');
   }
+
+  update() {}
 }
 
 export default AirBlock;

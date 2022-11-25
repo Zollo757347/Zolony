@@ -1,9 +1,9 @@
 import Axis from "../../utils/Axis";
 import Vector3 from "../../utils/Vector3";
-import AirBlock from "./Blocks/AirBlock";
-import Block from "./Blocks/Block";
 import OpaqueBlock from "./Blocks/OpaqueBlock";
+import RedstoneDust from "./Blocks/RedstoneDust";
 import TransparentBlock from "./Blocks/TransparentBlock";
+import Engine from "./Engine";
 
 /**
  * @typedef PlaygroundAngles 記錄觀察點的角度
@@ -114,24 +114,19 @@ class Playground {
     this.distance = this.cameraZ - this.screenZ;
 
     /**
-     * 所有方塊
-     * @type {Block[][][]}
-     */
-    this._pg = Array.from({ length: xLen }, (_, x) => 
-      Array.from({ length: yLen }, (_, y) => 
-        Array.from({ length: zLen }, (_, z) => new TransparentBlock({ x, y, z }))
-      )
-    );
-
-    /**
      * 快捷欄上的方塊
      */
-    this.hotbar = [OpaqueBlock, TransparentBlock];
+    this.hotbar = [OpaqueBlock, TransparentBlock, RedstoneDust];
 
     /**
      * 快捷欄當前方塊的駐標
      */
     this.hotbarTarget = 0;
+
+    /**
+     * 遊戲引擎
+     */
+    this.engine = new Engine({ xLen, yLen, zLen });
   }
 
   _prevRefX = 0;
@@ -181,7 +176,7 @@ class Playground {
     z += normVector.z;
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
-    this._pg[x][y][z] = new this.hotbar[this.hotbarTarget]({ x, y, z });
+    this.engine.rightClick(x, y, z, this.hotbar[this.hotbarTarget]);
   }
 
   /**
@@ -197,9 +192,7 @@ class Playground {
     const { cords: { x, y, z } } = target;
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
-    const block = this._pg[x][y][z];
-    this._pg[x][y][z] = new AirBlock({ x, y, z });
-    return block;
+    return this.engine.leftClick(x, y, z);
   }
 
   /**
@@ -276,42 +269,18 @@ class Playground {
    * @returns {Surface[]}
    */
   _visibleSurfaces() {
-    const air = new AirBlock({ x: -1, y: -1, z: -1 });
     const surfaces = [];
 
-    [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(([dx, dy, dz]) => {
-      const posDir = dx ? Axis.PX : dy ? Axis.PY : Axis.PZ;
-      const negDir = dx ? Axis.NX : dy ? Axis.NY : Axis.NZ;
+    for (let i = 0; i < this.xLen; i++) {
+      for (let j = 0; j < this.yLen; j++) {
+        for (let k = 0; k < this.zLen; k++) {
+          if (this.engine.block(i, j, k).type === 0) continue;
 
-      for (let i = -1; i < this.xLen; i++) {
-        for (let j = -1; j < this.yLen; j++) {
-          for (let k = -1; k < this.zLen; k++) {
-            const p = i + dx, q = j + dy, r = k + dz;
-
-            const prevInRange = 0 <= i && i < this.xLen && 0 <= j && j < this.yLen && 0 <= k && k < this.zLen;
-            const nextInRange = 0 <= p && p < this.xLen && 0 <= q && q < this.yLen && 0 <= r && r < this.zLen;
-
-            const [prevRender, nextRender] =
-              Block.toRender(prevInRange ? this._pg[i][j][k] : air, nextInRange ? this._pg[p][q][r] : air);
-            
-            if (prevRender) {
-              surfaces.push({
-                cords: new Vector3(i, j, k), 
-                norm: posDir, 
-                ...this._pg[i][j][k].surface(posDir)
-              });
-            }
-            if (nextRender) {
-              surfaces.push({
-                cords: new Vector3(p, q, r), 
-                norm: negDir, 
-                ...this._pg[p][q][r].surface(negDir)
-              });
-            }
-          }
+          const blockSurfaces = this.engine.block(i, j, k).surfaces();
+          surfaces.push(...blockSurfaces);
         }
       }
-    });
+    }
 
     return surfaces;
   }
