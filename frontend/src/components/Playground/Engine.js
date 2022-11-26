@@ -1,7 +1,7 @@
 import Axis from "../../utils/Axis";
 import AirBlock from "./Blocks/AirBlock";
 import Block from "./Blocks/Block"; // eslint-disable-line no-unused-vars
-import OpaqueBlock from "./Blocks/OpaqueBlock";
+import Concrete from "./Blocks/Concrete";
 
 class Engine {
   constructor({ xLen, yLen, zLen }) {
@@ -15,7 +15,7 @@ class Engine {
      */
     this._pg = Array.from({ length: xLen }, (_, x) => 
       Array.from({ length: yLen }, (_, y) => 
-        Array.from({ length: zLen }, (_, z) => y === 0 ? new OpaqueBlock({ x, y, z, engine: this }) : new AirBlock({ x, y, z, engine: this }))
+        Array.from({ length: zLen }, (_, z) => y === 0 ? new Concrete({ x, y, z, engine: this }) : new AirBlock({ x, y, z, engine: this }))
       )
     );
   }

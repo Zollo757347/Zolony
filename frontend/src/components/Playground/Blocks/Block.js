@@ -5,18 +5,21 @@ import Vector3 from "../../../utils/Vector3"; // eslint-disable-line no-unused-v
  * @abstract
  */
 class Block {
-  constructor({ x, y, z, engine, type }) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+  constructor(options) {
+    this.x = options.x;
+    this.y = options.y;
+    this.z = options.z;
 
     /**
      * 遊戲引擎
      * @type {Engine}
      */
-    this.engine = engine;
+    this.engine = options.engine;
 
-    this.type = type;
+    this.type = options.type;
+
+    this.upperSupport = options.fullSupport || false;
+    this.interactable = options.interactable || false;
   }
 
   /**
@@ -24,15 +27,6 @@ class Block {
    * @abstract
    */
   surfaces() {
-    throw new Error('Not implemented yet.');
-  }
-
-  /**
-   * 取得此方塊指定表面的材質
-   * @param {Vector3} norm 指定表面的單位法向量
-   * @abstract
-   */
-  surfaceTexture(norm) {
     throw new Error('Not implemented yet.');
   }
 

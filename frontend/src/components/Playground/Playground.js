@@ -1,8 +1,8 @@
 import Axis from "../../utils/Axis";
 import Vector3 from "../../utils/Vector3";
-import OpaqueBlock from "./Blocks/OpaqueBlock";
+import Concrete from "./Blocks/Concrete";
 import RedstoneDust from "./Blocks/RedstoneDust";
-import TransparentBlock from "./Blocks/TransparentBlock";
+import GlassBlock from "./Blocks/GlassBlock";
 import Engine from "./Engine";
 
 /**
@@ -116,7 +116,7 @@ class Playground {
     /**
      * 快捷欄上的方塊
      */
-    this.hotbar = [OpaqueBlock, TransparentBlock, RedstoneDust];
+    this.hotbar = [Concrete, GlassBlock, RedstoneDust];
 
     /**
      * 快捷欄當前方塊的駐標

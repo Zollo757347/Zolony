@@ -2,7 +2,7 @@ import Axis from "../../../utils/Axis";
 import Vector3 from "../../../utils/Vector3";
 import Block from "./Block";
 
-const d = 0.01
+const d = 0.01;
 
 /**
  * 代表一個紅石粉
