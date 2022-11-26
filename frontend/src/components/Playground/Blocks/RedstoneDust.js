@@ -13,6 +13,8 @@ class RedstoneDust extends Block {
     
     this.states = { east: 0, south: 0, west: 0, north: 0, power: 0 };
     this.needBottomSupport = true;
+    this.interactable = true;
+    this.crossMode = true;
   }
 
   /**
@@ -59,6 +61,11 @@ class RedstoneDust extends Block {
     }
   }
 
+  interact() {
+    this.crossMode = !this.crossMode;
+    this.update();
+  }
+
   update() {
     if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
       this.engine.leftClick(this.x, this.y, this.z);
@@ -69,10 +76,10 @@ class RedstoneDust extends Block {
       if (this.engine.block(this.x + 1, this.y, this.z).type === 100) {
         this.states.east = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x + 1, this.y - 1, this.z).type === 100) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x + 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x + 1, this.y, this.z).type !== 1) {
         this.states.east = 1;
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x + 1, this.y + 1, this.z).type === 100) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x + 1, this.y + 1, this.z).type === 100 && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
         this.states.east = 2;
       }
     }
@@ -82,10 +89,10 @@ class RedstoneDust extends Block {
       if (this.engine.block(this.x, this.y, this.z + 1).type === 100) {
         this.states.south = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z + 1).type === 100) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y, this.z + 1).type !== 1) {
         this.states.south = 1;
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z + 1).type === 100) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
         this.states.south = 2;
       }
     }
@@ -95,10 +102,10 @@ class RedstoneDust extends Block {
       if (this.engine.block(this.x - 1, this.y, this.z).type === 100) {
         this.states.west = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x - 1, this.y - 1, this.z).type === 100) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x - 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x - 1, this.y, this.z).type !== 1) {
         this.states.west = 1;
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x - 1, this.y + 1, this.z).type === 100) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x - 1, this.y + 1, this.z).type === 100 && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
         this.states.west = 2;
       }
     }
@@ -108,11 +115,29 @@ class RedstoneDust extends Block {
       if (this.engine.block(this.x, this.y, this.z - 1).type === 100) {
         this.states.north = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z - 1).type === 100) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y, this.z - 1).type !== 1) {
         this.states.north = 1;
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z - 1).type === 100) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
         this.states.north = 2;
+      }
+    }
+
+
+    const explicitDir = Object.entries(this.states)
+      .map(([dir, val]) => val ? dir : undefined)
+      .filter((dir) => dir && dir !== 'power');
+    
+    if (explicitDir.length === 0 && this.crossMode) {
+      this.states.east = this.states.south = this.states.west = this.states.north = 1;
+    }
+    else if (explicitDir.length === 1) {
+      switch (explicitDir[0]) {
+        case 'east': this.states.west = 1; break;
+        case 'south': this.states.north = 1; break;
+        case 'west': this.states.east = 1; break;
+        case 'north': this.states.south = 1; break;
+        default: break;
       }
     }
   }

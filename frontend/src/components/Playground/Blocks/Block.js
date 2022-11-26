@@ -16,7 +16,7 @@ class Block {
      */
     this.engine = engine;
 
-    this.type = type || 0;
+    this.type = type;
   }
 
   /**

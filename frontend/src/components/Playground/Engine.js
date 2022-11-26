@@ -1,3 +1,4 @@
+import Axis from "../../utils/Axis";
 import AirBlock from "./Blocks/AirBlock";
 import Block from "./Blocks/Block"; // eslint-disable-line no-unused-vars
 import OpaqueBlock from "./Blocks/OpaqueBlock";
@@ -31,7 +32,19 @@ class Engine {
     return block;
   }
 
-  rightClick(x, y, z, B) {
+  rightClick(x, y, z, dir, B) {
+    if (this._pg[x][y][z].interactable) {
+      this._pg[x][y][z].interact();
+      return;
+    }
+
+    let norm = Axis.VECTOR[dir];
+    x += norm.x;
+    y += norm.y;
+    z += norm.z;
+    if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
+    if (this._pg[x][y][z].type !== 0) return;
+
     const newBlock = new B({ x, y, z, engine: this });
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 

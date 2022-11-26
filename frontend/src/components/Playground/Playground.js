@@ -170,13 +170,7 @@ class Playground {
     if (!target) return;
 
     let { cords: { x, y, z }, norm } = target;
-    let normVector = Axis.VECTOR[norm];
-    x += normVector.x;
-    y += normVector.y;
-    z += normVector.z;
-    if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
-
-    this.engine.rightClick(x, y, z, this.hotbar[this.hotbarTarget]);
+    this.engine.rightClick(x, y, z, norm, this.hotbar[this.hotbarTarget]);
   }
 
   /**
