@@ -8,6 +8,8 @@ import Block from "./Block";
 class TransparentBlock extends Block {
   constructor({ x, y, z, engine }) {
     super({ x, y, z, engine, type: 2 });
+  
+    this.upperSupport = true;
   }
 
   /**

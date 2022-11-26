@@ -32,7 +32,10 @@ class Engine {
   }
 
   rightClick(x, y, z, B) {
-    this._pg[x][y][z] = new B({ x, y, z, engine: this });
+    const newBlock = new B({ x, y, z, engine: this });
+    if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
+
+    this._pg[x][y][z] = newBlock;
     this._update(x, y, z);
   }
 

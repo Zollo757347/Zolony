@@ -8,6 +8,8 @@ import Block from "./Block";
 class OpaqueBlock extends Block {
   constructor({ x, y, z, engine }) {
     super({ x, y, z, engine, type: 1 });
+
+    this.upperSupport = true;
   }
 
   /**

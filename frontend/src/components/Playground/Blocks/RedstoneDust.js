@@ -12,6 +12,7 @@ class RedstoneDust extends Block {
     super({ x, y, z, engine, type: 100 });
     
     this.states = { east: 0, south: 0, west: 0, north: 0, power: 0 };
+    this.needBottomSupport = true;
   }
 
   /**
@@ -59,6 +60,10 @@ class RedstoneDust extends Block {
   }
 
   update() {
+    if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
+      this.engine.leftClick(this.x, this.y, this.z);
+    }
+
     this.states.east = 0;
     if (this.x + 1 < this.engine.xLen) {
       if (this.engine.block(this.x + 1, this.y, this.z).type === 100) {
