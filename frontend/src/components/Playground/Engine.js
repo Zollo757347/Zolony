@@ -5,13 +5,28 @@ import Concrete from "./Blocks/Concrete";
 
 class Engine {
   constructor({ xLen, yLen, zLen }) {
+    /**
+     * x 軸的長度
+     * @type number
+     */
     this.xLen = xLen;
+
+    /**
+     * y 軸的長度
+     * @type number
+     */
     this.yLen = yLen;
+
+    /**
+     * z 軸的長度
+     * @type number
+     */
     this.zLen = zLen;
 
     /**
      * 所有方塊
      * @type {Block[][][]}
+     * @private
      */
     this._pg = Array.from({ length: xLen }, (_, x) => 
       Array.from({ length: yLen }, (_, y) => 
@@ -20,11 +35,25 @@ class Engine {
     );
   }
 
+  /**
+   * 取得指定座標上的方塊
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} z 
+   * @returns {Block}
+   */
   block(x, y, z) {
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return undefined;
     return this._pg[x][y][z];
   }
 
+  /**
+   * 在指定方塊上按下破壞鍵
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} z 
+   * @returns {Block} 被破壞的方塊
+   */
   leftClick(x, y, z) {
     const block = this._pg[x][y][z];
     this._pg[x][y][z] = new AirBlock({ x, y, z, engine: this });
@@ -32,6 +61,15 @@ class Engine {
     return block;
   }
 
+  /**
+   * 在指定方塊的指定面上按下使用鍵
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} z 
+   * @param {symbol} dir 指定面的法向量方向
+   * @param {new () => Block} B 在不觸發互動時所放下的方塊
+   * @returns 
+   */
   rightClick(x, y, z, dir, B) {
     if (this._pg[x][y][z].interactable) {
       this._pg[x][y][z].interact();
@@ -52,6 +90,13 @@ class Engine {
     this._update(x, y, z);
   }
 
+  /**
+   * 更新指定方塊的方塊狀態
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} z 
+   * @private
+   */
   _update(x, y, z) {
     for (let i = x - 1; i <= x + 1; i++) {
       for (let j = y - 1; j <= y + 1; j++) {
@@ -63,4 +108,4 @@ class Engine {
   }
 }
 
-export default Engine;
+export { Engine };

@@ -5,25 +5,41 @@ import Block from "./Block";
 const d = 0.01;
 
 /**
- * 代表一個紅石粉
+ * @typedef RedstoneDustState
+ * @type {object}
+ * @property {number} east 紅石粉東側的連接狀態，0 為無，1 為有，2 為有且向上
+ * @property {number} south 紅石粉南側的連接狀態，0 為無，1 為有，2 為有且向上
+ * @property {number} west 紅石粉西側的連接狀態，0 為無，1 為有，2 為有且向上
+ * @property {number} north 紅石粉北側的連接狀態，0 為無，1 為有，2 為有且向上
+ * @property {number} power 此紅石粉的充能等級
+ */
+
+/**
+ * 代表一個紅石粉方塊
  */
 class RedstoneDust extends Block {
   constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 100 });
+    super({ x, y, z, engine, type: 100, needBottomSupport: true, interactable: true });
     
+    /**
+     * 此紅石粉的狀態
+     * @type {RedstoneDustState}
+     */
     this.states = { east: 0, south: 0, west: 0, north: 0, power: 0 };
-    this.needBottomSupport = true;
-    this.interactable = true;
+
+    /**
+     * 此紅石粉閒置時是否處於向四周充能的狀態
+     */
     this.crossMode = true;
   }
 
   /**
-   * 取得此方塊指定平面的資訊
-   * @returns 
+   * 取得此方塊所有平面的資訊
+   * @returns {import("../Playground").Surface[]}
    */
   surfaces() {
     const color = 'rgba(200, 100, 100)';
-    const result = [{ points: this._surfaces.middle.map(i => new Vector3(...this._vertices[i])), color, norm: Axis.PY, cords: new Vector3(this.x, this.y, this.z) }];
+    const result = [{ points: this._surfaces.middle.map(i => new Vector3(...this._vertices[i])), color, dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) }];
     result.push(...this._otherSurfacesOf('east'));
     result.push(...this._otherSurfacesOf('south'));
     result.push(...this._otherSurfacesOf('west'));
@@ -61,6 +77,9 @@ class RedstoneDust extends Block {
     }
   }
 
+  /**
+   * 與此紅石粉互動一次
+   */
   interact() {
     this.crossMode = !this.crossMode;
     this.update();
@@ -187,31 +206,38 @@ class RedstoneDust extends Block {
     west: [[8, 9, 10, 11], [9, 18, 19, 10]], 
     north: [[0, 1, 2, 11], [0, 1, 13, 12]]
   };
-  _otherSurfacesOf(dir) {
-    if (!this.states[dir]) return [];
+
+  /**
+   * 取得此紅石粉指定方向所應渲染的所有平面
+   * @param {symbol} dir 指定的法向量方向
+   * @returns {import("../Playground").Surface[]}
+   * @private
+   */
+  _otherSurfacesOf(dirName) {
+    if (!this.states[dirName]) return [];
 
     const result = [];
 
     result.push({
-      points: this._surfaces[dir][0].map(i => new Vector3(...this._vertices[i])), 
+      points: this._surfaces[dirName][0].map(i => new Vector3(...this._vertices[i])), 
       color: 'rgba(200, 100, 100)', 
-      norm: Axis.PY, 
+      dir: Axis.PY, 
       cords: new Vector3(this.x, this.y, this.z)
     });
 
-    if (this.states[dir] === 2) {
-      let norm;
-      switch (dir) {
-        case 'east': norm = Axis.NX; break;
-        case 'south': norm = Axis.NZ; break;
-        case 'west': norm = Axis.PX; break;
-        case 'north': norm = Axis.PZ; break;
+    if (this.states[dirName] === 2) {
+      let dir;
+      switch (dirName) {
+        case 'east': dir = Axis.NX; break;
+        case 'south': dir = Axis.NZ; break;
+        case 'west': dir = Axis.PX; break;
+        case 'north': dir = Axis.PZ; break;
         default: break;
       }
       result.push({
-        points: this._surfaces[dir][1].map(i => new Vector3(...this._vertices[i])), 
+        points: this._surfaces[dirName][1].map(i => new Vector3(...this._vertices[i])), 
         color: 'rgba(200, 100, 100)', 
-        norm: norm, 
+        dir, 
         cords: new Vector3(this.x, this.y, this.z)
       });
     }

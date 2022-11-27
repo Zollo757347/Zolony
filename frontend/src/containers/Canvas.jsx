@@ -35,7 +35,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     const canvas = canvasRef.current;
     const p = getPosition(canvas, e);
     
-    playgroundRef.current.destroy(p.x, p.y);
+    playgroundRef.current.leftClick(p.x, p.y);
     playgroundRef.current.renderOn(canvas);
   }
 
@@ -45,7 +45,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     const canvas = canvasRef.current;
     const p = getPosition(canvas, e);
     
-    playgroundRef.current.place(p.x, p.y);
+    playgroundRef.current.rightClick(p.x, p.y);
     playgroundRef.current.renderOn(canvas);
   }
 

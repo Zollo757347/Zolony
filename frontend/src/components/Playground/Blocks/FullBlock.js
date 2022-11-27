@@ -3,7 +3,7 @@ import Vector3 from "../../../utils/Vector3";
 import Block from "./Block";
 
 /**
- * 代表一個不透明的單位方塊
+ * 代表一個 1x1x1 的方塊
  * @abstract
  */
 class FullBlock extends Block {
@@ -15,8 +15,8 @@ class FullBlock extends Block {
   }
 
   /**
-   * 取得此方塊指定平面的資訊
-   * @returns 
+   * 取得此方塊所有平面的資訊
+   * @returns {import("../Playground").Surface[]}
    */
   surfaces() {
     const result = [];
@@ -27,7 +27,7 @@ class FullBlock extends Block {
       const block = this.engine.block(x, y, z);
       if (block?.type === 1) return undefined;
       
-      result.push({ points: this._surfaceOf(dir), color: this.surfaceColor(dir), norm: dir, cords: new Vector3(this.x, this.y, this.z) });
+      result.push({ points: this._surfaceOf(dir), color: this.surfaceColor(dir), dir, cords: new Vector3(this.x, this.y, this.z) });
     });
 
     return result.filter(r => !!r);
@@ -37,7 +37,7 @@ class FullBlock extends Block {
    * 取得此方塊指定平面的顏色
    * @returns 
    */
-  surfaceColor(dir) {
+  surfaceColor() {
     throw new Error('Not implemented yet.');
   }
 
@@ -71,6 +71,13 @@ class FullBlock extends Block {
     [Axis.NY]: [0, 1, 5, 4], 
     [Axis.NZ]: [0, 1, 3, 2]
   };
+
+  /**
+   * 取得指定平面的有向頂點座標
+   * @param {symbol} dir 指定平面的法向量方向
+   * @returns {Vector3[]}
+   * @private
+   */
   _surfaceOf(dir) {
     return this._surfaces[dir].map(i => new Vector3(...this._vertices[i]));
   }

@@ -2,7 +2,7 @@ import Axis from "../../../utils/Axis";
 import FullBlock from "./FullBlock";
 
 /**
- * 代表一個不透明的單位方塊
+ * 代表一個玻璃方塊，或透明的單位方塊
  */
 class GlassBlock extends FullBlock {
   constructor({ x, y, z, engine }) {
@@ -11,7 +11,8 @@ class GlassBlock extends FullBlock {
 
   /**
    * 取得此方塊指定平面的顏色
-   * @returns 
+   * @param {symbol} dir 指定平面的法向量方向
+   * @returns {string}
    */
   surfaceColor(dir) {
     switch (dir) {

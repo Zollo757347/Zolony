@@ -1,9 +1,8 @@
 import Axis from "../../../utils/Axis";
-import Vector3 from "../../../utils/Vector3";
 import FullBlock from "./FullBlock";
 
 /**
- * 代表一個不透明的單位方塊
+ * 代表一個混凝土方塊，或不透明的單位方塊
  */
 class Concrete extends FullBlock {
   constructor({ x, y, z, engine }) {
@@ -11,27 +10,9 @@ class Concrete extends FullBlock {
   }
 
   /**
-   * 取得此方塊指定平面的資訊
-   * @returns 
-   */
-  surfaces() {
-    const result = [];
-
-    [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].forEach(dir => {
-      const norm = Axis.VECTOR[dir];
-      const x = this.x + norm.x, y = this.y + norm.y, z = this.z + norm.z;
-      const block = this.engine.block(x, y, z);
-      if (block?.type === 1) return undefined;
-      
-      result.push({ points: this._surfaceOf(dir), color: this.surfaceColor(dir), norm: dir, cords: new Vector3(this.x, this.y, this.z) });
-    });
-
-    return result.filter(r => !!r);
-  }
-
-  /**
    * 取得此方塊指定平面的顏色
-   * @returns 
+   * @param {symbol} dir 指定平面的法向量方向
+   * @returns {string}
    */
   surfaceColor(dir) {
     switch (dir) {

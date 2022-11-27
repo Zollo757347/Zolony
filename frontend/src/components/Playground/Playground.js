@@ -3,7 +3,7 @@ import Vector3 from "../../utils/Vector3";
 import Concrete from "./Blocks/Concrete";
 import RedstoneDust from "./Blocks/RedstoneDust";
 import GlassBlock from "./Blocks/GlassBlock";
-import Engine from "./Engine";
+import { Engine } from "./Engine";
 
 /**
  * @typedef PlaygroundAngles 記錄觀察點的角度
@@ -27,14 +27,14 @@ import Engine from "./Engine";
  * @typedef TargetBlock 目標方塊的資訊
  * @type {object}
  * @property {Vector3} cords 目標方塊在旋轉前的三維坐標
- * @property {Vector3} norm 目標平面在旋轉前的單位法向量
+ * @property {symbol} dir 目標平面在旋轉前的法向量
  */
 
 /**
  * @typedef Surface 代表一個有限大小的有向表面
  * @type {object}
  * @property {Vector3} cords 表面的所屬方塊在旋轉前的三維坐標
- * @property {Vector3} norm 表面在旋轉前的法向量
+ * @property {symbol} dir 表面在旋轉前的法向量
  * @property {Vector3[]} points 表面的所有頂點座標
  * @property {string} color 表面的材質
  */
@@ -115,16 +115,19 @@ class Playground {
 
     /**
      * 快捷欄上的方塊
+     * @type {new () => Block}
      */
     this.hotbar = [Concrete, GlassBlock, RedstoneDust];
 
     /**
      * 快捷欄當前方塊的駐標
+     * @type {number}
      */
     this.hotbarTarget = 0;
 
     /**
      * 遊戲引擎
+     * @type {Engine}
      */
     this.engine = new Engine({ xLen, yLen, zLen });
   }
@@ -152,7 +155,8 @@ class Playground {
   }
 
   /**
-   * 
+   * 根據滾輪滾動的數值調整快捷欄
+   * @param {number} deltaY 滾輪滾動的幅度
    */
   scrollHotbar(deltaY) {
     this._prevRefWheel += deltaY;
@@ -160,26 +164,12 @@ class Playground {
   }
 
   /**
-   * 在游標指定的位置上放置一個方塊
-   * @param {number} cursorX 游標在畫布上的 x 座標
-   * @param {number} cursorY 游標在畫布上的 y 座標
-   * @returns {void}
-   */
-  place(canvasX, canvasY) {
-    const target = this._getTarget(canvasX, canvasY);
-    if (!target) return;
-
-    let { cords: { x, y, z }, norm } = target;
-    this.engine.rightClick(x, y, z, norm, this.hotbar[this.hotbarTarget]);
-  }
-
-  /**
-   * 破壞游標所指向的方塊
+   * 在游標指定的位置上按下破壞鍵
    * @param {number} cursorX 游標在畫布上的 x 座標
    * @param {number} cursorY 游標在畫布上的 y 座標
    * @returns {Block} 被破壞的方塊
    */
-  destroy(canvasX, canvasY) {
+  leftClick(canvasX, canvasY) {
     const target = this._getTarget(canvasX, canvasY);
     if (!target) return;
 
@@ -190,9 +180,21 @@ class Playground {
   }
 
   /**
+   * 在游標指定的位置上按下使用鍵
+   * @param {number} cursorX 游標在畫布上的 x 座標
+   * @param {number} cursorY 游標在畫布上的 y 座標
+   */
+  rightClick(canvasX, canvasY) {
+    const target = this._getTarget(canvasX, canvasY);
+    if (!target) return;
+
+    let { cords: { x, y, z }, dir } = target;
+    this.engine.rightClick(x, y, z, dir, this.hotbar[this.hotbarTarget]);
+  }
+
+  /**
    * 在指定畫布上渲染物體，畫布的大小需與初始值相同
    * @param {JSX.IntrinsicElements.canvas} canvas 
-   * @returns {void}
    */
   renderOn(canvas) {
     if (canvas.width !== this.canvasWidth || canvas.height !== this.canvasHeight) {
@@ -227,6 +229,7 @@ class Playground {
    * @param {number} cursorX 游標在畫布上的 x 座標
    * @param {number} cursorY 游標在畫布上的 y 座標
    * @returns {TargetBlock}
+   * @private
    */
   _getTarget(canvasX, canvasY) {
     const surfaces = this._visibleSurfaces();
@@ -235,7 +238,7 @@ class Playground {
     let maxZ = -Infinity;
     let target = null;
 
-    projectedSurfaces.forEach(({ cords, points, norm }) => {
+    projectedSurfaces.forEach(({ cords, points, dir }) => {
       const min = Math.min(...points.map(p => p.z));
       if (maxZ >= min) return;
 
@@ -252,7 +255,7 @@ class Playground {
       }
 
       maxZ = min;
-      target = { cords, norm };
+      target = { cords, dir };
     });
 
     return target;
@@ -261,6 +264,7 @@ class Playground {
   /**
    * 尋找所有需要渲染的表面
    * @returns {Surface[]}
+   * @private
    */
   _visibleSurfaces() {
     const surfaces = [];
@@ -280,20 +284,16 @@ class Playground {
   }
 
   /**
-   * 將所有平面投影在螢幕上，傳入參數的部分值會被改動
+   * 將所有平面投影在螢幕上，傳入參數的部分值會被改動，為了加速渲染會移除部分看不見的平面
    * @param {Surface[]} surfaces 投影前的平面
-   * @returns {Surface[]} 投影後的平面
+   * @returns {Surface[]} 投影後且有可能會被看見的平面
+   * @private
    */
   _projectSurfaces(surfaces) {
     const offset = new Vector3(this.canvasWidth / 2, this.canvasHeight / 2, 0);
     const camera = new Vector3(0, 0, this.cameraZ);
 
-    const newAxes = Object.assign({}, Axis.VECTOR);
-    for (const key in newAxes) {
-      newAxes[key] = newAxes[key]
-        .rotateY(this.angles.theta)
-        .rotateX(this.angles.phi);
-    }
+    const newAxes = Axis.VectorMap(v => v.rotateY(this.angles.theta).rotateX(this.angles.phi));
 
     surfaces.forEach(surface => {
       let checked = false;
@@ -304,7 +304,7 @@ class Playground {
           .rotateY(this.angles.theta)
           .rotateX(this.angles.phi);
 
-        if (!checked && newPoint.subtract(camera).dot(newAxes[surface.norm]) > 0) {
+        if (!checked && newPoint.subtract(camera).dot(newAxes[surface.dir]) > 0) {
           surface.points = [];
           return;
         }
