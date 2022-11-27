@@ -5,7 +5,7 @@ import Block from "./Block";
  */
 class AirBlock extends Block {
   constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 0 });
+    super({ x, y, z, engine, type: 0, transparent: true });
   }
 
   surfaces() {

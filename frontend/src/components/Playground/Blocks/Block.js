@@ -35,6 +35,18 @@ class Block {
     this.type = options.type;
 
     /**
+     * 此方塊是否為透明方塊
+     * @type {boolean}
+     */
+    this.transparent = options.transparent || false;
+
+    /**
+     * 此方塊是否為玻璃材質
+     * @type {boolean}
+     */
+    this.glassLike = options.glassLike || false;
+
+    /**
      * 此方塊是否提供頂部支撐點
      * @type {boolean}
      */

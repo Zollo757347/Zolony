@@ -2,7 +2,7 @@ import Axis from "../../../utils/Axis";
 import Vector3 from "../../../utils/Vector3";
 import Block from "./Block";
 
-const d = 0.01;
+const d = 0.001;
 
 /**
  * @typedef RedstoneDustState
@@ -19,7 +19,7 @@ const d = 0.01;
  */
 class RedstoneDust extends Block {
   constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 100, needBottomSupport: true, interactable: true });
+    super({ x, y, z, engine, type: 100, needBottomSupport: true, interactable: true, transparent: true });
     
     /**
      * 此紅石粉的狀態

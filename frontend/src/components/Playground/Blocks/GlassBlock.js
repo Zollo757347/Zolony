@@ -6,7 +6,7 @@ import FullBlock from "./FullBlock";
  */
 class GlassBlock extends FullBlock {
   constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 2 });
+    super({ x, y, z, engine, type: 2, transparent: true, glassLike: true });
   }
 
   /**

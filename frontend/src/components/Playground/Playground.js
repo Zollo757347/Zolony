@@ -160,7 +160,7 @@ class Playground {
    */
   scrollHotbar(deltaY) {
     this._prevRefWheel += deltaY;
-    this.hotbarTarget = ((this._prevRefWheel / 100) % this.hotbar.length + this.hotbar.length) % this.hotbar.length;
+    this.hotbarTarget = (Math.trunc(this._prevRefWheel / 100) % this.hotbar.length + this.hotbar.length) % this.hotbar.length;
   }
 
   /**

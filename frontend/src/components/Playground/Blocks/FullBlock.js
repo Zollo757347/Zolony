@@ -25,7 +25,7 @@ class FullBlock extends Block {
       const norm = Axis.VECTOR[dir];
       const x = this.x + norm.x, y = this.y + norm.y, z = this.z + norm.z;
       const block = this.engine.block(x, y, z);
-      if (block?.type === 1) return undefined;
+      if (block && block instanceof FullBlock && (this.type === 2 || block.type !== 2)) return undefined;
       
       result.push({ points: this._surfaceOf(dir), color: this.surfaceColor(dir), dir, cords: new Vector3(this.x, this.y, this.z) });
     });
