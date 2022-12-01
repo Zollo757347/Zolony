@@ -1,4 +1,5 @@
 import Axis from "../../../utils/Axis";
+import Utils from "../../../utils/Utils";
 import Vector3 from "../../../utils/Vector3";
 import Block from "./Block";
 
@@ -25,12 +26,17 @@ class RedstoneDust extends Block {
      * 此紅石粉的狀態
      * @type {RedstoneDustState}
      */
-    this.states = { east: 0, south: 0, west: 0, north: 0, power: 0 };
+    this.states = { east: 1, south: 1, west: 1, north: 1, power: 0 };
 
     /**
      * 此紅石粉閒置時是否處於向四周充能的狀態
+     * @type {boolean}
      */
     this.crossMode = true;
+  }
+
+  get power() {
+    return this.states.power;
   }
 
   /**
@@ -38,8 +44,7 @@ class RedstoneDust extends Block {
    * @returns {import("../Playground").Surface[]}
    */
   surfaces() {
-    const color = 'rgba(200, 100, 100)';
-    const result = [{ points: this._surfaces.middle.map(i => new Vector3(...this._vertices[i])), color, dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) }];
+    const result = [{ points: this._surfaces.middle.map(i => new Vector3(...this._vertices[i])), color: this.surfaceColor(), dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) }];
     result.push(...this._otherSurfacesOf('east'));
     result.push(...this._otherSurfacesOf('south'));
     result.push(...this._otherSurfacesOf('west'));
@@ -52,29 +57,9 @@ class RedstoneDust extends Block {
    * 取得此方塊指定平面的材質
    * @returns 
    */
-  surfaceColor(dir) {
-    switch (dir) {
-      case Axis.PX:
-        return 'rgba(200, 100, 100)';
-
-      case Axis.PY:
-        return 'rgba(240, 140, 140)';
-
-      case Axis.PZ:
-        return 'rgba(160,  60,  60)';
-
-      case Axis.NX:
-        return 'rgba(180,  80,  80)';
-
-      case Axis.NY:
-        return 'rgba(140,  40,  40)';
-
-      case Axis.NZ:
-        return 'rgba(220, 120, 120)';
-
-      default:
-        throw new Error();
-    }
+  surfaceColor() {
+    const brightness = this.power * 8 + 100;
+    return `rgba(${brightness}, ${brightness >> 1}, ${brightness >> 1})`;
   }
 
   /**
@@ -82,10 +67,27 @@ class RedstoneDust extends Block {
    */
   interact() {
     this.crossMode = !this.crossMode;
-    this.update();
+    this.sendPPUpdate();
   }
 
-  update() {
+  sendPPUpdate() {
+    [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach((dir, i) => {
+      const norm = Axis.VECTOR[dir];
+      const target = this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z);
+      target?.PPUpdate(Axis.ReverseTable[dir]);
+
+      if (i <= 3 && this.doPointTo(dir) && target?.type !== 100) {
+        this.engine.block(this.x + norm.x, this.y + norm.y + 1, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
+        this.engine.block(this.x + norm.x, this.y + norm.y - 1, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
+      }
+    });
+    this.PPUpdate();
+  }
+
+  PPUpdate() {
+    const oldStates = JSON.parse(JSON.stringify(this.states));
+    let maxDiaDustPower = 0;
+
     if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
       this.engine.leftClick(this.x, this.y, this.z);
     }
@@ -95,11 +97,13 @@ class RedstoneDust extends Block {
       if (this.engine.block(this.x + 1, this.y, this.z).redstoneAutoConnect) {
         this.states.east = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x + 1, this.y - 1, this.z).redstoneAutoConnect && this.engine.block(this.x + 1, this.y, this.z).type !== 1) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x + 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x + 1, this.y, this.z).transparent) {
         this.states.east = 1;
+        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x + 1, this.y - 1, this.z).power);
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x + 1, this.y + 1, this.z).redstoneAutoConnect && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x + 1, this.y + 1, this.z).type === 100 && this.engine.block(this.x, this.y + 1, this.z).transparent) {
         this.states.east = 2;
+        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x + 1, this.y + 1, this.z).power);
       }
     }
 
@@ -108,11 +112,13 @@ class RedstoneDust extends Block {
       if (this.engine.block(this.x, this.y, this.z + 1).redstoneAutoConnect) {
         this.states.south = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z + 1).redstoneAutoConnect && this.engine.block(this.x, this.y, this.z + 1).type !== 1) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y, this.z + 1).transparent) {
         this.states.south = 1;
+        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x, this.y - 1, this.z + 1).power);
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z + 1).redstoneAutoConnect && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y + 1, this.z).transparent) {
         this.states.south = 2;
+        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x, this.y + 1, this.z + 1).power);
       }
     }
 
@@ -121,11 +127,13 @@ class RedstoneDust extends Block {
       if (this.engine.block(this.x - 1, this.y, this.z).redstoneAutoConnect) {
         this.states.west = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x - 1, this.y - 1, this.z).redstoneAutoConnect && this.engine.block(this.x - 1, this.y, this.z).type !== 1) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x - 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x - 1, this.y, this.z).transparent) {
         this.states.west = 1;
+        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x - 1, this.y - 1, this.z).power);
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x - 1, this.y + 1, this.z).redstoneAutoConnect && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x - 1, this.y + 1, this.z).type === 100 && this.engine.block(this.x, this.y + 1, this.z).transparent) {
         this.states.west = 2;
+        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x - 1, this.y + 1, this.z).power);
       }
     }
 
@@ -134,30 +142,75 @@ class RedstoneDust extends Block {
       if (this.engine.block(this.x, this.y, this.z - 1).redstoneAutoConnect) {
         this.states.north = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z - 1).redstoneAutoConnect && this.engine.block(this.x, this.y, this.z - 1).type !== 1) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y, this.z - 1).transparent) {
         this.states.north = 1;
+        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x, this.y - 1, this.z - 1).power);
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z - 1).redstoneAutoConnect && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y + 1, this.z).transparent) {
         this.states.north = 2;
+        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x, this.y + 1, this.z - 1).power);
       }
     }
-
 
     const explicitDir = Object.entries(this.states)
       .map(([dir, val]) => val ? dir : undefined)
       .filter((dir) => dir && dir !== 'power');
     
-    if (explicitDir.length === 0 && this.crossMode) {
-      this.states.east = this.states.south = this.states.west = this.states.north = 1;
-    }
-    else if (explicitDir.length === 1) {
-      switch (explicitDir[0]) {
-        case 'east': this.states.west = 1; break;
-        case 'south': this.states.north = 1; break;
-        case 'west': this.states.east = 1; break;
-        case 'north': this.states.south = 1; break;
-        default: break;
+    if (explicitDir.length === 0) {
+      if (this.crossMode) {
+        this.states.east = this.states.south = this.states.west = this.states.north = 1;
       }
+    }
+    else {
+      this.crossMode = true;
+      if (explicitDir.length === 1) {
+        switch (explicitDir[0]) {
+          case 'east': this.states.west = 1; break;
+          case 'south': this.states.north = 1; break;
+          case 'west': this.states.east = 1; break;
+          case 'north': this.states.south = 1; break;
+          default: break;
+        }
+      }
+    }
+
+    this.states.power = Math.max(
+      this.engine.block(this.x + 1, this.y, this.z)?.power || 0, 
+      this.engine.block(this.x, this.y + 1, this.z)?.power || 0, 
+      this.engine.block(this.x, this.y, this.z + 1)?.power || 0, 
+      this.engine.block(this.x - 1, this.y, this.z)?.power || 0, 
+      this.engine.block(this.x, this.y - 1, this.z)?.power || 0, 
+      this.engine.block(this.x, this.y, this.z - 1)?.power || 0, 
+      maxDiaDustPower, 
+      1
+    ) - 1;
+
+    if (!Utils.StrictEqual(oldStates, this.states)) {
+      this.sendPPUpdate();
+    }
+  }
+
+  /**
+   * 檢查紅石粉有沒有指向某一個方向
+   * @param {symbol} dir 
+   * @returns {boolean}
+   */
+  doPointTo(dir) {
+    switch (dir) {
+      case Axis.NX:
+        return !!this.states.west;
+      
+      case Axis.PX:
+        return !!this.states.east;
+
+      case Axis.NZ:
+        return !!this.states.south;
+      
+      case Axis.PZ:
+        return !!this.states.north;
+
+      default:
+        return false;
     }
   }
 
@@ -220,7 +273,7 @@ class RedstoneDust extends Block {
 
     result.push({
       points: this._surfaces[dirName][0].map(i => new Vector3(...this._vertices[i])), 
-      color: 'rgba(200, 100, 100)', 
+      color: this.surfaceColor(), 
       dir: Axis.PY, 
       cords: new Vector3(this.x, this.y, this.z)
     });
@@ -236,7 +289,7 @@ class RedstoneDust extends Block {
       }
       result.push({
         points: this._surfaces[dirName][1].map(i => new Vector3(...this._vertices[i])), 
-        color: 'rgba(200, 100, 100)', 
+        color: this.surfaceColor(), 
         dir, 
         cords: new Vector3(this.x, this.y, this.z)
       });

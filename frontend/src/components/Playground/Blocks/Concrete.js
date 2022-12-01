@@ -39,7 +39,7 @@ class Concrete extends FullBlock {
     }
   }
 
-  update() {}
+  PPUpdate() {}
 }
 
 export default Concrete;

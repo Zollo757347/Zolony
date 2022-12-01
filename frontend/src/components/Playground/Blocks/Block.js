@@ -1,3 +1,5 @@
+import Axis from "../../../utils/Axis";
+
 /**
  * 代表一個方塊
  * @abstract
@@ -66,8 +68,28 @@ class Block {
 
     /**
      * 此方塊是否會被紅石粉主動連接
+     * @type {boolean}
      */
     this.redstoneAutoConnect = options.redstoneAutoConnect || false;
+  }
+
+  /**
+   * 取得此方塊的充能強度
+   * @type {number}
+   */
+  get power() {
+    return 0;
+  }
+
+  /**
+   * 發送 Post Placement Update 到相鄰的方塊
+   */
+  sendPPUpdate() {
+    [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach(dir => {
+      const norm = Axis.VECTOR[dir];
+      this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
+    });
+    this.PPUpdate();
   }
 
   /**
@@ -79,10 +101,11 @@ class Block {
   }
 
   /**
-   * 更新此方塊自身的狀態
+   * 根據 Post Placement Update 的來源方向更新自身狀態
+   * @param {symbol} dir 
    * @abstract
    */
-  update() {
+  PPUpdate(dir) {
     throw new Error('Not implemented yet.');
   }
 }

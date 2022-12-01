@@ -71,6 +71,18 @@ class Axis extends null {
   }
 
   /**
+   * 軸向量的反轉表
+   */
+  static ReverseTable = Object.freeze({
+    [Axis.PX]: Axis.NX, 
+    [Axis.PY]: Axis.NY, 
+    [Axis.PZ]: Axis.NZ, 
+    [Axis.NX]: Axis.PX, 
+    [Axis.NY]: Axis.PY, 
+    [Axis.NZ]: Axis.PZ
+  });
+
+  /**
    * 判斷一個 symbol 是不是正的軸向量
    * @param {symbol} axis 
    * @returns {boolean}

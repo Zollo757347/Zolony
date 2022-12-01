@@ -5,6 +5,12 @@ import Block from "./Block";
 class RedStoneTorch extends Block {
   constructor({ x, y, z, engine }) {
     super({ x, y, z, engine, type: 101, needBottomSupport: true, transparent: true, redstoneAutoConnect: true });
+
+    this.active = true;
+  }
+
+  get power() {
+    return this.active ? 15 : 0;
   }
 
   /**
@@ -47,8 +53,13 @@ class RedStoneTorch extends Block {
     }
   }
 
-  update() {
-    if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
+  /**
+   * 根據 Post Placement Update 的來源方向更新自身狀態
+   * @param {symbol} dir 
+   * @abstract
+   */
+  PPUpdate(dir) {
+    if (dir === Axis.NY && !this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
       this.engine.leftClick(this.x, this.y, this.z);
     }
   }

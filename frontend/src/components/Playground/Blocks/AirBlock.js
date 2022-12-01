@@ -16,7 +16,7 @@ class AirBlock extends Block {
     throw new Error('Air block does not have any surface textures.');
   }
 
-  update() {}
+  PPUpdate() {}
 }
 
 export default AirBlock;

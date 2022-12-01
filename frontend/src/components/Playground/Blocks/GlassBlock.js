@@ -39,7 +39,7 @@ class GlassBlock extends FullBlock {
     }
   }
 
-  update() {}
+  PPUpdate() {}
 }
 
 export default GlassBlock;

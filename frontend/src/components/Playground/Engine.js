@@ -57,7 +57,7 @@ class Engine {
   leftClick(x, y, z) {
     const block = this._pg[x][y][z];
     this._pg[x][y][z] = new AirBlock({ x, y, z, engine: this });
-    this._update(x, y, z);
+    block.sendPPUpdate(this._pg[x][y][z]);
     return block;
   }
 
@@ -87,24 +87,7 @@ class Engine {
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 
     this._pg[x][y][z] = newBlock;
-    this._update(x, y, z);
-  }
-
-  /**
-   * 更新指定方塊的方塊狀態
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} z 
-   * @private
-   */
-  _update(x, y, z) {
-    for (let i = x - 1; i <= x + 1; i++) {
-      for (let j = y - 1; j <= y + 1; j++) {
-        for (let k = z - 1; k <= z + 1; k++) {
-          this.block(i, j, k)?.update();
-        }
-      }
-    }
+    this._pg[x][y][z].sendPPUpdate();
   }
 }
 
