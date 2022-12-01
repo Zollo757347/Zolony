@@ -51,6 +51,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
 
   function handleScroll(e) {
     playgroundRef.current.scrollHotbar(e.deltaY);
+    playgroundRef.current.renderOn(canvasRef.current);
   }
   
   return (

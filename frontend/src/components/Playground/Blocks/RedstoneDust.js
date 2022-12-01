@@ -19,7 +19,7 @@ const d = 0.001;
  */
 class RedstoneDust extends Block {
   constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 100, needBottomSupport: true, interactable: true, transparent: true });
+    super({ x, y, z, engine, type: 100, needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: true });
     
     /**
      * 此紅石粉的狀態
@@ -92,52 +92,52 @@ class RedstoneDust extends Block {
 
     this.states.east = 0;
     if (this.x + 1 < this.engine.xLen) {
-      if (this.engine.block(this.x + 1, this.y, this.z).type === 100) {
+      if (this.engine.block(this.x + 1, this.y, this.z).redstoneAutoConnect) {
         this.states.east = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x + 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x + 1, this.y, this.z).type !== 1) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x + 1, this.y - 1, this.z).redstoneAutoConnect && this.engine.block(this.x + 1, this.y, this.z).type !== 1) {
         this.states.east = 1;
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x + 1, this.y + 1, this.z).type === 100 && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x + 1, this.y + 1, this.z).redstoneAutoConnect && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
         this.states.east = 2;
       }
     }
 
     this.states.south = 0;
     if (this.z + 1 < this.engine.xLen) {
-      if (this.engine.block(this.x, this.y, this.z + 1).type === 100) {
+      if (this.engine.block(this.x, this.y, this.z + 1).redstoneAutoConnect) {
         this.states.south = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y, this.z + 1).type !== 1) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z + 1).redstoneAutoConnect && this.engine.block(this.x, this.y, this.z + 1).type !== 1) {
         this.states.south = 1;
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z + 1).redstoneAutoConnect && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
         this.states.south = 2;
       }
     }
 
     this.states.west = 0;
     if (this.x - 1 >= 0) {
-      if (this.engine.block(this.x - 1, this.y, this.z).type === 100) {
+      if (this.engine.block(this.x - 1, this.y, this.z).redstoneAutoConnect) {
         this.states.west = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x - 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x - 1, this.y, this.z).type !== 1) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x - 1, this.y - 1, this.z).redstoneAutoConnect && this.engine.block(this.x - 1, this.y, this.z).type !== 1) {
         this.states.west = 1;
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x - 1, this.y + 1, this.z).type === 100 && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x - 1, this.y + 1, this.z).redstoneAutoConnect && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
         this.states.west = 2;
       }
     }
 
     this.states.north = 0;
     if (this.z - 1 >= 0) {
-      if (this.engine.block(this.x, this.y, this.z - 1).type === 100) {
+      if (this.engine.block(this.x, this.y, this.z - 1).redstoneAutoConnect) {
         this.states.north = 1;
       }
-      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y, this.z - 1).type !== 1) {
+      if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z - 1).redstoneAutoConnect && this.engine.block(this.x, this.y, this.z - 1).type !== 1) {
         this.states.north = 1;
       }
-      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
+      if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z - 1).redstoneAutoConnect && this.engine.block(this.x, this.y + 1, this.z).type !== 1) {
         this.states.north = 2;
       }
     }

@@ -63,6 +63,11 @@ class Block {
      * @type {boolean}
      */
     this.interactable = options.interactable || false;
+
+    /**
+     * 此方塊是否會被紅石粉主動連接
+     */
+    this.redstoneAutoConnect = options.redstoneAutoConnect || false;
   }
 
   /**
