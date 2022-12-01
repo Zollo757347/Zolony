@@ -71,22 +71,31 @@ class RedstoneDust extends Block {
   }
 
   sendPPUpdate() {
+    this.PPUpdate();
     [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach((dir, i) => {
       const norm = Axis.VECTOR[dir];
       const target = this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z);
       target?.PPUpdate(Axis.ReverseTable[dir]);
 
       if (i <= 3 && this.doPointTo(dir) && target?.type !== 100) {
-        this.engine.block(this.x + norm.x, this.y + norm.y + 1, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
         this.engine.block(this.x + norm.x, this.y + norm.y - 1, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
+        this.engine.block(this.x + norm.x, this.y + norm.y + 1, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
       }
     });
-    this.PPUpdate();
   }
 
   PPUpdate() {
+    this._changeShape();
+    this._changePower();
+  }
+
+  NCUpdate() {
+    this._changeShape();
+    this._changePower();
+  }
+
+  _changeShape() {
     const oldStates = JSON.parse(JSON.stringify(this.states));
-    let maxDiaDustPower = 0;
 
     if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
       this.engine.leftClick(this.x, this.y, this.z);
@@ -99,11 +108,9 @@ class RedstoneDust extends Block {
       }
       if (this.y - 1 >= 0 && this.engine.block(this.x + 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x + 1, this.y, this.z).transparent) {
         this.states.east = 1;
-        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x + 1, this.y - 1, this.z).power);
       }
       if (this.y + 1 < this.engine.yLen && this.engine.block(this.x + 1, this.y + 1, this.z).type === 100 && this.engine.block(this.x, this.y + 1, this.z).transparent) {
         this.states.east = 2;
-        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x + 1, this.y + 1, this.z).power);
       }
     }
 
@@ -114,11 +121,9 @@ class RedstoneDust extends Block {
       }
       if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y, this.z + 1).transparent) {
         this.states.south = 1;
-        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x, this.y - 1, this.z + 1).power);
       }
       if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y + 1, this.z).transparent) {
         this.states.south = 2;
-        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x, this.y + 1, this.z + 1).power);
       }
     }
 
@@ -129,11 +134,9 @@ class RedstoneDust extends Block {
       }
       if (this.y - 1 >= 0 && this.engine.block(this.x - 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x - 1, this.y, this.z).transparent) {
         this.states.west = 1;
-        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x - 1, this.y - 1, this.z).power);
       }
       if (this.y + 1 < this.engine.yLen && this.engine.block(this.x - 1, this.y + 1, this.z).type === 100 && this.engine.block(this.x, this.y + 1, this.z).transparent) {
         this.states.west = 2;
-        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x - 1, this.y + 1, this.z).power);
       }
     }
 
@@ -144,11 +147,9 @@ class RedstoneDust extends Block {
       }
       if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y, this.z - 1).transparent) {
         this.states.north = 1;
-        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x, this.y - 1, this.z - 1).power);
       }
       if (this.y + 1 < this.engine.yLen && this.engine.block(this.x, this.y + 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y + 1, this.z).transparent) {
         this.states.north = 2;
-        maxDiaDustPower = Math.max(maxDiaDustPower, this.engine.block(this.x, this.y + 1, this.z - 1).power);
       }
     }
 
@@ -174,18 +175,32 @@ class RedstoneDust extends Block {
       }
     }
 
-    this.states.power = Math.max(
-      this.engine.block(this.x + 1, this.y, this.z)?.power || 0, 
-      this.engine.block(this.x, this.y + 1, this.z)?.power || 0, 
-      this.engine.block(this.x, this.y, this.z + 1)?.power || 0, 
-      this.engine.block(this.x - 1, this.y, this.z)?.power || 0, 
-      this.engine.block(this.x, this.y - 1, this.z)?.power || 0, 
-      this.engine.block(this.x, this.y, this.z - 1)?.power || 0, 
-      maxDiaDustPower, 
-      1
-    ) - 1;
-
     if (!Utils.StrictEqual(oldStates, this.states)) {
+      this.sendPPUpdate();
+    }
+  }
+
+  _changePower() {
+    const oldPower = this.states.power;
+    let newPower = 1;
+    [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach(dir => {
+      const norm = Axis.VECTOR[dir];
+      newPower = Math.max(newPower, this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z)?.power ?? 1);
+    });
+
+    [
+      { dir: 'west', blockDown: this.engine.block(this.x - 1, this.y - 1, this.z), blockHori: this.engine.block(this.x - 1, this.y, this.z) }, 
+      { dir: 'east', blockDown: this.engine.block(this.x + 1, this.y - 1, this.z), blockHori: this.engine.block(this.x + 1, this.y, this.z) }, 
+      { dir: 'north', blockDown: this.engine.block(this.x, this.y - 1, this.z - 1), blockHori: this.engine.block(this.x, this.y, this.z - 1) }, 
+      { dir: 'south', blockDown: this.engine.block(this.x, this.y - 1, this.z + 1), blockHori: this.engine.block(this.x, this.y, this.z + 1) }, 
+    ].forEach(({ dir, blockDown, blockHori }) => {
+      if (dir && blockHori?.transparent && blockDown?.type === 100) {
+        newPower = Math.max(newPower, blockDown.power);
+      }
+    });
+
+    this.states.power = newPower - 1;
+    if (oldPower !== newPower - 1) {
       this.sendPPUpdate();
     }
   }
@@ -204,10 +219,10 @@ class RedstoneDust extends Block {
         return !!this.states.east;
 
       case Axis.NZ:
-        return !!this.states.south;
+        return !!this.states.north;
       
       case Axis.PZ:
-        return !!this.states.north;
+        return !!this.states.south;
 
       default:
         return false;

@@ -55,11 +55,10 @@ class RedStoneTorch extends Block {
 
   /**
    * 根據 Post Placement Update 的來源方向更新自身狀態
-   * @param {symbol} dir 
    * @abstract
    */
-  PPUpdate(dir) {
-    if (dir === Axis.NY && !this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
+  PPUpdate() {
+    if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
       this.engine.leftClick(this.x, this.y, this.z);
     }
   }

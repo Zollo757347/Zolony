@@ -224,7 +224,7 @@ class Playground {
       context.fill();
     });
 
-    const text = ['Concrete', 'Glass BLock', 'Redstone Dust', 'Redstone Torch'][this.hotbarTarget];
+    const text = ['Concrete', 'Glass Block', 'Redstone Dust', 'Redstone Torch'][this.hotbarTarget];
     context.fillStyle = 'black';
     context.font = '30px Arias';
     context.fillText(text, 20, 50);
