@@ -84,12 +84,8 @@ class RedstoneDust extends Block {
     });
   }
 
+  // temprarily take PP and NC update as the same
   PPUpdate() {
-    this._changeShape();
-    this._changePower();
-  }
-
-  NCUpdate() {
     this._changeShape();
     this._changePower();
   }

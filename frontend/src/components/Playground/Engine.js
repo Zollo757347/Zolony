@@ -3,6 +3,8 @@ import AirBlock from "./Blocks/AirBlock";
 import Block from "./Blocks/Block"; // eslint-disable-line no-unused-vars
 import Concrete from "./Blocks/Concrete";
 
+let _redstoneInterval = null;
+
 class Engine {
   constructor({ xLen, yLen, zLen }) {
     /**
@@ -23,6 +25,8 @@ class Engine {
      */
     this.zLen = zLen;
 
+    this.taskQueue = [];
+
     /**
      * 所有方塊
      * @type {Block[][][]}
@@ -33,6 +37,34 @@ class Engine {
         Array.from({ length: zLen }, (_, z) => y === 0 ? new Concrete({ x, y, z, engine: this }) : new AirBlock({ x, y, z, engine: this }))
       )
     );
+  }
+
+  startTicking() {
+    if (_redstoneInterval) {
+      clearInterval(_redstoneInterval);
+    }
+
+    _redstoneInterval = setInterval(() => {
+      while (this.taskQueue.length) {
+        const [taskName, params] = this.taskQueue.shift();
+
+        switch (taskName) {
+          case 'leftClick':
+            this.leftClick(...params);
+            break;
+
+          case 'rightClick':
+            this.rightClick(...params);
+            break;
+
+          default: break;
+        }
+      }
+    }, 50);
+  }
+
+  addTask(name, params) {
+    this.taskQueue.push([name, params]);
   }
 
   /**

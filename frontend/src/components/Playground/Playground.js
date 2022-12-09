@@ -40,11 +40,13 @@ import RedStoneTorch from "./Blocks/RedstoneTorch";
  * @property {string} color 表面的材質
  */
 
+let _renderInterval = null;
+
 /**
  * 3D 渲染的邏輯實作
  */
 class Playground {
-  constructor({ canvasWidth, canvasHeight, xLen, yLen, zLen, angles }) {
+  constructor({ canvasWidth, canvasHeight, xLen, yLen, zLen, angles, canvas }) {
     /**
      * 畫布中物體的 x 軸長度，單位為格
      * @type {number}
@@ -77,6 +79,8 @@ class Playground {
       theta: angles?.theta || 0, 
       phi: angles?.phi || 0
     };
+
+    this.canvas = canvas;
 
     /**
      * 畫布的寬度，單位為像素
@@ -131,6 +135,23 @@ class Playground {
      * @type {Engine}
      */
     this.engine = new Engine({ xLen, yLen, zLen });
+
+    this.startTicking();
+    this.engine.startTicking();
+  }
+
+  startTicking() {
+    if (_renderInterval) {
+      clearInterval(_renderInterval);
+    }
+
+    _renderInterval = setInterval(() => {
+      this.renderOn();
+    }, 16);
+  }
+
+  setCanvas(canvas) {
+    this.canvas = canvas;
   }
 
   _prevRefX = 0;
@@ -168,7 +189,6 @@ class Playground {
    * 在游標指定的位置上按下破壞鍵
    * @param {number} cursorX 游標在畫布上的 x 座標
    * @param {number} cursorY 游標在畫布上的 y 座標
-   * @returns {Block} 被破壞的方塊
    */
   leftClick(canvasX, canvasY) {
     const target = this._getTarget(canvasX, canvasY);
@@ -177,7 +197,7 @@ class Playground {
     const { cords: { x, y, z } } = target;
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
-    return this.engine.leftClick(x, y, z);
+    this.engine.addTask('leftClick', [x, y, z]);
   }
 
   /**
@@ -190,7 +210,8 @@ class Playground {
     if (!target) return;
 
     let { cords: { x, y, z }, dir } = target;
-    this.engine.rightClick(x, y, z, dir, this.hotbar[this.hotbarTarget]);
+    
+    this.engine.addTask('rightClick', [x, y, z, dir, this.hotbar[this.hotbarTarget]]);
   }
 
   /**
@@ -198,13 +219,11 @@ class Playground {
    * @param {JSX.IntrinsicElements.canvas} canvas 
    */
   renderOn(canvas) {
-    if (canvas.width !== this.canvasWidth || canvas.height !== this.canvasHeight) {
-      throw new Error('The dimension of the canvas does not correspond to the initial value.');
-    }
+    canvas = this.canvas;
 
     const context = canvas.getContext('2d');
     context.fillStyle = 'white';
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
     
     const surfaces = this._visibleSurfaces();
     const projectedSurfaces = this._projectSurfaces(surfaces);

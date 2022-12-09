@@ -12,18 +12,15 @@ function getPosition(canvas, event) {
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
   const canvasRef = useRef(<canvas></canvas>);
   const spanRef = useRef();
-
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen }));
 
   useEffect(() => {
-    playgroundRef.current.renderOn(canvasRef.current);
+    playgroundRef.current.setCanvas(canvasRef.current);
   }, []);
 
   function handleDrag(e) {
     if (e.clientX === 0 || e.clientY === 0) return;
-    const canvas = canvasRef.current;
     playgroundRef.current.adjustAngles(e.clientX, e.clientY);
-    playgroundRef.current.renderOn(canvas);
   }
   
   function handleDragStart(e) {
@@ -36,7 +33,6 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     const p = getPosition(canvas, e);
     
     playgroundRef.current.leftClick(p.x, p.y);
-    playgroundRef.current.renderOn(canvas);
   }
 
   function handleContextMenu(e) {
@@ -46,12 +42,10 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     const p = getPosition(canvas, e);
     
     playgroundRef.current.rightClick(p.x, p.y);
-    playgroundRef.current.renderOn(canvas);
   }
 
   function handleScroll(e) {
     playgroundRef.current.scrollHotbar(e.deltaY);
-    playgroundRef.current.renderOn(canvasRef.current);
   }
   
   return (
