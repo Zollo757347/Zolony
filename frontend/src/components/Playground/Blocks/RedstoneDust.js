@@ -185,13 +185,24 @@ class RedstoneDust extends Block {
     });
 
     [
-      { dir: 'west', blockDown: this.engine.block(this.x - 1, this.y - 1, this.z), blockHori: this.engine.block(this.x - 1, this.y, this.z) }, 
-      { dir: 'east', blockDown: this.engine.block(this.x + 1, this.y - 1, this.z), blockHori: this.engine.block(this.x + 1, this.y, this.z) }, 
-      { dir: 'north', blockDown: this.engine.block(this.x, this.y - 1, this.z - 1), blockHori: this.engine.block(this.x, this.y, this.z - 1) }, 
-      { dir: 'south', blockDown: this.engine.block(this.x, this.y - 1, this.z + 1), blockHori: this.engine.block(this.x, this.y, this.z + 1) }, 
-    ].forEach(({ dir, blockDown, blockHori }) => {
-      if (dir && blockHori?.transparent && blockDown?.type === 100) {
+      { blockDown: this.engine.block(this.x - 1, this.y - 1, this.z), blockHori: this.engine.block(this.x - 1, this.y, this.z) }, 
+      { blockDown: this.engine.block(this.x + 1, this.y - 1, this.z), blockHori: this.engine.block(this.x + 1, this.y, this.z) }, 
+      { blockDown: this.engine.block(this.x, this.y - 1, this.z - 1), blockHori: this.engine.block(this.x, this.y, this.z - 1) }, 
+      { blockDown: this.engine.block(this.x, this.y - 1, this.z + 1), blockHori: this.engine.block(this.x, this.y, this.z + 1) }, 
+    ].forEach(({ blockDown, blockHori }) => {
+      if (blockHori?.transparent && blockDown?.type === 100) {
         newPower = Math.max(newPower, blockDown.power);
+      }
+    });
+
+    [
+      { blockUp: this.engine.block(this.x - 1, this.y + 1, this.z), blockAbove: this.engine.block(this.x, this.y + 1, this.z) }, 
+      { blockUp: this.engine.block(this.x + 1, this.y + 1, this.z), blockAbove: this.engine.block(this.x, this.y + 1, this.z) }, 
+      { blockUp: this.engine.block(this.x, this.y + 1, this.z - 1), blockAbove: this.engine.block(this.x, this.y + 1, this.z) }, 
+      { blockUp: this.engine.block(this.x, this.y + 1, this.z + 1), blockAbove: this.engine.block(this.x, this.y + 1, this.z) }, 
+    ].forEach(({ blockUp, blockAbove }) => {
+      if (!blockAbove?.type && blockUp?.type === 100) {
+        newPower = Math.max(newPower, blockUp.power);
       }
     });
 
