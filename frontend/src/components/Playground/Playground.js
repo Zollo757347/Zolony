@@ -36,11 +36,10 @@ import RedStoneTorch from "./Blocks/RedstoneTorch";
  * @type {object}
  * @property {Vector3} cords 表面的所屬方塊在旋轉前的三維坐標
  * @property {symbol} dir 表面在旋轉前的法向量
- * @property {Vector3[]} points 表面的所有頂點座標
+ * @property {Vector3[]} points 表面的所有二維頂點座標
+ * @property {Vector3[]} points3D 表面的所有三維頂點座標
  * @property {string} color 表面的材質
  */
-
-let _renderInterval = null;
 
 /**
  * 3D 渲染的邏輯實作
@@ -95,6 +94,18 @@ class Playground {
     this.canvasHeight = canvasHeight;
 
     /**
+     * 滑鼠當前的 x 座標
+     * @type {number}
+     */
+    this.cursorX = 0;
+
+    /**
+     * 滑鼠當前的 y 座標
+     * @type {number}
+     */
+    this.cursorY = 0;
+
+    /**
      * 物體的縮放倍率
      * @type {number}
      */
@@ -140,18 +151,24 @@ class Playground {
     this.engine.startTicking();
   }
 
+  _renderInterval = null;
   startTicking() {
-    if (_renderInterval) {
-      clearInterval(_renderInterval);
+    if (this._renderInterval) {
+      clearInterval(this._renderInterval);
     }
 
-    _renderInterval = setInterval(() => {
+    this._renderInterval = setInterval(() => {
       this.renderOn();
     }, 16);
   }
 
   setCanvas(canvas) {
     this.canvas = canvas;
+  }
+
+  setCursor(x, y) {
+    this.cursorX = x;
+    this.cursorY = y;
   }
 
   _prevRefX = 0;
@@ -216,23 +233,24 @@ class Playground {
 
   /**
    * 在指定畫布上渲染物體，畫布的大小需與初始值相同
-   * @param {JSX.IntrinsicElements.canvas} canvas 
    */
-  renderOn(canvas) {
-    canvas = this.canvas;
+  renderOn() {
+    if (!this.canvas) return;
 
-    const context = canvas.getContext('2d');
+    const context = this.canvas.getContext('2d');
     context.fillStyle = 'white';
     context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+
+    const target = this._getTarget(this.cursorX, this.cursorY);
     
     const surfaces = this._visibleSurfaces();
     const projectedSurfaces = this._projectSurfaces(surfaces);
 
-    projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => 
-      Math.min(...p1.map(p => p.z)) - Math.min(...p2.map(p => p.z))
-    );
+    projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => {
+      return Math.min(...p1.map(({z}) => z)) - Math.min(...p2.map(({z}) => z));
+    });
 
-    projectedSurfaces.forEach(({ points: [p1, p2, p3, p4], color }) => {
+    projectedSurfaces.forEach(({ cords, points: [p1, p2, p3, p4], color }) => {
       context.fillStyle = color;
       context.beginPath();
       context.moveTo(p1.x, p1.y);
@@ -241,6 +259,17 @@ class Playground {
       context.lineTo(p4.x, p4.y);
       context.closePath();
       context.fill();
+
+      if (target && target.cords.x === cords.x && target.cords.y === cords.y && target.cords.z === cords.z) {
+        const p = target.points;
+        context.beginPath();
+        context.moveTo(p[0].x, p[0].y);
+        context.lineTo(p[1].x, p[1].y);
+        context.lineTo(p[2].x, p[2].y);
+        context.lineTo(p[3].x, p[3].y);
+        context.closePath();
+        context.stroke();
+      }
     });
 
     const text = ['Concrete', 'Glass Block', 'Redstone Dust', 'Redstone Torch'][this.hotbarTarget];
@@ -253,11 +282,11 @@ class Playground {
    * 取得游標指向方塊的資訊
    * @param {number} cursorX 游標在畫布上的 x 座標
    * @param {number} cursorY 游標在畫布上的 y 座標
-   * @returns {TargetBlock}
+   * @returns {TargetBlock?}
    * @private
    */
   _getTarget(canvasX, canvasY) {
-    const surfaces = this._visibleSurfaces();
+    const surfaces = this._visibleSurfaces(true);
     const projectedSurfaces = this._projectSurfaces(surfaces);
 
     let maxZ = -Infinity;
@@ -280,18 +309,19 @@ class Playground {
       }
 
       maxZ = min;
-      target = { cords, dir };
+      target = { cords, dir, points };
     });
 
     return target;
   }
 
   /**
-   * 尋找所有需要渲染的表面
+   * 尋找所有指定的表面
+   * @param {boolean} interactionBox true：互動箱，false：渲染箱
    * @returns {Surface[]}
    * @private
    */
-  _visibleSurfaces() {
+  _visibleSurfaces(interactionBox = false) {
     const surfaces = [];
 
     for (let i = 0; i < this.xLen; i++) {
@@ -299,7 +329,9 @@ class Playground {
         for (let k = 0; k < this.zLen; k++) {
           if (this.engine.block(i, j, k).type === 0) continue;
 
-          const blockSurfaces = this.engine.block(i, j, k).surfaces();
+          const blockSurfaces = 
+            (interactionBox ? this.engine.block(i, j, k).interactionSurfaces?.() : null) ??
+            this.engine.block(i, j, k).surfaces();
           surfaces.push(...blockSurfaces);
         }
       }
@@ -318,9 +350,16 @@ class Playground {
     const offset = new Vector3(this.canvasWidth / 2, this.canvasHeight / 2, 0);
     const camera = new Vector3(0, 0, this.cameraZ);
 
-    const newAxes = Axis.VectorMap(v => v.rotateY(this.angles.theta).rotateX(this.angles.phi));
-
     surfaces.forEach(surface => {
+      const newAxes = Axis.VectorMap(v => v
+        .rotateX(surface.xAngle || 0)
+        .rotateZ(surface.zAngle || 0)
+        .rotateY(this.angles.theta)
+        .rotateX(this.angles.phi)
+      );
+
+      surface.points3D = [];
+
       let checked = false;
       for (let i = 0; i < surface.points.length; i++) {
         const newPoint = surface.points[i]
@@ -335,6 +374,7 @@ class Playground {
         }
         checked = true;
 
+        surface.points3D.push(newPoint);
         surface.points[i] = newPoint
           .projectZ(this.cameraZ, this.distance)
           .mirrorY()

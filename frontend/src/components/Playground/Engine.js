@@ -3,8 +3,6 @@ import AirBlock from "./Blocks/AirBlock";
 import Block from "./Blocks/Block"; // eslint-disable-line no-unused-vars
 import Concrete from "./Blocks/Concrete";
 
-let _redstoneInterval = null;
-
 class Engine {
   constructor({ xLen, yLen, zLen }) {
     /**
@@ -39,12 +37,13 @@ class Engine {
     );
   }
 
+  _redstoneInterval = null;
   startTicking() {
-    if (_redstoneInterval) {
-      clearInterval(_redstoneInterval);
+    if (this._redstoneInterval) {
+      clearInterval(this._redstoneInterval);
     }
 
-    _redstoneInterval = setInterval(() => {
+    this._redstoneInterval = setInterval(() => {
       while (this.taskQueue.length) {
         const [taskName, params] = this.taskQueue.shift();
 
@@ -116,6 +115,7 @@ class Engine {
     if (this._pg[x][y][z].type !== 0) return;
 
     const newBlock = new B({ x, y, z, engine: this });
+    newBlock.setFacing?.(dir);
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 
     this._pg[x][y][z] = newBlock;

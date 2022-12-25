@@ -62,6 +62,39 @@ class RedstoneDust extends Block {
     return `rgba(${brightness}, ${brightness >> 1}, ${brightness >> 1})`;
   }
 
+  _interactionBoxVertices = [
+    [this.x    , this.y         , this.z], 
+    [this.x + 1, this.y         , this.z], 
+    [this.x    , this.y + 0.0625, this.z], 
+    [this.x + 1, this.y + 0.0625, this.z], 
+    [this.x    , this.y         , this.z + 1], 
+    [this.x + 1, this.y         , this.z + 1], 
+    [this.x    , this.y + 0.0625, this.z + 1], 
+    [this.x + 1, this.y + 0.0625, this.z + 1]
+  ];
+  _interactionBoxSurfaces = {
+    [Axis.PX]: [1, 3, 7, 5], 
+    [Axis.PY]: [2, 3, 7, 6], 
+    [Axis.PZ]: [4, 5, 7, 6], 
+    [Axis.NX]: [0, 2, 6, 4], 
+    [Axis.NY]: [0, 1, 5, 4], 
+    [Axis.NZ]: [0, 1, 3, 2]
+  };
+
+  interactionSurfaces() {
+    const result = [];
+
+    [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].forEach(dir => {
+      result.push({ points: this._interactionSurfaceOf(dir), dir, cords: new Vector3(this.x, this.y, this.z) });
+    });
+
+    return result.filter(r => !!r);
+  }
+
+  _interactionSurfaceOf(dir) {
+    return this._interactionBoxSurfaces[dir].map(i => new Vector3(...this._interactionBoxVertices[i]));
+  }
+
   /**
    * 與此紅石粉互動一次
    */
@@ -251,7 +284,7 @@ class RedstoneDust extends Block {
    *           |         ⊙y
    *           z
    */
-    _vertices = [
+  _vertices = [
     [this.x + 0.375, this.y + d, this.z], 
     [this.x + 0.625, this.y + d, this.z], 
     [this.x + 0.625, this.y + d, this.z + 0.375], 

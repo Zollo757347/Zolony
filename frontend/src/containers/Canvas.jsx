@@ -11,12 +11,17 @@ function getPosition(canvas, event) {
 
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
   const canvasRef = useRef(<canvas></canvas>);
-  const spanRef = useRef();
+  const spanRef = useRef(<span></span>);
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen }));
 
   useEffect(() => {
     playgroundRef.current.setCanvas(canvasRef.current);
   }, []);
+
+  function handleMouseMove(e) {
+    const p = getPosition(canvasRef.current, e);
+    playgroundRef.current.setCursor(p.x, p.y);
+  }
 
   function handleDrag(e) {
     if (e.clientX === 0 || e.clientY === 0) return;
@@ -54,6 +59,8 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}
+
+        onMouseMove={handleMouseMove}
         
         draggable={true}
         onDrag={handleDrag}

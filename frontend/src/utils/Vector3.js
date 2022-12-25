@@ -59,7 +59,7 @@ class Vector3 {
 
   /**
    * 以 x 軸為軸心，由 +y 軸向 +z 軸旋轉
-   * @param {Vector3} rad 旋轉弧度
+   * @param {number} rad 旋轉弧度
    * @returns 旋轉後的新向量
    */
   rotateX(rad) {
@@ -75,7 +75,7 @@ class Vector3 {
 
   /**
    * 以 y 軸為軸心，由 +z 軸向 +x 軸旋轉
-   * @param {Vector3} rad 旋轉弧度
+   * @param {number} rad 旋轉弧度
    * @returns 旋轉後的新向量
    */
   rotateY(rad) {
@@ -91,7 +91,7 @@ class Vector3 {
 
   /**
    * 以 z 軸為軸心，由 +x 軸向 +y 軸旋轉
-   * @param {Vector3} rad 旋轉弧度
+   * @param {number} rad 旋轉弧度
    * @returns 旋轉後的新向量
    */
   rotateZ(rad) {

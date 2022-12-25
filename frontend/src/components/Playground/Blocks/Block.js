@@ -52,7 +52,19 @@ class Block {
      * 此方塊是否提供頂部支撐點
      * @type {boolean}
      */
-    this.upperSupport = options.fullSupport || false;
+    this.upperSupport = options.fullSupport || options.upperSupport || false;
+
+    /**
+     * 此方塊是否提供側面支撐點
+     * @type {boolean}
+     */
+    this.sideSupport = options.fullSupport || options.sideSupport || false;
+
+    /**
+     * 此方塊是否需要支撐點
+     * @type {boolean}
+     */
+    this.needSupport = options.needSupport || false;
 
     /**
      * 此方塊是否需要底部支撐點
