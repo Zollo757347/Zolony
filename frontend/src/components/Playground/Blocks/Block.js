@@ -37,6 +37,11 @@ class Block {
     this.type = options.type;
 
     /**
+     * 方塊的狀態
+     */
+    this.states = { power: 0, source: false };
+
+    /**
      * 此方塊是否為透明方塊
      * @type {boolean}
      */
@@ -90,7 +95,7 @@ class Block {
    * @type {number}
    */
   get power() {
-    return 0;
+    return this.states.power;
   }
 
   /**
@@ -114,10 +119,9 @@ class Block {
 
   /**
    * 根據 Post Placement Update 的來源方向更新自身狀態
-   * @param {symbol} dir 
    * @abstract
    */
-  PPUpdate(dir) {
+  PPUpdate() {
     throw new Error('Not implemented yet.');
   }
 }

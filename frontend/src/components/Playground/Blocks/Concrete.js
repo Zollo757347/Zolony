@@ -38,8 +38,6 @@ class Concrete extends FullBlock {
         throw new Error();
     }
   }
-
-  PPUpdate() {}
 }
 
 export default Concrete;

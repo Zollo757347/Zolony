@@ -79,6 +79,52 @@ class FullBlock extends Block {
   _surfaceOf(dir) {
     return this._surfaces[dir].map(i => new Vector3(...this._vertices[i]));
   }
+
+  PPUpdate() {
+    const lowerBlock = this.engine.block(this.x, this.y - 1, this.z);
+    const oldPower = this.states.power;
+    const oldSource = this.states.source;
+    if (lowerBlock?.type === 101 && lowerBlock.states.lit) {
+      this.states.power = 15;
+      this.states.source = true;
+    }
+    else {
+      let power = 0, block = null;
+
+      block = this.engine.block(this.x, this.y + 1, this.z);
+      if (block?.type === 100) {
+        power = Math.max(power, block.power);
+      }
+
+      block = this.engine.block(this.x + 1, this.y, this.z);
+      if (block?.type === 100 && block.states.west) {
+        power = Math.max(power, block.power);
+      }
+
+      block = this.engine.block(this.x - 1, this.y, this.z);
+      if (block?.type === 100 && block.states.east) {
+        power = Math.max(power, block.power);
+      }
+
+      block = this.engine.block(this.x, this.y, this.z + 1);
+      if (block?.type === 100 && block.states.north) {
+        power = Math.max(power, block.power);
+      }
+
+      block = this.engine.block(this.x, this.y, this.z - 1);
+      if (block?.type === 100 && block.states.south) {
+        power = Math.max(power, block.power);
+      }
+
+      this.states.power = power;
+      this.states.source = false;
+    }
+
+
+    if (oldPower !== this.states.power || oldSource !== this.states.source) {
+      this.sendPPUpdate();
+    }
+  }
 }
 
 export default FullBlock;

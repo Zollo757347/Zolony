@@ -26,7 +26,7 @@ class RedstoneDust extends Block {
      * 此紅石粉的狀態
      * @type {RedstoneDustState}
      */
-    this.states = { east: 1, south: 1, west: 1, north: 1, power: 0 };
+    this.states = { east: 1, south: 1, west: 1, north: 1, power: 0, source: true };
 
     /**
      * 此紅石粉閒置時是否處於向四周充能的狀態
@@ -144,7 +144,7 @@ class RedstoneDust extends Block {
     }
 
     this.states.south = 0;
-    if (this.z + 1 < this.engine.xLen) {
+    if (this.z + 1 < this.engine.zLen) {
       if (this.engine.block(this.x, this.y, this.z + 1).redstoneAutoConnect) {
         this.states.south = 1;
       }
@@ -184,7 +184,7 @@ class RedstoneDust extends Block {
 
     const explicitDir = Object.entries(this.states)
       .map(([dir, val]) => val ? dir : undefined)
-      .filter((dir) => dir && dir !== 'power');
+      .filter((dir) => dir && dir !== 'power' && dir !== 'source');
     
     if (explicitDir.length === 0) {
       if (this.crossMode) {
@@ -214,7 +214,8 @@ class RedstoneDust extends Block {
     let newPower = 1;
     [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach(dir => {
       const norm = Axis.VECTOR[dir];
-      newPower = Math.max(newPower, this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z)?.power ?? 1);
+      const block = this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z);
+      newPower = Math.max(newPower, block?.states.source ? block?.power ?? 1 : 1);
     });
 
     [

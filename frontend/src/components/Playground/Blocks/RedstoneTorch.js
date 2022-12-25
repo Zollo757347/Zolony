@@ -6,7 +6,7 @@ class RedStoneTorch extends Block {
   constructor({ x, y, z, engine }) {
     super({ x, y, z, engine, type: 101, needSupport: true, transparent: true, redstoneAutoConnect: true });
 
-    this.states = { lit: true, facing: null };
+    this.states = { lit: true, facing: null, source: true };
   }
 
   get power() {
@@ -59,6 +59,8 @@ class RedStoneTorch extends Block {
   ` * @returns {string}
   ` */
   surfaceColor(dir) {
+    if (!this.states.lit) return 'black';
+
     switch (dir) {
       case Axis.PX:
         return 'rgba(200, 100, 100)';
@@ -143,36 +145,58 @@ class RedStoneTorch extends Block {
    * @abstract
    */
   PPUpdate() {
+    let attachedBlock = null;
+    let broken = false;
     switch (this.states.facing) {
       case 'east':
-        if (!this.engine.block(this.x - 1, this.y, this.z)?.sideSupport) {
-          this.engine.leftClick(this.x, this.y, this.z);
+        attachedBlock = this.engine.block(this.x - 1, this.y, this.z);
+        if (!attachedBlock?.sideSupport) {
+          broken = true;
         }
         break;
 
       case 'west':
-        if (!this.engine.block(this.x + 1, this.y, this.z)?.sideSupport) {
-          this.engine.leftClick(this.x, this.y, this.z);
+        attachedBlock = this.engine.block(this.x + 1, this.y, this.z);
+        if (!attachedBlock?.sideSupport) {
+          broken = true;
         }
         break;
       
       case 'south':
-        if (!this.engine.block(this.x, this.y, this.z - 1)?.sideSupport) {
-          this.engine.leftClick(this.x, this.y, this.z);
+        attachedBlock = this.engine.block(this.x, this.y, this.z - 1);
+        if (!attachedBlock?.sideSupport) {
+          broken = true;
         }
         break;
 
       case 'north':
-        if (!this.engine.block(this.x, this.y, this.z + 1)?.sideSupport) {
-          this.engine.leftClick(this.x, this.y, this.z);
+        attachedBlock = this.engine.block(this.x, this.y, this.z + 1);
+        if (!attachedBlock?.sideSupport) {
+          broken = true;
         }
         break;
       
       default:
-        if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
-          this.engine.leftClick(this.x, this.y, this.z);
+        attachedBlock = this.engine.block(this.x, this.y - 1, this.z);
+        if (!attachedBlock?.upperSupport) {
+          broken = true;
         }
+        break;
     }
+
+    if (broken) {
+      this.engine.leftClick(this.x, this.y, this.z);
+      return;
+    }
+
+    if (!attachedBlock?.states.power !== this.states.lit) {
+      this.engine.addTask('torchUpdate', [this.x, this.y, this.z, !attachedBlock?.states.power], 2);
+    }
+  }
+
+  torchUpdate(lit) {
+    this.states.lit = lit;
+    this.sendPPUpdate();
   }
 
   

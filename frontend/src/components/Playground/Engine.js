@@ -44,8 +44,15 @@ class Engine {
     }
 
     this._redstoneInterval = setInterval(() => {
+      const nextQueue = [];
+
       while (this.taskQueue.length) {
-        const [taskName, params] = this.taskQueue.shift();
+        const [taskName, params, tickAfter] = this.taskQueue.shift();
+
+        if (tickAfter) {
+          nextQueue.push([taskName, params, tickAfter - 1]);
+          continue;
+        }
 
         switch (taskName) {
           case 'leftClick':
@@ -56,14 +63,20 @@ class Engine {
             this.rightClick(...params);
             break;
 
+          case 'torchUpdate':
+            this.torchUpdate(...params);
+            break;
+
           default: break;
         }
       }
-    }, 50);
+
+      this.taskQueue.push(...nextQueue);
+    }, 100);
   }
 
-  addTask(name, params) {
-    this.taskQueue.push([name, params]);
+  addTask(name, params, tickAfter = 0) {
+    this.taskQueue.push([name, params, tickAfter]);
   }
 
   /**
@@ -120,6 +133,13 @@ class Engine {
 
     this._pg[x][y][z] = newBlock;
     this._pg[x][y][z].sendPPUpdate();
+  }
+
+  torchUpdate(x, y, z, lit) {
+    const block = this.block(x, y, z);
+    if (block?.type !== 101) return;
+
+    block.torchUpdate(lit);
   }
 }
 
