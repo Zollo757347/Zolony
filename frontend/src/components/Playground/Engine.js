@@ -1,4 +1,5 @@
 import Axis from "../../utils/Axis";
+import Utils from "../../utils/Utils";
 import AirBlock from "./Blocks/AirBlock";
 import Block from "./Blocks/Block"; // eslint-disable-line no-unused-vars
 import Concrete from "./Blocks/Concrete";
@@ -46,6 +47,7 @@ class Engine {
     this._redstoneInterval = setInterval(() => {
       const nextQueue = [];
 
+      console.log(this.taskQueue.length);
       while (this.taskQueue.length) {
         const [taskName, params, tickAfter] = this.taskQueue.shift();
 
@@ -76,6 +78,7 @@ class Engine {
   }
 
   addTask(name, params, tickAfter = 0) {
+    if (this.taskQueue.some(t => t[0] === name && t[2] === tickAfter && Utils.StrictEqual(t[1], params))) return;
     this.taskQueue.push([name, params, tickAfter]);
   }
 
