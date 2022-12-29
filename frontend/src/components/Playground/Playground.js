@@ -4,7 +4,8 @@ import Concrete from "./Blocks/Concrete";
 import RedstoneDust from "./Blocks/RedstoneDust";
 import GlassBlock from "./Blocks/GlassBlock";
 import { Engine } from "./Engine";
-import RedStoneTorch from "./Blocks/RedstoneTorch";
+import RedstoneTorch from "./Blocks/RedstoneTorch";
+import RedstoneRepeater from "./Blocks/RedstoneRepeater";
 
 /**
  * @typedef PlaygroundAngles 記錄觀察點的角度
@@ -133,7 +134,7 @@ class Playground {
      * 快捷欄上的方塊
      * @type {new () => Block}
      */
-    this.hotbar = [Concrete, GlassBlock, RedstoneDust, RedStoneTorch];
+    this.hotbar = [Concrete, GlassBlock, RedstoneDust, RedstoneTorch, RedstoneRepeater];
 
     /**
      * 快捷欄當前方塊的駐標
@@ -272,7 +273,7 @@ class Playground {
       }
     });
 
-    const text = ['Concrete', 'Glass Block', 'Redstone Dust', 'Redstone Torch'][this.hotbarTarget];
+    const text = ['Concrete', 'Glass Block', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater'][this.hotbarTarget];
     context.fillStyle = 'black';
     context.font = '30px Arias';
     context.fillText(text, 20, 50);

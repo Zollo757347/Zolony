@@ -47,7 +47,6 @@ class Engine {
     this._redstoneInterval = setInterval(() => {
       const nextQueue = [];
 
-      console.log(this.taskQueue.length);
       while (this.taskQueue.length) {
         const [taskName, params, tickAfter] = this.taskQueue.shift();
 
@@ -67,6 +66,10 @@ class Engine {
 
           case 'torchUpdate':
             this.torchUpdate(...params);
+            break;
+
+          case 'repeaterUpdate':
+            this.repeaterUpdate(...params);
             break;
 
           default: break;
@@ -143,6 +146,13 @@ class Engine {
     if (block?.type !== 101) return;
 
     block.torchUpdate(lit);
+  }
+
+  repeaterUpdate(x, y, z, powered) {
+    const block = this.block(x, y, z);
+    if (block?.type !== 102) return;
+
+    block.repeaterUpdate(powered);
   }
 }
 

@@ -133,7 +133,10 @@ class RedstoneDust extends Block {
     this.states.east = 0;
     if (this.x + 1 < this.engine.xLen) {
       if (this.engine.block(this.x + 1, this.y, this.z).redstoneAutoConnect) {
-        this.states.east = 1;
+        const block = this.engine.block(this.x + 1, this.y, this.z);
+        if (block.redstoneAutoConnect === true || (block.redstoneAutoConnect === 'lined' && ['west', 'east'].includes(block.states.facing))) {
+          this.states.east = 1;
+        }
       }
       if (this.y - 1 >= 0 && this.engine.block(this.x + 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x + 1, this.y, this.z).transparent) {
         this.states.east = 1;
@@ -146,7 +149,10 @@ class RedstoneDust extends Block {
     this.states.south = 0;
     if (this.z + 1 < this.engine.zLen) {
       if (this.engine.block(this.x, this.y, this.z + 1).redstoneAutoConnect) {
-        this.states.south = 1;
+        const block = this.engine.block(this.x, this.y, this.z + 1);
+        if (block.redstoneAutoConnect === true || (block.redstoneAutoConnect === 'lined' && ['south', 'north'].includes(block.states.facing))) {
+          this.states.south = 1;
+        }
       }
       if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z + 1).type === 100 && this.engine.block(this.x, this.y, this.z + 1).transparent) {
         this.states.south = 1;
@@ -159,7 +165,10 @@ class RedstoneDust extends Block {
     this.states.west = 0;
     if (this.x - 1 >= 0) {
       if (this.engine.block(this.x - 1, this.y, this.z).redstoneAutoConnect) {
-        this.states.west = 1;
+        const block = this.engine.block(this.x - 1, this.y, this.z);
+        if (block.redstoneAutoConnect === true || (block.redstoneAutoConnect === 'lined' && ['west', 'east'].includes(block.states.facing))) {
+          this.states.west = 1;
+        }
       }
       if (this.y - 1 >= 0 && this.engine.block(this.x - 1, this.y - 1, this.z).type === 100 && this.engine.block(this.x - 1, this.y, this.z).transparent) {
         this.states.west = 1;
@@ -172,7 +181,10 @@ class RedstoneDust extends Block {
     this.states.north = 0;
     if (this.z - 1 >= 0) {
       if (this.engine.block(this.x, this.y, this.z - 1).redstoneAutoConnect) {
-        this.states.north = 1;
+        const block = this.engine.block(this.x, this.y, this.z - 1);
+        if (block.redstoneAutoConnect === true || (block.redstoneAutoConnect === 'lined' && ['south', 'north'].includes(block.states.facing))) {
+          this.states.north = 1;
+        }
       }
       if (this.y - 1 >= 0 && this.engine.block(this.x, this.y - 1, this.z - 1).type === 100 && this.engine.block(this.x, this.y, this.z - 1).transparent) {
         this.states.north = 1;
@@ -219,13 +231,16 @@ class RedstoneDust extends Block {
     });
 
     [
-      { blockDown: this.engine.block(this.x - 1, this.y - 1, this.z), blockHori: this.engine.block(this.x - 1, this.y, this.z) }, 
-      { blockDown: this.engine.block(this.x + 1, this.y - 1, this.z), blockHori: this.engine.block(this.x + 1, this.y, this.z) }, 
-      { blockDown: this.engine.block(this.x, this.y - 1, this.z - 1), blockHori: this.engine.block(this.x, this.y, this.z - 1) }, 
-      { blockDown: this.engine.block(this.x, this.y - 1, this.z + 1), blockHori: this.engine.block(this.x, this.y, this.z + 1) }, 
-    ].forEach(({ blockDown, blockHori }) => {
+      { blockDown: this.engine.block(this.x - 1, this.y - 1, this.z), blockHori: this.engine.block(this.x - 1, this.y, this.z), facing: 'east' }, 
+      { blockDown: this.engine.block(this.x + 1, this.y - 1, this.z), blockHori: this.engine.block(this.x + 1, this.y, this.z), facing: 'west' }, 
+      { blockDown: this.engine.block(this.x, this.y - 1, this.z - 1), blockHori: this.engine.block(this.x, this.y, this.z - 1), facing: 'south' }, 
+      { blockDown: this.engine.block(this.x, this.y - 1, this.z + 1), blockHori: this.engine.block(this.x, this.y, this.z + 1), facing: 'north' }, 
+    ].forEach(({ blockDown, blockHori, facing }) => {
       if (blockHori?.transparent && blockDown?.type === 100) {
         newPower = Math.max(newPower, blockDown.power);
+      }
+      else if (blockHori?.type === 102 && blockHori.states.powered && blockHori.states.facing === facing) {
+        newPower = 16;
       }
     });
 

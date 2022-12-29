@@ -2,7 +2,7 @@ import Axis from "../../../utils/Axis";
 import Vector3 from "../../../utils/Vector3";
 import Block from "./Block";
 
-class RedStoneTorch extends Block {
+class RedstoneTorch extends Block {
   constructor({ x, y, z, engine }) {
     super({ x, y, z, engine, type: 101, needSupport: true, transparent: true, redstoneAutoConnect: true });
 
@@ -290,4 +290,4 @@ class RedStoneTorch extends Block {
   }
 }
 
-export default RedStoneTorch;
+export default RedstoneTorch;

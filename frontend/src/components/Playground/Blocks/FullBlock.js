@@ -89,7 +89,7 @@ class FullBlock extends Block {
       this.states.source = true;
     }
     else {
-      let power = 0, block = null;
+      let power = 0, source = false, block = null;
 
       block = this.engine.block(this.x, this.y + 1, this.z);
       if (block?.type === 100) {
@@ -100,24 +100,40 @@ class FullBlock extends Block {
       if (block?.type === 100 && block.states.west) {
         power = Math.max(power, block.power);
       }
+      else if (block?.type === 102 && block.states.powered && block.states.facing === 'west') {
+        power = 15;
+        source = true;
+      }
 
       block = this.engine.block(this.x - 1, this.y, this.z);
       if (block?.type === 100 && block.states.east) {
         power = Math.max(power, block.power);
+      }
+      else if (block?.type === 102 && block.states.powered && block.states.facing === 'east') {
+        power = 15;
+        source = true;
       }
 
       block = this.engine.block(this.x, this.y, this.z + 1);
       if (block?.type === 100 && block.states.north) {
         power = Math.max(power, block.power);
       }
+      else if (block?.type === 102 && block.states.powered && block.states.facing === 'north') {
+        power = 15;
+        source = true;
+      }
 
       block = this.engine.block(this.x, this.y, this.z - 1);
       if (block?.type === 100 && block.states.south) {
         power = Math.max(power, block.power);
       }
+      else if (block?.type === 102 && block.states.powered && block.states.facing === 'south') {
+        power = 15;
+        source = true;
+      }
 
       this.states.power = power;
-      this.states.source = false;
+      this.states.source = source;
     }
 
 
