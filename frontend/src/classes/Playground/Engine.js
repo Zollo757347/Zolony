@@ -1,8 +1,6 @@
-import Axis from "../../utils/Axis";
-import Utils from "../../utils/Utils";
-import AirBlock from "./Blocks/AirBlock";
-import Block from "./Blocks/Block"; // eslint-disable-line no-unused-vars
-import Concrete from "./Blocks/Concrete";
+import Axis from "../Axis";
+import Utils from "../Utils";
+import { AirBlock, Concrete } from "./Blocks";
 
 class Engine {
   constructor({ xLen, yLen, zLen }) {
@@ -28,7 +26,7 @@ class Engine {
 
     /**
      * 所有方塊
-     * @type {Block[][][]}
+     * @type {import("./").Block[][][]}
      * @private
      */
     this._pg = Array.from({ length: xLen }, (_, x) => 

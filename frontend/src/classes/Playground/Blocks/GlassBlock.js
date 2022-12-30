@@ -1,5 +1,5 @@
-import Axis from "../../../utils/Axis";
-import FullBlock from "./FullBlock";
+import Axis from "../../Axis";
+import { FullBlock } from "./FullBlock";
 
 /**
  * 代表一個玻璃方塊，或透明的單位方塊
@@ -42,4 +42,4 @@ class GlassBlock extends FullBlock {
   PPUpdate() {}
 }
 
-export default GlassBlock;
+export { GlassBlock };

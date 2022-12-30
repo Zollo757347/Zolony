@@ -1,5 +1,5 @@
-import Axis from "../../../utils/Axis";
-import FullBlock from "./FullBlock";
+import Axis from "../../Axis";
+import { FullBlock } from "./FullBlock";
 
 /**
  * 代表一個混凝土方塊，或不透明的單位方塊
@@ -40,4 +40,4 @@ class Concrete extends FullBlock {
   }
 }
 
-export default Concrete;
+export { Concrete };

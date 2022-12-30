@@ -1,6 +1,6 @@
-import Axis from "../../../utils/Axis";
-import Vector3 from "../../../utils/Vector3";
-import Block from "./Block";
+import Axis from "../../Axis";
+import Vector3 from "../../Vector3";
+import { Block } from "./Block";
 
 // const d = 0.001;
 
@@ -200,4 +200,4 @@ class RedstoneRepeater extends Block {
   }
 }
 
-export default RedstoneRepeater;
+export { RedstoneRepeater };

@@ -1,4 +1,4 @@
-import Axis from "../../../utils/Axis";
+import Axis from "../../Axis";
 
 /**
  * 代表一個方塊
@@ -126,4 +126,4 @@ class Block {
   }
 }
 
-export default Block;
+export { Block };

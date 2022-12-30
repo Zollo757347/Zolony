@@ -1,7 +1,7 @@
-import Axis from "../../../utils/Axis";
-import Utils from "../../../utils/Utils";
-import Vector3 from "../../../utils/Vector3";
-import Block from "./Block";
+import Axis from "../../Axis";
+import Vector3 from "../../Vector3";
+import Utils from "../../Utils";
+import { Block } from "./Block";
 
 const d = 0.001;
 
@@ -370,4 +370,4 @@ class RedstoneDust extends Block {
   }
 }
 
-export default RedstoneDust;
+export { RedstoneDust };

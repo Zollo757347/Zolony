@@ -1,6 +1,6 @@
-import Axis from "../../../utils/Axis";
-import Vector3 from "../../../utils/Vector3";
-import Block from "./Block";
+import Axis from "../../Axis";
+import Vector3 from "../../Vector3";
+import { Block } from "./Block";
 
 /**
  * 代表一個 1x1x1 的方塊
@@ -143,4 +143,4 @@ class FullBlock extends Block {
   }
 }
 
-export default FullBlock;
+export { FullBlock };

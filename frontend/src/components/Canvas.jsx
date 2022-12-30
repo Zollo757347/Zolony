@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import Playground from "../components/Playground/Playground";
+import { Playground } from "../classes/Playground";
 
 function getPosition(canvas, event) {
   const p = canvas.getBoundingClientRect();

@@ -1,11 +1,7 @@
-import Axis from "../../utils/Axis";
-import Vector3 from "../../utils/Vector3";
-import Concrete from "./Blocks/Concrete";
-import RedstoneDust from "./Blocks/RedstoneDust";
-import GlassBlock from "./Blocks/GlassBlock";
+import Axis from "../Axis";
+import Vector3 from "../Vector3";
+import { Concrete, GlassBlock, RedstoneDust, RedstoneRepeater, RedstoneTorch } from "./Blocks";
 import { Engine } from "./Engine";
-import RedstoneTorch from "./Blocks/RedstoneTorch";
-import RedstoneRepeater from "./Blocks/RedstoneRepeater";
 
 /**
  * @typedef PlaygroundAngles 記錄觀察點的角度
@@ -387,4 +383,4 @@ class Playground {
   }
 }
 
-export default Playground;
+export { Playground };
