@@ -1,24 +1,27 @@
 import Axis from "../../Axis";
 import Vector3 from "../../Vector3";
+import { BlockType } from "../BlockType";
 import { Block } from "./Block";
 
 // const d = 0.001;
 
 /**
- * @typedef RedstoneRepeaterState
+ * @typedef _RedstoneRepeaterState
  * @type {object}
  * @property {number} delay 紅石中繼器的延遲
  * @property {string} facing 紅石中繼器的指向
  * @property {boolean} locked 紅石中繼器是否被鎖定
  * @property {boolean} powered 紅石中繼器是否被激發
+ * 
+ * @typedef {import("./Block").BlockState & _RedstoneRepeaterState} RedstoneRepeaterState
  */
 
 /**
  * 代表一個紅石中繼器
  */
 class RedstoneRepeater extends Block {
-  constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 102, needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'lined' });
+  constructor(options) {
+    super({ type: BlockType.RedstoneRepeater, needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'lined', ...options });
     
     /**
      * 此紅石中繼器的狀態
@@ -48,10 +51,10 @@ class RedstoneRepeater extends Block {
       case Axis.NZ:
         this.states.facing = 'south';
         return;
-      
+
       default:
         this.states.facing = 'north';
-        return;        
+        return;
     }
   }
 
@@ -66,32 +69,13 @@ class RedstoneRepeater extends Block {
   }
 
   /**
-   * 取得此方塊指定平面的材質
+   * 取得此方塊指定平面的顏色
    * @returns 
    */
   surfaceColor() {
     const brightness = this.states.powered ? 250 : 125;
-    return `rgba(${brightness}, ${(brightness >> 1) + this.states.delay * 30}, ${brightness >> 1})`;
+    return `rgb(${brightness}, ${(brightness >> 1) + this.states.delay * 30}, ${brightness >> 1})`;
   }
-
-  _interactionBoxVertices = [
-    [this.x    , this.y        , this.z], 
-    [this.x + 1, this.y        , this.z], 
-    [this.x    , this.y + 0.125, this.z], 
-    [this.x + 1, this.y + 0.125, this.z], 
-    [this.x    , this.y        , this.z + 1], 
-    [this.x + 1, this.y        , this.z + 1], 
-    [this.x    , this.y + 0.125, this.z + 1], 
-    [this.x + 1, this.y + 0.125, this.z + 1]
-  ];
-  _interactionBoxSurfaces = {
-    [Axis.PX]: [1, 3, 7, 5], 
-    [Axis.PY]: [2, 3, 7, 6], 
-    [Axis.PZ]: [4, 5, 7, 6], 
-    [Axis.NX]: [0, 2, 6, 4], 
-    [Axis.NY]: [0, 1, 5, 4], 
-    [Axis.NZ]: [0, 1, 3, 2]
-  };
 
   interactionSurfaces() {
     const result = [];
@@ -101,10 +85,6 @@ class RedstoneRepeater extends Block {
     });
 
     return result.filter(r => !!r);
-  }
-
-  _interactionSurfaceOf(dir) {
-    return this._interactionBoxSurfaces[dir].map(i => new Vector3(...this._interactionBoxVertices[i]));
   }
 
   /**
@@ -117,6 +97,11 @@ class RedstoneRepeater extends Block {
 
   // temprarily take PP and NC update as the same
   PPUpdate() {
+    if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
+      this.engine._leftClick(this.x, this.y, this.z);
+      return;
+    }
+
     let x, y, z;
     switch (this.states.facing) {
       case 'west':
@@ -142,7 +127,7 @@ class RedstoneRepeater extends Block {
     const oldPowered = this.states.powered;
     let newPowered;
     const block = this.engine.block(this.x + x, this.y + y, this.z + z);
-    if (block && (block.power || (block.type === 102 && block.states.facing === this.states.facing && block.states.powered))) {
+    if (block && (block.power || (block.type === BlockType.RedstoneRepeater && block.states.facing === this.states.facing && block.states.powered))) {
       newPowered = true;
     }
     else {
@@ -154,6 +139,10 @@ class RedstoneRepeater extends Block {
     }
   }
 
+  /**
+   * 更新此紅石中繼器的激發狀態
+   * @param {boolean} powered 
+   */
   repeaterUpdate(powered) {
     this.states.powered = powered;
     this.sendPPUpdate();
@@ -170,6 +159,7 @@ class RedstoneRepeater extends Block {
    *    /
    *   z
    */
+  /***/
   _vertices = [
     [this.x    , this.y        , this.z], 
     [this.x + 1, this.y        , this.z], 
@@ -197,6 +187,29 @@ class RedstoneRepeater extends Block {
    */
   _surfaceOf(dir) {
     return this._surfaces[dir].map(i => new Vector3(...this._vertices[i]));
+  }
+
+  _interactionBoxVertices = [
+    [this.x    , this.y        , this.z], 
+    [this.x + 1, this.y        , this.z], 
+    [this.x    , this.y + 0.125, this.z], 
+    [this.x + 1, this.y + 0.125, this.z], 
+    [this.x    , this.y        , this.z + 1], 
+    [this.x + 1, this.y        , this.z + 1], 
+    [this.x    , this.y + 0.125, this.z + 1], 
+    [this.x + 1, this.y + 0.125, this.z + 1]
+  ];
+  _interactionBoxSurfaces = {
+    [Axis.PX]: [1, 3, 7, 5], 
+    [Axis.PY]: [2, 3, 7, 6], 
+    [Axis.PZ]: [4, 5, 7, 6], 
+    [Axis.NX]: [0, 2, 6, 4], 
+    [Axis.NY]: [0, 1, 5, 4], 
+    [Axis.NZ]: [0, 1, 3, 2]
+  };
+
+  _interactionSurfaceOf(dir) {
+    return this._interactionBoxSurfaces[dir].map(i => new Vector3(...this._interactionBoxVertices[i]));
   }
 }
 

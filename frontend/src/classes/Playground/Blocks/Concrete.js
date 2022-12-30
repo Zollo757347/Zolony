@@ -1,12 +1,13 @@
 import Axis from "../../Axis";
+import { BlockType } from "../BlockType";
 import { FullBlock } from "./FullBlock";
 
 /**
- * 代表一個混凝土方塊，或不透明的單位方塊
+ * 代表一個混凝土方塊，即不透明的單位方塊
  */
 class Concrete extends FullBlock {
-  constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 1 });
+  constructor(options) {
+    super({ type: BlockType.Concrete, ...options });
   }
 
   /**
@@ -17,22 +18,22 @@ class Concrete extends FullBlock {
   surfaceColor(dir) {
     switch (dir) {
       case Axis.PX:
-        return 'rgba(200, 200, 200)';
+        return 'rgb(200, 200, 200)';
 
       case Axis.PY:
-        return 'rgba(240, 240, 240)';
+        return 'rgb(240, 240, 240)';
 
       case Axis.PZ:
-        return 'rgba(160, 160, 160)';
+        return 'rgb(160, 160, 160)';
 
       case Axis.NX:
-        return 'rgba(180, 180, 180)';
+        return 'rgb(180, 180, 180)';
 
       case Axis.NY:
-        return 'rgba(140, 140, 140)';
+        return 'rgb(140, 140, 140)';
 
       case Axis.NZ:
-        return 'rgba(220, 220, 220)';
+        return 'rgb(220, 220, 220)';
 
       default:
         throw new Error();

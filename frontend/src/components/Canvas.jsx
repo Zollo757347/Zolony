@@ -24,13 +24,17 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
   }
 
   function handleDrag(e) {
-    if (e.clientX === 0 || e.clientY === 0) return;
+    // 拖曳結束前的最後一個事件的座標會是 (0, 0)，因為會嚴重影響到畫面，所以直接擋掉
+    if (e.clientX === 0 && e.clientY === 0) return;
+
     playgroundRef.current.adjustAngles(e.clientX, e.clientY);
   }
   
   function handleDragStart(e) {
-    playgroundRef.current.adjustAngles(e.clientX, e.clientY, true);
+    // 把拖曳的殘影改成看不見的元素
     e.dataTransfer.setDragImage(spanRef.current, 0, 0);
+
+    playgroundRef.current.adjustAngles(e.clientX, e.clientY, true);
   }
 
   function handleClick(e) {
@@ -41,6 +45,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
   }
 
   function handleContextMenu(e) {
+    // 防止 Context Menu 真的跳出來
     e.preventDefault();
 
     const canvas = canvasRef.current;

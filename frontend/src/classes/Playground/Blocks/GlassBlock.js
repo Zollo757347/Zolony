@@ -1,12 +1,13 @@
 import Axis from "../../Axis";
+import { BlockType } from "../BlockType";
 import { FullBlock } from "./FullBlock";
 
 /**
- * 代表一個玻璃方塊，或透明的單位方塊
+ * 代表一個玻璃方塊，即透明的單位方塊
  */
 class GlassBlock extends FullBlock {
   constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 2, transparent: true, glassLike: true });
+    super({ x, y, z, engine, type: BlockType.GlassBlock, transparent: true });
   }
 
   /**

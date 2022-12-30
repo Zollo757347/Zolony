@@ -1,6 +1,24 @@
 import Axis from "../../Axis";
 
 /**
+ * @typedef Surface 代表一個有限大小的有向表面
+ * @type {object}
+ * @property {Vector3} cords 表面的所屬方塊在旋轉前的三維坐標
+ * @property {symbol} dir 表面在旋轉前的法向量
+ * @property {Vector3[]} points 表面的所有二維頂點座標
+ * @property {string} color 表面的顏色
+ * @property {number?} xAngle 在渲染前需要先沿著 x 軸旋轉的角度
+ * @property {number?} zAngle 在渲染前需要先沿著 z 軸旋轉的角度
+ */
+
+/**
+ * @typedef BlockState 此方塊的狀態
+ * @type {object}
+ * @property {number} power 此方塊的充能等級
+ * @property {boolean} source 此方塊是否為電源或被強充能
+ */
+
+/**
  * 代表一個方塊
  * @abstract
  */
@@ -38,6 +56,7 @@ class Block {
 
     /**
      * 方塊的狀態
+     * @type {BlockState}
      */
     this.states = { power: 0, source: false };
 
@@ -46,12 +65,6 @@ class Block {
      * @type {boolean}
      */
     this.transparent = options.transparent || false;
-
-    /**
-     * 此方塊是否為玻璃材質
-     * @type {boolean}
-     */
-    this.glassLike = options.glassLike || false;
 
     /**
      * 此方塊是否提供頂部支撐點
@@ -85,9 +98,9 @@ class Block {
 
     /**
      * 此方塊是否會被紅石粉主動連接
-     * @type {boolean}
+     * @type {'full' | 'line' | 'none'}
      */
-    this.redstoneAutoConnect = options.redstoneAutoConnect || false;
+    this.redstoneAutoConnect = options.redstoneAutoConnect || 'none';
   }
 
   /**
@@ -110,11 +123,19 @@ class Block {
   }
 
   /**
-   * 取得此方塊的所有表面
+   * 取得此方塊的渲染箱的所有表面
+   * @returns {Surface[]}
    * @abstract
    */
   surfaces() {
     throw new Error('Not implemented yet.');
+  }
+
+  /**
+   * 取得此方塊的互動箱的所有表面
+   */
+  interactionSurfaces() {
+    return this.surfaces();
   }
 
   /**

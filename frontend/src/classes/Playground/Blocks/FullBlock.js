@@ -1,44 +1,89 @@
 import Axis from "../../Axis";
 import Vector3 from "../../Vector3";
+import { BlockType } from "../BlockType";
 import { Block } from "./Block";
 
 /**
- * 代表一個 1x1x1 的方塊
+ * 代表一個單位方塊
  * @abstract
  */
 class FullBlock extends Block {
   constructor(options) {
-    super({ 
-      fullSupport: true, 
-      ...options
-    });
+    super({ fullSupport: true, ...options });
   }
 
   /**
-   * 取得此方塊所有平面的資訊
-   * @returns {import("../Playground").Surface[]}
+   * 取得此方塊可能需要渲染的表面
+   * @returns {import("./Block").Surface[]}
    */
   surfaces() {
-    const result = [];
-
-    [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].forEach(dir => {
+    return [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].map(dir => {
       const norm = Axis.VECTOR[dir];
       const x = this.x + norm.x, y = this.y + norm.y, z = this.z + norm.z;
       const block = this.engine.block(x, y, z);
-      if (block && block instanceof FullBlock && (this.type === 2 || block.type !== 2)) return undefined;
-      
-      result.push({ points: this._surfaceOf(dir), color: this.surfaceColor(dir), dir, cords: new Vector3(this.x, this.y, this.z) });
-    });
 
-    return result.filter(r => !!r);
+      // 如果隔壁也是單位方塊，在特定條件下不會被看見，因此可以直接不渲染
+      if (block && block instanceof FullBlock && (this.type === BlockType.GlassBlock || block.type !== BlockType.GlassBlock)) return undefined;
+
+      return { points: this._surfaceOf(dir), color: this.surfaceColor(dir), dir, cords: new Vector3(this.x, this.y, this.z) };
+    }).filter(r => !!r);
   }
 
   /**
    * 取得此方塊指定平面的顏色
-   * @returns 
+   * @abstract
    */
   surfaceColor() {
     throw new Error('Not implemented yet.');
+  }
+
+  /**
+   * 更新自身狀態
+   */
+  PPUpdate() {
+    const oldPower = this.states.power;
+    const oldSource = this.states.source;
+
+    let power = 0, source = false;
+    let block = this.engine.block(this.x, this.y - 1, this.z);
+
+    // 下方的方塊是點亮的紅石火把，強充能至 15
+    if (block?.type === BlockType.RedstoneTorch && block.states.lit) {
+      power = 15;
+      source = true;
+    }
+
+    else {
+      block = this.engine.block(this.x, this.y + 1, this.z);
+
+      // 上方的方塊是紅石粉，弱充能至相同等級
+      if (block?.type === BlockType.RedstoneDust) {
+        power = Math.max(power, block.power);
+      }
+
+      // 判斷側邊的方塊
+      [[1, 0, 'west'], [-1, 0, 'east'], [0, 1, 'north'], [0, -1, 'south']].forEach(([dx, dz, dir]) => {
+        block = this.engine.block(this.x + dx, this.y, this.z + dz);
+
+        // 側邊方塊是指向自己的紅石粉，弱充能至相同等級
+        if (block?.type === BlockType.RedstoneDust && block.states[dir]) {
+          power = Math.max(power, block.power);
+        }
+
+        // 側邊方塊是指向自己的紅石中繼器，強充能至 15
+        else if (block?.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === dir) {
+          power = 15;
+          source = true;
+        }
+      });
+    }
+
+    this.states.power = power;
+    this.states.source = source;
+
+    if (oldPower !== this.states.power || oldSource !== this.states.source) {
+      this.sendPPUpdate();
+    }
   }
 
   /**
@@ -51,6 +96,7 @@ class FullBlock extends Block {
    *    /
    *   z
    */
+  /***/
   _vertices = [
     [this.x    , this.y    , this.z], 
     [this.x + 1, this.y    , this.z], 
@@ -71,75 +117,13 @@ class FullBlock extends Block {
   };
 
   /**
-   * 取得指定平面的有向頂點座標
+   * 取得指定平面的頂點座標
    * @param {symbol} dir 指定平面的法向量方向
    * @returns {Vector3[]}
    * @private
    */
   _surfaceOf(dir) {
     return this._surfaces[dir].map(i => new Vector3(...this._vertices[i]));
-  }
-
-  PPUpdate() {
-    const lowerBlock = this.engine.block(this.x, this.y - 1, this.z);
-    const oldPower = this.states.power;
-    const oldSource = this.states.source;
-    if (lowerBlock?.type === 101 && lowerBlock.states.lit) {
-      this.states.power = 15;
-      this.states.source = true;
-    }
-    else {
-      let power = 0, source = false, block = null;
-
-      block = this.engine.block(this.x, this.y + 1, this.z);
-      if (block?.type === 100) {
-        power = Math.max(power, block.power);
-      }
-
-      block = this.engine.block(this.x + 1, this.y, this.z);
-      if (block?.type === 100 && block.states.west) {
-        power = Math.max(power, block.power);
-      }
-      else if (block?.type === 102 && block.states.powered && block.states.facing === 'west') {
-        power = 15;
-        source = true;
-      }
-
-      block = this.engine.block(this.x - 1, this.y, this.z);
-      if (block?.type === 100 && block.states.east) {
-        power = Math.max(power, block.power);
-      }
-      else if (block?.type === 102 && block.states.powered && block.states.facing === 'east') {
-        power = 15;
-        source = true;
-      }
-
-      block = this.engine.block(this.x, this.y, this.z + 1);
-      if (block?.type === 100 && block.states.north) {
-        power = Math.max(power, block.power);
-      }
-      else if (block?.type === 102 && block.states.powered && block.states.facing === 'north') {
-        power = 15;
-        source = true;
-      }
-
-      block = this.engine.block(this.x, this.y, this.z - 1);
-      if (block?.type === 100 && block.states.south) {
-        power = Math.max(power, block.power);
-      }
-      else if (block?.type === 102 && block.states.powered && block.states.facing === 'south') {
-        power = 15;
-        source = true;
-      }
-
-      this.states.power = power;
-      this.states.source = source;
-    }
-
-
-    if (oldPower !== this.states.power || oldSource !== this.states.source) {
-      this.sendPPUpdate();
-    }
   }
 }
 

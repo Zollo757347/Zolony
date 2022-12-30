@@ -4,10 +4,10 @@ import { Concrete, GlassBlock, RedstoneDust, RedstoneRepeater, RedstoneTorch } f
 import { Engine } from "./Engine";
 
 /**
- * @typedef PlaygroundAngles 記錄觀察點的角度
+ * @typedef PlaygroundAngles 記錄物體的旋轉角度
  * @type {object}
- * @property {number} theta 觀察點的水平轉角
- * @property {number} phi 觀察點的鉛直轉角
+ * @property {number} theta 物體的水平轉角
+ * @property {number} phi 物體的鉛直轉角
  */
 
 /**
@@ -18,7 +18,7 @@ import { Engine } from "./Engine";
  * @property {number} xLen 畫布中物體的 x 軸長度，單位為格
  * @property {number} yLen 畫布中物體的 y 軸長度，單位為格
  * @property {number} zLen 畫布中物體的 z 軸長度，單位為格
- * @property {PlaygroundAngles} 觀察點的初始角度
+ * @property {PlaygroundAngles} 物體的初始角度
  */
 
 /**
@@ -26,16 +26,6 @@ import { Engine } from "./Engine";
  * @type {object}
  * @property {Vector3} cords 目標方塊在旋轉前的三維坐標
  * @property {symbol} dir 目標平面在旋轉前的法向量
- */
-
-/**
- * @typedef Surface 代表一個有限大小的有向表面
- * @type {object}
- * @property {Vector3} cords 表面的所屬方塊在旋轉前的三維坐標
- * @property {symbol} dir 表面在旋轉前的法向量
- * @property {Vector3[]} points 表面的所有二維頂點座標
- * @property {Vector3[]} points3D 表面的所有三維頂點座標
- * @property {string} color 表面的材質
  */
 
 /**
@@ -68,7 +58,7 @@ class Playground {
     this.center = new Vector3(xLen / 2, yLen / 2, zLen / 2);
 
     /**
-     * 觀察點的角度
+     * 物體的旋轉角度
      * @type {PlaygroundAngles}
      */
     this.angles = {
@@ -76,6 +66,9 @@ class Playground {
       phi: angles?.phi || 0
     };
 
+    /**
+     * 渲染的目標畫布
+     */
     this.canvas = canvas;
 
     /**
@@ -91,13 +84,13 @@ class Playground {
     this.canvasHeight = canvasHeight;
 
     /**
-     * 滑鼠當前的 x 座標
+     * 游標當前的 x 座標
      * @type {number}
      */
     this.cursorX = 0;
 
     /**
-     * 滑鼠當前的 y 座標
+     * 游標當前的 y 座標
      * @type {number}
      */
     this.cursorY = 0;
@@ -128,7 +121,7 @@ class Playground {
 
     /**
      * 快捷欄上的方塊
-     * @type {new () => Block}
+     * @type {(new () => import("./Blocks/Block").Block)[]}
      */
     this.hotbar = [Concrete, GlassBlock, RedstoneDust, RedstoneTorch, RedstoneRepeater];
 
@@ -144,25 +137,22 @@ class Playground {
      */
     this.engine = new Engine({ xLen, yLen, zLen });
 
-    this.startTicking();
-    this.engine.startTicking();
+    this._startTicking();
   }
 
-  _renderInterval = null;
-  startTicking() {
-    if (this._renderInterval) {
-      clearInterval(this._renderInterval);
-    }
-
-    this._renderInterval = setInterval(() => {
-      this.renderOn();
-    }, 16);
-  }
-
+  /**
+   * 設定畫布
+   * @param {*} canvas 
+   */
   setCanvas(canvas) {
     this.canvas = canvas;
   }
 
+  /**
+   * 設定游標當前的座標
+   * @param {number} x 
+   * @param {number} y 
+   */
   setCursor(x, y) {
     this.cursorX = x;
     this.cursorY = y;
@@ -178,7 +168,7 @@ class Playground {
    * @param {number} cursorY 游標在網頁上的 y 座標
    * @param {boolean} init 是否僅初始化
    */
-  adjustAngles(cursorX, cursorY, init) {
+  adjustAngles(cursorX, cursorY, init = false) {
     if (!init) {
       this.angles = {
         theta: this.angles.theta + (cursorX - this._prevRefX) * 0.0087, 
@@ -191,7 +181,7 @@ class Playground {
   }
 
   /**
-   * 根據滾輪滾動的數值調整快捷欄
+   * 根據滾輪滾動的幅度調整快捷欄
    * @param {number} deltaY 滾輪滾動的幅度
    */
   scrollHotbar(deltaY) {
@@ -229,9 +219,9 @@ class Playground {
   }
 
   /**
-   * 在指定畫布上渲染物體，畫布的大小需與初始值相同
+   * 在畫布上渲染物體
    */
-  renderOn() {
+  render() {
     if (!this.canvas) return;
 
     const context = this.canvas.getContext('2d');
@@ -275,6 +265,28 @@ class Playground {
     context.fillText(text, 20, 50);
   }
 
+
+  /**
+   * 區間計時器
+   * @type {number | null}
+   * @private
+   */
+  _interval = null;
+
+  /**
+   * 開始渲染畫面
+   * @private
+   */
+  _startTicking() {
+    if (this._interval) {
+      clearInterval(this._interval);
+    }
+
+    this._interval = setInterval(() => {
+      this.render();
+    }, 16);
+  }
+
   /**
    * 取得游標指向方塊的資訊
    * @param {number} cursorX 游標在畫布上的 x 座標
@@ -313,7 +325,7 @@ class Playground {
   }
 
   /**
-   * 尋找所有指定的表面
+   * 尋找所有指定的表面（互動箱或渲染箱）
    * @param {boolean} interactionBox true：互動箱，false：渲染箱
    * @returns {Surface[]}
    * @private
@@ -326,9 +338,7 @@ class Playground {
         for (let k = 0; k < this.zLen; k++) {
           if (this.engine.block(i, j, k).type === 0) continue;
 
-          const blockSurfaces = 
-            (interactionBox ? this.engine.block(i, j, k).interactionSurfaces?.() : null) ??
-            this.engine.block(i, j, k).surfaces();
+          const blockSurfaces = interactionBox ? this.engine.block(i, j, k).interactionSurfaces() : this.engine.block(i, j, k).surfaces();
           surfaces.push(...blockSurfaces);
         }
       }
@@ -355,8 +365,6 @@ class Playground {
         .rotateX(this.angles.phi)
       );
 
-      surface.points3D = [];
-
       let checked = false;
       for (let i = 0; i < surface.points.length; i++) {
         const newPoint = surface.points[i]
@@ -371,7 +379,6 @@ class Playground {
         }
         checked = true;
 
-        surface.points3D.push(newPoint);
         surface.points[i] = newPoint
           .projectZ(this.cameraZ, this.distance)
           .mirrorY()

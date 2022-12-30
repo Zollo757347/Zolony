@@ -1,10 +1,11 @@
 import Axis from "../../Axis";
 import Vector3 from "../../Vector3";
+import { BlockType } from "../BlockType";
 import { Block } from "./Block";
 
 class RedstoneTorch extends Block {
-  constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: 101, needSupport: true, transparent: true, redstoneAutoConnect: true });
+  constructor(options) {
+    super({ type: BlockType.RedstoneTorch, needSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
 
     this.states = { lit: true, facing: null, source: true };
   }
@@ -15,30 +16,41 @@ class RedstoneTorch extends Block {
 
   _xAngle = 0;
   _zAngle = 0;
+
+  /**
+   * 設定紅石火把面向的方向
+   * @param {symbol} dir 
+   */
   setFacing(dir) {
     switch (dir) {
       case Axis.PX: 
         this.states.facing = 'east';
+        this._xAngle = 0;
         this._zAngle = -Math.PI / 6;
         break;
 
       case Axis.NX:
         this.states.facing = 'west';
+        this._xAngle = 0;
         this._zAngle = Math.PI / 6;
         break;
 
       case Axis.PZ:
         this.states.facing = 'south';
         this._xAngle = Math.PI / 6;
+        this._zAngle = 0;
         break;
 
       case Axis.NZ:
         this.states.facing = 'north';
         this._xAngle = -Math.PI / 6;
+        this._zAngle = 0;
         break;
 
       default:
         this.states.facing = null;
+        this._xAngle = 0;
+        this._zAngle = 0;
         break;
     }
   }
@@ -63,22 +75,22 @@ class RedstoneTorch extends Block {
 
     switch (dir) {
       case Axis.PX:
-        return 'rgba(200, 100, 100)';
+        return 'rgb(200, 100, 100)';
 
       case Axis.PY:
-        return 'rgba(240, 120, 120)';
+        return 'rgb(240, 120, 120)';
 
       case Axis.PZ:
-        return 'rgba(160, 80, 80)';
+        return 'rgb(160, 80, 80)';
 
       case Axis.NX:
-        return 'rgba(180, 90, 90)';
+        return 'rgb(180, 90, 90)';
 
       case Axis.NY:
-        return 'rgba(140, 70, 70)';
+        return 'rgb(140, 70, 70)';
 
       case Axis.NZ:
-        return 'rgba(220, 110, 110)';
+        return 'rgb(220, 110, 110)';
 
       default:
         throw new Error();
@@ -142,7 +154,6 @@ class RedstoneTorch extends Block {
 
   /**
    * 根據 Post Placement Update 的來源方向更新自身狀態
-   * @abstract
    */
   PPUpdate() {
     let attachedBlock = null;
@@ -194,8 +205,13 @@ class RedstoneTorch extends Block {
     }
   }
 
+  /**
+   * 更新此紅石火把的明暗狀態
+   * @param {boolean} lit 
+   */
   torchUpdate(lit) {
     this.states.lit = lit;
+    this.states.source = lit;
     this.sendPPUpdate();
   }
 
