@@ -137,7 +137,8 @@ class Playground {
      */
     this.engine = new Engine({ xLen, yLen, zLen });
 
-    this._startTicking();
+    this.render = this.render.bind(this);
+    requestAnimationFrame(this.render);
   }
 
   /**
@@ -219,73 +220,55 @@ class Playground {
     this.engine.addTask('rightClick', [x, y, z, shiftDown, dir, this.hotbar[this.hotbarTarget]]);
   }
 
-  /**
-   * 在畫布上渲染物體
-   */
-  render() {
-    if (!this.canvas) return;
-
-    const context = this.canvas.getContext('2d');
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-
-    const target = this._getTarget(this.cursorX, this.cursorY);
-    
-    const surfaces = this._visibleSurfaces();
-    const projectedSurfaces = this._projectSurfaces(surfaces);
-
-    projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => {
-      return Math.min(...p1.map(({z}) => z)) - Math.min(...p2.map(({z}) => z));
-    });
-
-    projectedSurfaces.forEach(({ cords, points: [p1, p2, p3, p4], color }) => {
-      context.fillStyle = color;
-      context.beginPath();
-      context.moveTo(p1.x, p1.y);
-      context.lineTo(p2.x, p2.y);
-      context.lineTo(p3.x, p3.y);
-      context.lineTo(p4.x, p4.y);
-      context.closePath();
-      context.fill();
-
-      if (target && target.cords.x === cords.x && target.cords.y === cords.y && target.cords.z === cords.z) {
-        const p = target.points;
-        context.beginPath();
-        context.moveTo(p[0].x, p[0].y);
-        context.lineTo(p[1].x, p[1].y);
-        context.lineTo(p[2].x, p[2].y);
-        context.lineTo(p[3].x, p[3].y);
-        context.closePath();
-        context.stroke();
-      }
-    });
-
-    const text = ['Concrete', 'Glass Block', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater'][this.hotbarTarget];
-    context.fillStyle = 'black';
-    context.font = '30px Arias';
-    context.fillText(text, 20, 50);
-  }
-
-
-  /**
-   * 區間計時器
-   * @type {number | null}
-   * @private
-   */
-  _interval = null;
 
   /**
    * 開始渲染畫面
    * @private
    */
-  _startTicking() {
-    if (this._interval) {
-      clearInterval(this._interval);
+  render() {
+    if (this.canvas) {
+      const context = this.canvas.getContext('2d', { alpha: false });
+      context.fillStyle = 'white';
+      context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+  
+      const target = this._getTarget(this.cursorX, this.cursorY);
+      
+      const surfaces = this._visibleSurfaces();
+      const projectedSurfaces = this._projectSurfaces(surfaces);
+  
+      projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => {
+        return Math.min(...p1.map(({z}) => z)) - Math.min(...p2.map(({z}) => z));
+      });
+  
+      projectedSurfaces.forEach(({ cords, points: [p1, p2, p3, p4], color }) => {
+        context.fillStyle = color;
+        context.beginPath();
+        context.moveTo(p1.x, p1.y);
+        context.lineTo(p2.x, p2.y);
+        context.lineTo(p3.x, p3.y);
+        context.lineTo(p4.x, p4.y);
+        context.closePath();
+        context.fill();
+  
+        if (target && target.cords.x === cords.x && target.cords.y === cords.y && target.cords.z === cords.z) {
+          const p = target.points;
+          context.beginPath();
+          context.moveTo(p[0].x, p[0].y);
+          context.lineTo(p[1].x, p[1].y);
+          context.lineTo(p[2].x, p[2].y);
+          context.lineTo(p[3].x, p[3].y);
+          context.closePath();
+          context.stroke();
+        }
+      });
+  
+      const text = ['Concrete', 'Glass Block', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater'][this.hotbarTarget];
+      context.fillStyle = 'black';
+      context.font = '30px Arias';
+      context.fillText(text, 20, 50);
     }
 
-    this._interval = setInterval(() => {
-      this.render();
-    }, 16);
+    requestAnimationFrame(this.render);
   }
 
   /**

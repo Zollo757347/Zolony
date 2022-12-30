@@ -2,11 +2,14 @@ import Canvas from './components/Canvas';
 import './App.css';
 
 const App = () => {
+  const w = 500;
+  const d = 5;
+
   return (
     <div className="app">
-      <Canvas canvasWidth={500} canvasHeight={500} xLen={5} yLen={5} zLen={5} />
+      <Canvas canvasWidth={w} canvasHeight={w} xLen={d} yLen={d} zLen={d} />
     </div>
-  )
+  );
 }
 
 export default App;
