@@ -1,10 +1,11 @@
 import Axis from "../Axis";
 import Utils from "../Utils";
 import { AirBlock, Concrete } from "./Blocks";
+import { BlockType } from "./BlockType";
 
 
 /**
- * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean] }} TaskParams
+ * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], lampUnlit: [number, number, number] }} TaskParams
  */
 
 /**
@@ -126,6 +127,10 @@ class Engine {
             this._repeaterUpdate(...params);
             break;
 
+          case 'lampUnlit':
+            this._lampUnlit(...params);
+            break;
+
           default: break;
         }
       }
@@ -196,7 +201,7 @@ class Engine {
    */
   _torchUpdate(x, y, z, lit) {
     const block = this.block(x, y, z);
-    if (block?.type !== 101) return;
+    if (block?.type !== BlockType.RedstoneTorch) return;
 
     block.torchUpdate(lit);
   }
@@ -211,9 +216,23 @@ class Engine {
    */
   _repeaterUpdate(x, y, z, powered) {
     const block = this.block(x, y, z);
-    if (block?.type !== 102) return;
+    if (block?.type !== BlockType.RedstoneRepeater) return;
 
     block.repeaterUpdate(powered);
+  }
+
+  /**
+   * 關閉指定位置的紅石燈
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} z 
+   * @private
+   */
+  _lampUnlit(x, y, z) {
+    const block = this.block(x, y, z);
+    if (block?.type !== BlockType.RedstoneLamp) return;
+
+    block.lampUnlit();
   }
 }
 

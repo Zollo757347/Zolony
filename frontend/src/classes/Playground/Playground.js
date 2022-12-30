@@ -1,6 +1,7 @@
 import Axis from "../Axis";
 import Vector3 from "../Vector3";
 import { Concrete, GlassBlock, RedstoneDust, RedstoneRepeater, RedstoneTorch } from "./Blocks";
+import { RedstoneLamp } from "./Blocks/RedstoneLamp";
 import { Engine } from "./Engine";
 
 /**
@@ -123,7 +124,7 @@ class Playground {
      * 快捷欄上的方塊
      * @type {(new () => import("./Blocks/Block").Block)[]}
      */
-    this.hotbar = [Concrete, GlassBlock, RedstoneDust, RedstoneTorch, RedstoneRepeater];
+    this.hotbar = [Concrete, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater];
 
     /**
      * 快捷欄當前方塊的駐標
@@ -262,7 +263,7 @@ class Playground {
         }
       });
   
-      const text = ['Concrete', 'Glass Block', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater'][this.hotbarTarget];
+      const text = ['Concrete', 'Glass Block', 'Redstone Lamp', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater'][this.hotbarTarget];
       context.fillStyle = 'black';
       context.font = '30px Arias';
       context.fillText(text, 20, 50);

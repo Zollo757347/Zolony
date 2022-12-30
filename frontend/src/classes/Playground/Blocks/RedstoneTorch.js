@@ -3,10 +3,23 @@ import Vector3 from "../../Vector3";
 import { BlockType } from "../BlockType";
 import { Block } from "./Block";
 
+/**
+ * @typedef _RedstoneTorchState
+ * @type {object}
+ * @property {boolean} lit 此紅石火把是否被觸發
+ * @property {'north' | 'south' | 'west' | 'east' | null} facing 此紅石火把是否被觸發
+ * 
+ * @typedef {import("./Block").BlockState & _RedstoneTorchState} RedstoneTorchState
+ */
+
 class RedstoneTorch extends Block {
   constructor(options) {
     super({ type: BlockType.RedstoneTorch, needSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
 
+    /**
+     * 此紅石火把的狀態
+     * @type {RedstoneTorchState}
+     */
     this.states = { lit: true, facing: null, source: true };
   }
 

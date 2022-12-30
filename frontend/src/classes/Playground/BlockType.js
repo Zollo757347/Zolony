@@ -4,7 +4,8 @@ const BlockType = Object.freeze({
   GlassBlock: 2, 
   RedstoneDust: 100, 
   RedstoneTorch: 101, 
-  RedstoneRepeater: 102
+  RedstoneRepeater: 102,
+  RedstoneLamp: 103
 });
 
 export { BlockType };
