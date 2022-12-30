@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useEffect, useRef } from "react";
 import { Playground } from "../classes/Playground";
 
@@ -14,9 +15,19 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
   const spanRef = useRef(<span></span>);
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen }));
 
+  const [shiftDown, setShiftDown] = useState(false);
+
   useEffect(() => {
     playgroundRef.current.setCanvas(canvasRef.current);
   }, []);
+
+  function handleKeyDown(e) {
+    setShiftDown(e.shiftKey);
+  }
+
+  function handleKeyUp(e) {
+    setShiftDown(e.shiftKey);
+  }
 
   function handleMouseMove(e) {
     const p = getPosition(canvasRef.current, e);
@@ -51,7 +62,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     const canvas = canvasRef.current;
     const p = getPosition(canvas, e);
     
-    playgroundRef.current.rightClick(p.x, p.y);
+    playgroundRef.current.rightClick(p.x, p.y, shiftDown);
   }
 
   function handleScroll(e) {
@@ -64,6 +75,10 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}
+
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
 
         onMouseMove={handleMouseMove}
         

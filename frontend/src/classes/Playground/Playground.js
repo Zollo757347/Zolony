@@ -208,14 +208,15 @@ class Playground {
    * 在游標指定的位置上按下使用鍵
    * @param {number} cursorX 游標在畫布上的 x 座標
    * @param {number} cursorY 游標在畫布上的 y 座標
+   * @param {boolean} shiftDown 是否有按下 Shift 鍵
    */
-  rightClick(canvasX, canvasY) {
+  rightClick(canvasX, canvasY, shiftDown) {
     const target = this._getTarget(canvasX, canvasY);
     if (!target) return;
 
     let { cords: { x, y, z }, dir } = target;
     
-    this.engine.addTask('rightClick', [x, y, z, dir, this.hotbar[this.hotbarTarget]]);
+    this.engine.addTask('rightClick', [x, y, z, shiftDown, dir, this.hotbar[this.hotbarTarget]]);
   }
 
   /**

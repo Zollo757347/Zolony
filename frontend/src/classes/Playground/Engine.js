@@ -4,7 +4,7 @@ import { AirBlock, Concrete } from "./Blocks";
 
 
 /**
- * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean] }} TaskParams
+ * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean] }} TaskParams
  */
 
 /**
@@ -154,13 +154,14 @@ class Engine {
    * @param {number} x 
    * @param {number} y 
    * @param {number} z 
+   * @param {boolean} shiftDown 
    * @param {symbol} dir 指定面的法向量方向
    * @param {new () => Block} B 在不觸發互動時所放下的方塊
    * @private
    */
-  _rightClick(x, y, z, dir, B) {
+  _rightClick(x, y, z, shiftDown, dir, B) {
     // 如果指向的方塊可以互動，就互動
-    if (this._pg[x][y][z].interactable) {
+    if (!shiftDown && this._pg[x][y][z].interactable) {
       this._pg[x][y][z].interact();
       return;
     }
