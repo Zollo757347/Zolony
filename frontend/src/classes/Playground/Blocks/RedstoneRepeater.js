@@ -3,7 +3,7 @@ import Vector3 from "../../Vector3";
 import { BlockType } from "../BlockType";
 import { Block } from "./Block";
 
-// const d = 0.001;
+const d = 0.001;
 
 /**
  * @typedef _RedstoneRepeaterState
@@ -63,9 +63,23 @@ class RedstoneRepeater extends Block {
    * @returns {import("../Playground").Surface[]}
    */
   surfaces() {
-    return [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].map(dir => {
-      return { points: this._surfaceOf(dir), color: this.surfaceColor(dir), dir, xAngle: this._xAngle, zAngle: this._zAngle, cords: new Vector3(this.x, this.y, this.z) };
+    const result = [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].map(dir => {
+      return { points: this._surfaceOf(dir), color: 'rgb(210, 210, 210)', dir, cords: new Vector3(this.x, this.y, this.z) };
     });
+
+    const basis = this._textureSurfaces[this.states.facing];
+    [basis[0], basis[this.states.delay]].forEach(([dx, dz]) => {
+      const [x, y, z] = [this.x + dx * 0.125, this.y + 0.125 + d, this.z + dz * 0.125];
+      const points = [
+        new Vector3(x, y, z), 
+        new Vector3(x + 0.125, y, z), 
+        new Vector3(x + 0.125, y, z + 0.125), 
+        new Vector3(x, y, z + 0.125)
+      ];
+      result.push({ points, color: this.surfaceColor(), dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) });
+    });
+
+    return result;
   }
 
   /**
@@ -73,8 +87,8 @@ class RedstoneRepeater extends Block {
    * @returns 
    */
   surfaceColor() {
-    const brightness = this.states.powered ? 250 : 125;
-    return `rgb(${brightness}, ${(brightness >> 1) + this.states.delay * 30}, ${brightness >> 1})`;
+    const brightness = this.states.powered ? 250 : 120;
+    return `rgb(${brightness}, ${brightness >> 1}, ${brightness >> 1})`;
   }
 
   interactionSurfaces() {
@@ -144,6 +158,35 @@ class RedstoneRepeater extends Block {
    * @param {boolean} powered 
    */
   repeaterUpdate(powered) {
+    if (!powered) {
+      let x, y, z;
+      switch (this.states.facing) {
+        case 'west':
+          [x, y, z] = [1, 0, 0];
+          break;
+        
+        case 'east':
+          [x, y, z] = [-1, 0, 0];
+          break;
+  
+        case 'north':
+          [x, y, z] = [0, 0, 1];
+          break;
+  
+        case 'south':
+          [x, y, z] = [0, 0, -1];
+          break;
+  
+        default:
+          throw new Error(`${this.states.facing} is not a valid direction.`);
+      }
+      
+      const block = this.engine.block(this.x + x, this.y + y, this.z + z);
+      if (block && (block.power || (block.type === BlockType.RedstoneRepeater && block.states.facing === this.states.facing && block.states.powered))) {
+        return;
+      }
+    }
+
     this.states.powered = powered;
     this.sendPPUpdate();
   }
@@ -177,6 +220,13 @@ class RedstoneRepeater extends Block {
     [Axis.NX]: [0, 2, 6, 4], 
     [Axis.NY]: [0, 1, 5, 4], 
     [Axis.NZ]: [0, 1, 3, 2]
+  };
+
+  _textureSurfaces = {
+    west: [[1, 3.5], [3, 3.5], [4, 3.5], [5, 3.5], [6, 3.5]], 
+    east: [[6, 3.5], [4, 3.5], [3, 3.5], [2, 3.5], [1, 3.5]], 
+    north: [[3.5, 1], [3.5, 3], [3.5, 4], [3.5, 5], [3.5, 6]], 
+    south: [[3.5, 6], [3.5, 4], [3.5, 3], [3.5, 2], [3.5, 1]]
   };
 
   /**
