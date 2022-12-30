@@ -196,7 +196,7 @@ class RedstoneTorch extends Block {
     }
 
     if (broken) {
-      this.engine.leftClick(this.x, this.y, this.z);
+      this.engine._leftClick(this.x, this.y, this.z);
       return;
     }
 
