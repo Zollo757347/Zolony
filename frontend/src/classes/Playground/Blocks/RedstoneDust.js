@@ -23,13 +23,13 @@ const d = 0.001;
  */
 class RedstoneDust extends Block {
   constructor(options) {
-    super({ type: BlockType.RedstoneDust, needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
+    super({ type: BlockType.RedstoneDust, name: 'Redstone Dust', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
     
     /**
      * 此紅石粉的狀態
      * @type {RedstoneDustState}
      */
-    this.states = { east: 1, south: 1, west: 1, north: 1, power: 0, source: true };
+    this.states = { ...(this.states ?? {}), east: 1, south: 1, west: 1, north: 1, power: 0, source: true };
 
     /**
      * 此紅石粉閒置時是否處於向四周充能的狀態

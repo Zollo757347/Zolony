@@ -6,7 +6,7 @@ import { Block } from "./Block";
  */
 class AirBlock extends Block {
   constructor(options) {
-    super({ type: BlockType.AirBlock, transparent: true, ...options });
+    super({ type: BlockType.AirBlock, name: 'Air Block', transparent: true, ...options });
   }
 
   surfaces() {

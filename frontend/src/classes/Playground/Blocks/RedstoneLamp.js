@@ -15,13 +15,13 @@ import { FullBlock } from "./FullBlock";
  */
 class RedstoneLamp extends FullBlock {
   constructor(options) {
-    super({ type: BlockType.RedstoneLamp, ...options });
+    super({ type: BlockType.RedstoneLamp, name: 'Redstone Lamp', ...options });
 
     /**
      * 此紅石燈的狀態
      * @type {RedstoneLampState}
      */
-    this.states = { lit: false };
+    this.states = { ...(this.states ?? {}), lit: false };
   }
 
   /**

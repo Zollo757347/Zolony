@@ -21,13 +21,13 @@ const d = 0.001;
  */
 class RedstoneRepeater extends Block {
   constructor(options) {
-    super({ type: BlockType.RedstoneRepeater, needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'lined', ...options });
+    super({ type: BlockType.RedstoneRepeater, name: 'Redstone Repeater', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'lined', ...options });
     
     /**
      * 此紅石中繼器的狀態
      * @type {RedstoneRepeaterState}
      */
-    this.states = { delay: 1, facing: 'north', locked: false, powered: false };
+    this.states = { ...(this.states ?? {}), delay: 1, facing: 'north', locked: false, powered: false };
   }
 
   get power() {

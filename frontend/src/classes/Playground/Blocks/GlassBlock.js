@@ -6,8 +6,8 @@ import { FullBlock } from "./FullBlock";
  * 代表一個玻璃方塊，即透明的單位方塊
  */
 class GlassBlock extends FullBlock {
-  constructor({ x, y, z, engine }) {
-    super({ x, y, z, engine, type: BlockType.GlassBlock, transparent: true });
+  constructor(options) {
+    super({ type: BlockType.GlassBlock, name: 'Glass Block', transparent: true, ...options });
   }
 
   /**

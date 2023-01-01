@@ -1,6 +1,6 @@
 import Axis from "../Axis";
 import Utils from "../Utils";
-import { AirBlock, Concrete } from "./Blocks";
+import { AirBlock, Block, Concrete } from "./Blocks";
 import { BlockType } from "./BlockType";
 
 
@@ -12,25 +12,41 @@ import { BlockType } from "./BlockType";
  * @typedef {{ [K in keyof TaskParams]: [K, TaskParams[K], number] }[keyof TaskParams]} Task 一項待辦工作
  */
 
+/**
+ * @typedef MapData 地圖的數據
+ * @type {object}
+ * @property {number} xLen x 軸的長度
+ * @property {number} yLen y 軸的長度
+ * @property {number} zLen z 軸的長度
+ * @property {string} name 地圖的名稱
+ * @property {import("./Blocks/Block").BlockStates[][][]} playground 地圖上所有方塊的狀態
+ */
+
 class Engine {
-  constructor({ xLen, yLen, zLen }) {
+  constructor({ xLen, yLen, zLen, name }) {
     /**
      * x 軸的長度
-     * @type number
+     * @type {number}
      */
     this.xLen = xLen;
 
     /**
      * y 軸的長度
-     * @type number
+     * @type {number}
      */
     this.yLen = yLen;
 
     /**
      * z 軸的長度
-     * @type number
+     * @type {number}
      */
     this.zLen = zLen;
+
+    /**
+     * 地圖的名稱
+     * @type {string}
+     */
+    this.name = name;
 
     /**
      * 工作佇列
@@ -50,6 +66,42 @@ class Engine {
     );
 
     this._startTicking();
+  }
+
+  /**
+   * 用給定的地圖資料生出引擎
+   * @param {MapData} data
+   * @returns {Engine} 
+   */
+  static spawn({ xLen, yLen, zLen, name, playground }) {
+    const engine = new Engine({ xLen, yLen, zLen, name });
+    playground.forEach((layer, i) => {
+      layer.forEach((line, j) => {
+        line.forEach((block, k) => {
+          engine._pg[i][j][k] = Block.spawn(engine, block);
+        })
+      })
+    });
+    return engine;
+  }
+
+  /**
+   * 把一個引擎轉換成可儲存的資料形式
+   * @param {Engine} engine 
+   * @returns {MapData}
+   */
+  static extract(engine) {
+    return {
+      xLen: engine.xLen, 
+      yLen: engine.yLen, 
+      zLen: engine.zLen, 
+      name: engine.name, 
+      playground: engine._pg.map(layer => {
+        return layer.map(line => {
+          return line.map(block => Block.extract(block));
+        })
+      })
+    };
   }
 
   /**

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect, useRef } from "react";
-import { Playground } from "../classes/Playground";
+import { Engine, Playground } from "../classes/Playground";
 
 function getPosition(canvas, event) {
   const p = canvas.getBoundingClientRect();
@@ -53,6 +53,10 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     const p = getPosition(canvas, e);
     
     playgroundRef.current.leftClick(p.x, p.y);
+
+    const data = Engine.extract(playgroundRef.current.engine);
+    const engine = Engine.spawn(data);
+    console.log(engine);
   }
 
   function handleContextMenu(e) {

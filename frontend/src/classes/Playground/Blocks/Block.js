@@ -1,4 +1,5 @@
 import Axis from "../../Axis";
+import Utils from "../../Utils";
 
 /**
  * @typedef Surface 代表一個有限大小的有向表面
@@ -12,10 +13,21 @@ import Axis from "../../Axis";
  */
 
 /**
- * @typedef BlockState 此方塊的狀態
+ * @typedef BlockStates 此方塊的狀態
  * @type {object}
  * @property {number} power 此方塊的充能等級
  * @property {boolean} source 此方塊是否為電源或被強充能
+ */
+
+/**
+ * @typedef BlockData 方塊的數據
+ * @type {object}
+ * @property {number} x 方塊的 x 座標
+ * @property {number} y 方塊的 y 座標
+ * @property {number} z 方塊的 z 座標
+ * @property {string} name 方塊的名稱
+ * @property {import("../BlockType")} type 方塊的種類
+ * @property {BlockStates} states 方塊的狀態
  */
 
 /**
@@ -55,8 +67,14 @@ class Block {
     this.type = options.type;
 
     /**
+     * 此方塊的名稱
+     * @type {string}
+     */
+    this.name = options.name;
+
+    /**
      * 方塊的狀態
-     * @type {BlockState}
+     * @type {BlockStates}
      */
     this.states = { power: 0, source: false };
 
@@ -101,6 +119,34 @@ class Block {
      * @type {'full' | 'line' | 'none'}
      */
     this.redstoneAutoConnect = options.redstoneAutoConnect || 'none';
+  }
+
+  /**
+   * 用給定的方塊資料生出方塊
+   * @param {import("../Engine").Engine} engine 負責生成的遊戲引擎
+   * @param {BlockData} data 
+   * @returns {Block}
+   */
+  static spawn(engine, { x, y, z, type, states }) {
+    const block = Utils.NewBlock(engine, type, x, y, z);
+    block.states = states;
+    return block;
+  }
+
+  /**
+   * 把一個方塊轉換成可儲存的資料形式
+   * @param {Block} block 
+   * @returns {BlockData}
+   */
+  static extract(block) {
+    return {
+      x: block.x, 
+      y: block.y, 
+      z: block.z, 
+      name: block.name, 
+      type: block.type, 
+      states: block.states
+    }
   }
 
   /**

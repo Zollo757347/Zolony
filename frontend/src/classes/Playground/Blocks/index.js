@@ -4,5 +4,6 @@ export * from "./Concrete";
 export * from "./FullBlock";
 export * from "./GlassBlock";
 export * from "./RedstoneDust";
+export * from "./RedstoneLamp";
 export * from "./RedstoneRepeater";
 export * from "./RedstoneTorch";
