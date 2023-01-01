@@ -21,7 +21,7 @@ const d = 0.001;
  */
 class RedstoneRepeater extends Block {
   constructor(options) {
-    super({ type: BlockType.RedstoneRepeater, name: 'Redstone Repeater', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'lined', ...options });
+    super({ type: BlockType.RedstoneRepeater, blockName: 'Redstone Repeater', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'lined', ...options });
     
     /**
      * 此紅石中繼器的狀態

@@ -7,7 +7,7 @@ import { FullBlock } from "./FullBlock";
  */
 class Concrete extends FullBlock {
   constructor(options) {
-    super({ type: BlockType.Concrete, name: 'Concrete', ...options });
+    super({ type: BlockType.Concrete, blockName: 'Concrete', ...options });
   }
 
   /**

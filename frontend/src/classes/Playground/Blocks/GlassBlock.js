@@ -7,7 +7,7 @@ import { FullBlock } from "./FullBlock";
  */
 class GlassBlock extends FullBlock {
   constructor(options) {
-    super({ type: BlockType.GlassBlock, name: 'Glass Block', transparent: true, ...options });
+    super({ type: BlockType.GlassBlock, blockName: 'Glass Block', transparent: true, ...options });
   }
 
   /**

@@ -18,12 +18,12 @@ import { BlockType } from "./BlockType";
  * @property {number} xLen x 軸的長度
  * @property {number} yLen y 軸的長度
  * @property {number} zLen z 軸的長度
- * @property {string} name 地圖的名稱
+ * @property {string} mapName 地圖的名稱
  * @property {import("./Blocks/Block").BlockStates[][][]} playground 地圖上所有方塊的狀態
  */
 
 class Engine {
-  constructor({ xLen, yLen, zLen, name }) {
+  constructor({ xLen, yLen, zLen, mapName }) {
     /**
      * x 軸的長度
      * @type {number}
@@ -46,7 +46,7 @@ class Engine {
      * 地圖的名稱
      * @type {string}
      */
-    this.name = name;
+    this.mapName = mapName;
 
     /**
      * 工作佇列
@@ -73,8 +73,8 @@ class Engine {
    * @param {MapData} data
    * @returns {Engine} 
    */
-  static spawn({ xLen, yLen, zLen, name, playground }) {
-    const engine = new Engine({ xLen, yLen, zLen, name });
+  static spawn({ xLen, yLen, zLen, mapName, playground }) {
+    const engine = new Engine({ xLen, yLen, zLen, mapName });
     playground.forEach((layer, i) => {
       layer.forEach((line, j) => {
         line.forEach((block, k) => {
@@ -95,7 +95,7 @@ class Engine {
       xLen: engine.xLen, 
       yLen: engine.yLen, 
       zLen: engine.zLen, 
-      name: engine.name, 
+      mapName: engine.mapName, 
       playground: engine._pg.map(layer => {
         return layer.map(line => {
           return line.map(block => Block.extract(block));

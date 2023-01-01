@@ -23,7 +23,7 @@ const d = 0.001;
  */
 class RedstoneDust extends Block {
   constructor(options) {
-    super({ type: BlockType.RedstoneDust, name: 'Redstone Dust', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
+    super({ type: BlockType.RedstoneDust, blockName: 'Redstone Dust', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
     
     /**
      * 此紅石粉的狀態

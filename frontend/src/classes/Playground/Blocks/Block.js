@@ -25,7 +25,7 @@ import Utils from "../../Utils";
  * @property {number} x 方塊的 x 座標
  * @property {number} y 方塊的 y 座標
  * @property {number} z 方塊的 z 座標
- * @property {string} name 方塊的名稱
+ * @property {string} blockName 方塊的名稱
  * @property {import("../BlockType")} type 方塊的種類
  * @property {BlockStates} states 方塊的狀態
  */
@@ -70,7 +70,7 @@ class Block {
      * 此方塊的名稱
      * @type {string}
      */
-    this.name = options.name;
+    this.blockName = options.blockName;
 
     /**
      * 方塊的狀態
@@ -143,7 +143,7 @@ class Block {
       x: block.x, 
       y: block.y, 
       z: block.z, 
-      name: block.name, 
+      blockName: block.blockName, 
       type: block.type, 
       states: block.states
     }

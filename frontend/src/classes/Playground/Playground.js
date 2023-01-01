@@ -127,6 +127,12 @@ class Playground {
     this.hotbar = [Concrete, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater];
 
     /**
+     * 快捷欄上方塊的名稱
+     * @type {string[]}
+     */
+    this.hotbarName = ['Concrete', 'Glass Block', 'Redstone Lamp', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater'];
+
+    /**
      * 快捷欄當前方塊的駐標
      * @type {number}
      */
@@ -263,10 +269,9 @@ class Playground {
         }
       });
   
-      const text = ['Concrete', 'Glass Block', 'Redstone Lamp', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater'][this.hotbarTarget];
       context.fillStyle = 'black';
       context.font = '30px Arias';
-      context.fillText(text, 20, 50);
+      context.fillText(this.hotbarName[this.hotbarTarget], 20, 50);
     }
 
     requestAnimationFrame(this.render);

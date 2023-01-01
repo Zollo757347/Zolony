@@ -15,7 +15,7 @@ import { FullBlock } from "./FullBlock";
  */
 class RedstoneLamp extends FullBlock {
   constructor(options) {
-    super({ type: BlockType.RedstoneLamp, name: 'Redstone Lamp', ...options });
+    super({ type: BlockType.RedstoneLamp, blockName: 'Redstone Lamp', ...options });
 
     /**
      * 此紅石燈的狀態
