@@ -70,13 +70,15 @@ class RedstoneRepeater extends Block {
     const basis = this._textureSurfaces[this.states.facing];
     basis.forEach(([dx, dz], i) => {
       const [x, y, z] = [this.x + dx * 0.125, this.y + 0.125 + d, this.z + dz * 0.125];
+      const color = this.states.locked && i === this.states.delay ? 'rgb(50, 50, 50)' : this.surfaceColor(i === 0 || i === this.states.delay);
+      const extend = this.states.locked && i === this.states.delay ? this._lockExtend[this.states.facing].map(a => a.map(b => b * 0.125)) : [[0, 0], [0, 0]];
+
       const points = [
-        new Vector3(x, y, z), 
-        new Vector3(x + 0.125, y, z), 
-        new Vector3(x + 0.125, y, z + 0.125), 
-        new Vector3(x, y, z + 0.125)
+        new Vector3(x + extend[0][0],         y, z + extend[0][1]), 
+        new Vector3(x + extend[1][0] + 0.125, y, z + extend[0][1]), 
+        new Vector3(x + extend[1][0] + 0.125, y, z + extend[1][1] + 0.125), 
+        new Vector3(x + extend[0][0],         y, z + extend[1][1] + 0.125)
       ];
-      const color = this.surfaceColor(i === 0 || i === this.states.delay);
       result.push({ points, color, dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) });
     });
 
@@ -117,22 +119,26 @@ class RedstoneRepeater extends Block {
       return;
     }
 
-    let x, y, z;
+    let x, y, z, sx, sy, sz, ds, dr;
     switch (this.states.facing) {
       case 'west':
         [x, y, z] = [1, 0, 0];
+        [sx, sy, sz, ds, dr] = [0, 0, 1, 'north', 'south'];
         break;
       
       case 'east':
         [x, y, z] = [-1, 0, 0];
+        [sx, sy, sz, ds, dr] = [0, 0, 1, 'north', 'south'];
         break;
 
       case 'north':
         [x, y, z] = [0, 0, 1];
+        [sx, sy, sz, ds, dr] = [1, 0, 0, 'west', 'east'];
         break;
 
       case 'south':
         [x, y, z] = [0, 0, -1];
+        [sx, sy, sz, ds, dr] = [1, 0, 0, 'west', 'east'];
         break;
 
       default:
@@ -140,17 +146,29 @@ class RedstoneRepeater extends Block {
     }
 
     const oldPowered = this.states.powered;
-    let newPowered;
-    const block = this.engine.block(this.x + x, this.y + y, this.z + z);
+    const oldLocked = this.states.locked;
+    let newPowered = false, newLocked = false;
+    let block = this.engine.block(this.x + x, this.y + y, this.z + z);
     if (block && (block.power || (block.type === BlockType.RedstoneRepeater && block.states.facing === this.states.facing && block.states.powered))) {
       newPowered = true;
     }
-    else {
-      newPowered = false;
+
+    block = this.engine.block(this.x + sx, this.y + sy, this.z + sz);
+    if (block && block.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === ds) {
+      newLocked = true;
     }
 
-    if (oldPowered !== newPowered) {
+    block = this.engine.block(this.x - sx, this.y - sy, this.z - sz);
+    if (block && block.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === dr) {
+      newLocked = true;
+    }
+
+    if (!newLocked && oldPowered !== newPowered) {
       this.engine.addTask('repeaterUpdate', [this.x, this.y, this.z, newPowered], this.states.delay * 2);
+    }
+    if (oldLocked !== newLocked) {
+      this.states.locked = newLocked;
+      this.sendPPUpdate();
     }
   }
 
@@ -228,6 +246,12 @@ class RedstoneRepeater extends Block {
     east: [[6, 3.5], [4, 3.5], [3, 3.5], [2, 3.5], [1, 3.5]], 
     north: [[3.5, 1], [3.5, 3], [3.5, 4], [3.5, 5], [3.5, 6]], 
     south: [[3.5, 6], [3.5, 4], [3.5, 3], [3.5, 2], [3.5, 1]]
+  };
+  _lockExtend = {
+    west: [[0, -2.5], [0, 2.5]], 
+    east: [[0, -2.5], [0, 2.5]], 
+    north: [[-2.5, 0], [2.5, 0]], 
+    south: [[-2.5, 0], [2.5, 0]]
   };
 
   /**

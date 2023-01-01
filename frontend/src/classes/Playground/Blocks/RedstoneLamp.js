@@ -86,7 +86,7 @@ class RedstoneLamp extends FullBlock {
 
       if (!block) return false;
       if (block.type === BlockType.RedstoneDust) return block.power && block.doPointTo(Axis.ReverseTable[dir]);
-      if (block.type === BlockType.RedstoneTorch) return block.states.facing !== facing;
+      if (block.type === BlockType.RedstoneTorch) return block.states.lit && block.states.facing !== facing;
       return block.states.source || !!block?.power;
     });
     if (litByPower) return true;
