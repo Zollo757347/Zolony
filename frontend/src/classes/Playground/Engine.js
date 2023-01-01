@@ -19,7 +19,7 @@ import { BlockType } from "./BlockType";
  * @property {number} yLen y 軸的長度
  * @property {number} zLen z 軸的長度
  * @property {string} mapName 地圖的名稱
- * @property {import("./Blocks/Block").BlockStates[][][]} playground 地圖上所有方塊的狀態
+ * @property {import("./Blocks/Block").BlockData[][][]} playground 地圖上所有方塊的狀態
  */
 
 class Engine {

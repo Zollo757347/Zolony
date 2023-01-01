@@ -7,15 +7,14 @@ import { BlockType } from "../BlockType";
 const d = 0.001;
 
 /**
- * @typedef _RedstoneDustState
+ * @typedef _RedstoneDustStates
  * @type {object}
  * @property {number} east 紅石粉東側的連接狀態，0 為無，1 為有，2 為有且向上
  * @property {number} south 紅石粉南側的連接狀態，0 為無，1 為有，2 為有且向上
  * @property {number} west 紅石粉西側的連接狀態，0 為無，1 為有，2 為有且向上
  * @property {number} north 紅石粉北側的連接狀態，0 為無，1 為有，2 為有且向上
- * @property {number} power 此紅石粉的充能等級
  * 
- * @typedef {import("./Block").BlockState & _RedstoneDustState} RedstoneDustState
+ * @typedef {import("./Block").BlockStates & _RedstoneDustStates} RedstoneDustStates
  */
 
 /**
@@ -27,7 +26,7 @@ class RedstoneDust extends Block {
     
     /**
      * 此紅石粉的狀態
-     * @type {RedstoneDustState}
+     * @type {RedstoneDustStates}
      */
     this.states = { ...(this.states ?? {}), east: 1, south: 1, west: 1, north: 1, power: 0, source: true };
 

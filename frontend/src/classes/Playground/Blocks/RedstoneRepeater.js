@@ -6,14 +6,14 @@ import { Block } from "./Block";
 const d = 0.001;
 
 /**
- * @typedef _RedstoneRepeaterState
+ * @typedef _RedstoneRepeaterStates
  * @type {object}
  * @property {number} delay 紅石中繼器的延遲
  * @property {string} facing 紅石中繼器的指向
  * @property {boolean} locked 紅石中繼器是否被鎖定
  * @property {boolean} powered 紅石中繼器是否被激發
  * 
- * @typedef {import("./Block").BlockStates & _RedstoneRepeaterState} RedstoneRepeaterState
+ * @typedef {import("./Block").BlockStates & _RedstoneRepeaterStates} RedstoneRepeaterStates
  */
 
 /**
@@ -25,7 +25,7 @@ class RedstoneRepeater extends Block {
     
     /**
      * 此紅石中繼器的狀態
-     * @type {RedstoneRepeaterState}
+     * @type {RedstoneRepeaterStates}
      */
     this.states = { ...(this.states ?? {}), delay: 1, facing: 'north', locked: false, powered: false };
   }

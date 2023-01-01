@@ -4,12 +4,12 @@ import { BlockType } from "../BlockType";
 import { Block } from "./Block";
 
 /**
- * @typedef _RedstoneTorchState
+ * @typedef _RedstoneTorchStates
  * @type {object}
  * @property {boolean} lit 此紅石火把是否被觸發
- * @property {'north' | 'south' | 'west' | 'east' | 'up'} facing 此紅石火把是否被觸發
+ * @property {'north' | 'south' | 'west' | 'east' | 'up'} facing 此紅石火把面向的方向
  * 
- * @typedef {import("./Block").BlockState & _RedstoneTorchState} RedstoneTorchState
+ * @typedef {import("./Block").BlockStates & _RedstoneTorchStates} RedstoneTorchStates
  */
 
 class RedstoneTorch extends Block {
@@ -18,7 +18,7 @@ class RedstoneTorch extends Block {
 
     /**
      * 此紅石火把的狀態
-     * @type {RedstoneTorchState}
+     * @type {RedstoneTorchStates}
      */
     this.states = { ...(this.states ?? {}), lit: true, facing: 'up', source: true };
   }

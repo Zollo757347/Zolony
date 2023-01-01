@@ -3,11 +3,11 @@ import { BlockType } from "../BlockType";
 import { FullBlock } from "./FullBlock";
 
 /**
- * @typedef _RedstoneLampState
+ * @typedef _RedstoneLampStates
  * @type {object}
  * @property {boolean} lit 此紅石燈是否被觸發
  * 
- * @typedef {import("./Block").BlockState & _RedstoneLampState} RedstoneLampState
+ * @typedef {import("./Block").BlockStates & _RedstoneLampStates} RedstoneLampStates
  */
 
 /**
@@ -19,7 +19,7 @@ class RedstoneLamp extends FullBlock {
 
     /**
      * 此紅石燈的狀態
-     * @type {RedstoneLampState}
+     * @type {RedstoneLampStates}
      */
     this.states = { ...(this.states ?? {}), lit: false };
   }
