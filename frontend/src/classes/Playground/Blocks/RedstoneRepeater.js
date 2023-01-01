@@ -13,7 +13,7 @@ const d = 0.001;
  * @property {boolean} locked 紅石中繼器是否被鎖定
  * @property {boolean} powered 紅石中繼器是否被激發
  * 
- * @typedef {import("./Block").BlockState & _RedstoneRepeaterState} RedstoneRepeaterState
+ * @typedef {import("./Block").BlockStates & _RedstoneRepeaterState} RedstoneRepeaterState
  */
 
 /**
@@ -68,7 +68,7 @@ class RedstoneRepeater extends Block {
     });
 
     const basis = this._textureSurfaces[this.states.facing];
-    [basis[0], basis[this.states.delay]].forEach(([dx, dz]) => {
+    basis.forEach(([dx, dz], i) => {
       const [x, y, z] = [this.x + dx * 0.125, this.y + 0.125 + d, this.z + dz * 0.125];
       const points = [
         new Vector3(x, y, z), 
@@ -76,7 +76,8 @@ class RedstoneRepeater extends Block {
         new Vector3(x + 0.125, y, z + 0.125), 
         new Vector3(x, y, z + 0.125)
       ];
-      result.push({ points, color: this.surfaceColor(), dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) });
+      const color = this.surfaceColor(i === 0 || i === this.states.delay);
+      result.push({ points, color, dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) });
     });
 
     return result;
@@ -86,8 +87,8 @@ class RedstoneRepeater extends Block {
    * 取得此方塊指定平面的顏色
    * @returns 
    */
-  surfaceColor() {
-    const brightness = this.states.powered ? 250 : 120;
+  surfaceColor(indicator) {
+    const brightness = (this.states.powered ? 150 : 100) + indicator * 100;
     return `rgb(${brightness}, ${brightness >> 1}, ${brightness >> 1})`;
   }
 
