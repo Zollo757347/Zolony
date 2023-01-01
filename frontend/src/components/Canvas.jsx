@@ -53,10 +53,6 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
     const p = getPosition(canvas, e);
     
     playgroundRef.current.leftClick(p.x, p.y);
-
-    const data = Engine.extract(playgroundRef.current.engine);
-    const engine = Engine.spawn(data);
-    console.log(engine);
   }
 
   function handleContextMenu(e) {
