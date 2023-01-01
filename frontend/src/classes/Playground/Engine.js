@@ -61,7 +61,7 @@ class Engine {
      */
     this._pg = Array.from({ length: xLen }, (_, x) => 
       Array.from({ length: yLen }, (_, y) => 
-        Array.from({ length: zLen }, (_, z) => y === 0 ? new Concrete({ x, y, z, engine: this }) : new AirBlock({ x, y, z, engine: this }))
+        Array.from({ length: zLen }, (_, z) => y === 0 ? new Concrete({ x, y, z, engine: this, breakable: false }) : new AirBlock({ x, y, z, engine: this }))
       )
     );
 
@@ -196,11 +196,13 @@ class Engine {
    * @param {number} x 
    * @param {number} y 
    * @param {number} z 
-   * @returns {Block} 被破壞的方塊
+   * @returns {Block | null} 被破壞的方塊
    * @private
    */
   _leftClick(x, y, z) {
     const block = this._pg[x][y][z];
+    if (!block.breakable) return null;
+
     this._pg[x][y][z] = new AirBlock({ x, y, z, engine: this });
     block.sendPPUpdate(this._pg[x][y][z]);
     return block;

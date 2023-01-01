@@ -73,6 +73,12 @@ class Block {
     this.blockName = options.blockName;
 
     /**
+     * 此方塊可否被破壞
+     * @type {booolean}
+     */
+    this.breakable = options.breakable ?? true;
+
+    /**
      * 方塊的狀態
      * @type {BlockStates}
      */
@@ -82,43 +88,43 @@ class Block {
      * 此方塊是否為透明方塊
      * @type {boolean}
      */
-    this.transparent = options.transparent || false;
+    this.transparent = options.transparent ?? false;
 
     /**
      * 此方塊是否提供頂部支撐點
      * @type {boolean}
      */
-    this.upperSupport = options.fullSupport || options.upperSupport || false;
+    this.upperSupport = options.fullSupport ?? options.upperSupport ?? false;
 
     /**
      * 此方塊是否提供側面支撐點
      * @type {boolean}
      */
-    this.sideSupport = options.fullSupport || options.sideSupport || false;
+    this.sideSupport = options.fullSupport ?? options.sideSupport ?? false;
 
     /**
      * 此方塊是否需要支撐點
      * @type {boolean}
      */
-    this.needSupport = options.needSupport || false;
+    this.needSupport = options.needSupport ?? false;
 
     /**
      * 此方塊是否需要底部支撐點
      * @type {boolean}
      */
-    this.needBottomSupport = options.needBottomSupport || false;
+    this.needBottomSupport = options.needBottomSupport ?? false;
     
     /**
      * 此方塊是否為可互動方塊
      * @type {boolean}
      */
-    this.interactable = options.interactable || false;
+    this.interactable = options.interactable ?? false;
 
     /**
      * 此方塊是否會被紅石粉主動連接
      * @type {'full' | 'line' | 'none'}
      */
-    this.redstoneAutoConnect = options.redstoneAutoConnect || 'none';
+    this.redstoneAutoConnect = options.redstoneAutoConnect ?? 'none';
   }
 
   /**

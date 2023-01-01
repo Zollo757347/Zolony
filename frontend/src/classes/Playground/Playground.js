@@ -265,6 +265,8 @@ class Playground {
           context.lineTo(p[2].x, p[2].y);
           context.lineTo(p[3].x, p[3].y);
           context.closePath();
+
+          context.strokeStyle = this.engine.block(target.cords.x, target.cords.y, target.cords.z)?.breakable ? 'black' : 'red';
           context.stroke();
         }
       });
