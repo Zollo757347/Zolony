@@ -80,7 +80,7 @@ class RedstoneLamp extends FullBlock {
   _shouldLit() {
     if (this.power) return true;
 
-    const litByPower = [[Axis.PX, 'east'], [Axis.NX, 'west'], [Axis.PY, null], [Axis.NY, ''], [Axis.PZ, 'south'], [Axis.NZ, 'north']].some(([dir, facing]) => {
+    const litByPower = [[Axis.PX, 'east'], [Axis.NX, 'west'], [Axis.PY, 'up'], [Axis.NY, ''], [Axis.PZ, 'south'], [Axis.NZ, 'north']].some(([dir, facing]) => {
       const norm = Axis.VECTOR[dir];
       const block = this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z);
 

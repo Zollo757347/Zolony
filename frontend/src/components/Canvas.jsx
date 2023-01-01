@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect, useRef } from "react";
-import { Engine, Playground } from "../classes/Playground";
+import { Playground } from "../classes/Playground";
 
 function getPosition(canvas, event) {
   const p = canvas.getBoundingClientRect();
