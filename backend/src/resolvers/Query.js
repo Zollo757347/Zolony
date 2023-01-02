@@ -1,15 +1,39 @@
-const makeName = (name1, name2) => {
-  return name1 + "_" + name2;
-}
+import UserModel from "../models/userinfo";
+import MapModel from "../models/map";
 
 const Query = {
-  chatbox: async (parent, { name1, name2 }, { ChatBoxModel }) => {
-    let name = makeName(name1, name2);
-    let box = await ChatBoxModel.findOne({ name });
-    if (!box)
-      box = await new ChatBoxModel({ name }).save();
-    console.log(box);
-    return box;
+  
+  checkMyMap: async (parent, {name, passWord, mapName}) => {
+    let sortMap = await UserModel.find({name, passWord, mapName});
+    if(!sortMap){
+      console.log('there is no map in this user.');
+      return 'there is no map in this user.';
+    }
+    else{
+      console.log('find user map ' + mapName + ' :')
+      console.log(sortMap);
+      return sortMap;
+    }
   },
+
+  checkUser: async (parent, {name, passWord}) => {
+    let user = await UserModel.findOne({ name, passWord});
+    if(!user){
+      console.log('user not found.');
+      return 'user not found.';
+    }
+    else{
+      console.log('find user ' + name + ' :')
+      console.log(user);
+      return user;
+    }
+  },
+
+  checkMap: async (parent, { mapName }) => {
+    let sortMap = await MapModel.findOne({ mapName })
+    console.log('find map ' + mapName + ' :');
+    console.log(sortMap);
+    return sortMap;
+  }
 };
 export default Query;

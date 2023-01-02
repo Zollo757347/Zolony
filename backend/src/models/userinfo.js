@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 const UserSchema = new Schema({
   name: { type: String, required: [true, 'Name field is required.'] },
   password: { type: String, required: [true, 'password is required.']},
-  shot: { type: String, required: [true, 'picture url is required.']},
+  avatar: { type: String, required: [true, 'picture url is required.']},
   map: [{ type: mongoose.Types.ObjectId, ref: 'Map'}]
 })
 

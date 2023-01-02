@@ -1,6 +1,6 @@
 type Query {
-  checkMyMap(name: String!, passWord: String!, mapName: String!): Map!
-  checkUser(name: String!, passWord: String!): UserInfo! 
+  checkMyMap(name: String!, passWord: String!, mapName: String!): Map
+  checkUser(name: String!, passWord: String!): UserInfo
 
   checkMap(mapName: String!): Map!
 }
