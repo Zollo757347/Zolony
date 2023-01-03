@@ -11,7 +11,7 @@ const App = () => {
     setCollapsed(!collapsed);
   };
 
-  const [pageNum, setPageNum] = useState(0);
+  const [pageNum, setPageNum] = useState(1);
 
   return (
     <div className="app">
