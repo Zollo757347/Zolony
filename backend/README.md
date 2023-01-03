@@ -8,11 +8,15 @@
 
 ### **各個function的作用：**
 
-- **checkMyMap:** 輸入user的名字、密碼與地圖名字，得到地圖。適用於user點開自己的地圖時
+#### **query**
 
-- **checkUser:** 輸入user的名字、密碼，得到user的一切資料。適用於user點開自己的檔案時。
+- **checkMyMap:** 輸入user的名字、密碼與地圖名字，得到地圖，如果找不到該地圖會回傳null。適用於user點開自己的地圖時
 
-- **checkMap:** 輸入地圖名字，得到某張地圖，適用於client點入一個有地圖的文章時。
+- **checkUser:** 輸入user的名字、密碼，得到user的一切資料，如果找不到該user會回傳null。適用於user點開自己的檔案時。
+
+- **checkMap:** 輸入地圖名字，得到某張地圖，如果找不到該地圖會回傳null。適用於client點入一個有地圖的文章時。
+
+#### **mutation**
     
 - **createAccount:** 輸入user的名字、密碼，得到user的一切資料。適用於user創建一個帳號時。
 
@@ -53,4 +57,47 @@
             avatar
         }
     }
+
+    query {
+        checkUser(data:{
+            name: "yoe",
+            password: "123"
+        }) {
+            name
+            password
+            avatar
+        }
+    }
+
+    query {
+        checkUser(data:{
+            name: "yohe",
+            password: "123"
+        }) {
+            name
+            password
+            avatar
+        }
+    }
+
+    mutation {
+        initialMyMap(data:{
+            name: "yohe",
+            password: "12",
+            mapName: "yoheMap",
+            xLen: 3,
+            yLen: 3,
+            zLen: 3,
+        }) {
+            mapName
+            playground {
+            x
+            y
+            z
+            blockName
+            type
+            }
+        }
+    }
+
 ```

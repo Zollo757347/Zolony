@@ -2,35 +2,35 @@ import {UserModel, MapModel} from "../models.js";
 
 const Query = {
   
-  checkMyMap: async (parent, {name, passWord, mapName}) => {
-    let sortMap = await UserModel.find({name, passWord, mapName});
+  checkMyMap: async (parent, args) => {
+    let sortMap = await UserModel.find({name: args.data.name, password: args.data.password, mapName: args.data.mapName});
     if(!sortMap){
-      console.log('there is no map in this user.');
-      return 'there is no map in this user.';
+      console.log(`there is no map ${args.data.mapName} in this user.`);
+      return sortMap;
     }
     else{
-      console.log('find user map ' + mapName + ' :')
+      console.log(`find user map ${mapName} :`)
       console.log(sortMap);
       return sortMap;
     }
   },
 
-  checkUser: async (parent, {name, passWord}) => {
-    let user = await UserModel.findOne({ name, passWord});
+  checkUser: async (parent, args) => {
+    let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
     if(!user){
-      console.log('user not found.');
-      return 'user not found.';
+      console.log(`user ${args.data.name} not found.`);
+      return user;
     }
     else{
-      console.log('find user ' + name + ' :')
+      console.log(`find user ${args.data.name} :`)
       console.log(user);
       return user;
     }
   },
 
-  checkMap: async (parent, { mapName }) => {
-    let sortMap = await MapModel.findOne({ mapName })
-    console.log('find map ' + mapName + ' :');
+  checkMap: async (parent, args) => {
+    let sortMap = await MapModel.findOne({ mapName: args.data.mapName })
+    console.log(`find map ${args.data.mapName} :`);
     console.log(sortMap);
     return sortMap;
   }

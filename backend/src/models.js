@@ -7,28 +7,26 @@ const MapSchema = new Schema({
   yLen: {type: Number, required: [true, 'y is required.']},
   zLen: {type: Number, required: [true, 'z is required.']},
   playground: [[[{
-    blockdata: {
-      x: Number,
-      y: Number,
-      z: Number,
-      blockName: String,
-      type: Number,
-      states: {
-        power: Number,
-        source: Boolean,
+    x: Number,
+    y: Number,
+    z: Number,
+    blockName: String,
+    type: Number,
+    states: {
+      power: Number,
+      source: Boolean,
 
-        delay: Number,
-        facing: String,
-        locked: Boolean,
-        powered: Boolean,
+      delay: Number,
+      facing: String,
+      locked: Boolean,
+      powered: Boolean,
 
-        lit: Boolean,
+      lit: Boolean,
 
-        east: Number,
-        south: Number,
-        west: Number,
-        north: Number,
-      }
+      east: Number,
+      south: Number,
+      west: Number,
+      north: Number,
     }
   }]]],
 })

@@ -59,6 +59,7 @@ const initMap = (x, y, z, mapName) => {
     }
     newPlayground.push( newSubPlayground );
   }
+  
   const newMap = {
     xLen: x,
     yLen: y,
@@ -92,11 +93,11 @@ const Mutation = {
     return user;
   },
 
-  initialMyMap: async (parent, {name, passWord, mapName, xLen, yLen, zLen}) => {
-    let user = await UserModel.findOne({ name, passWord});
-    let newMap = initMap(xLen, yLen, zLen, mapName);
-    user.maps.push(newMap);
-    console.log(newMap);
+  initialMyMap: async (parent, args) => {
+    let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
+    let newMap = initMap(args.data.xLen, args.data.yLen, args.data.zLen, args.data.mapName);
+    user.maps.push(MapModel(newMap));
+    console.log(user);
     await user.save();
     return newMap;
   },

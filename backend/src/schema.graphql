@@ -1,7 +1,7 @@
 type Query {
   checkMyMap(data: checkMyMapInput!): MapData
   checkUser(data: checkUserInput!): UserInfo
-  checkMap(data: checkMapInput!): MapData!
+  checkMap(data: checkMapInput!): MapData
 }
 
 type Mutation {
@@ -64,6 +64,7 @@ input MapDataInput {
   yLen: Int!
   zLen: Int!
   mapName: String!
+  belong: String!
   playground: [[[BlockDataInput!]!]!]!
 }
 
@@ -108,6 +109,7 @@ type MapData {
   yLen: Int!
   zLen: Int!
   mapName: String!
+  belong: String!
   playground: [[[BlockData!]!]!]!
 }
 
