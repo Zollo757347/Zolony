@@ -1,5 +1,4 @@
-import UserModel from "../models/userinfo";
-import MapModel from "../models/map";
+import {UserModel, MapModel} from "../models.js";
 import db from "../db";
 
 const DEFAULT_AVATAR = 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'
@@ -71,23 +70,23 @@ const initMap = (x, y, z, mapName) => {
 }
 
 const Mutation = {
-  createAccount: async (parent, {name, passWord}) => {
-    const newUser = {
-      name: name,
-      password: passWord,
+  createAccount: async (parent, args) => {
+    const newUser = { 
+      name: args.data.name,
+      password: args.data.password,
       avatar: DEFAULT_AVATAR,
       maps: [],
     }
     console.log( newUser );
-    await new UserModel( newUser ).save();
+    await UserModel(newUser).save();
     return newUser;
   },
 
-  editProfile: async (parent, {name, passWord, newAvatar, newName, newPassWord}) => {
-    let user = await UserModel.findOne({ name, passWord});
-    if(newName) user.name = newName;
-    if(newPassWord) user.password = newPassWord;
-    if(newAvatar) user.avatar = newAvatar;
+  editProfile: async (parent, args) => {
+    let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
+    if(args.data.newName) user.name = args.data.newName;
+    if(args.data.newPassword) user.password = args.data.newPassword;
+    if(args.data.newAvatar) user.avatar = args.data.newAvatar;
     console.log(user);
     await user.save();
     return user;

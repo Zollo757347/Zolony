@@ -1,63 +1,140 @@
 type Query {
-  checkMyMap(name: String!, passWord: String!, mapName: String!): Map
-  checkUser(name: String!, passWord: String!): UserInfo
-
-  checkMap(mapName: String!): Map!
+  checkMyMap(data: checkMyMapInput!): MapData
+  checkUser(data: checkUserInput!): UserInfo
+  checkMap(data: checkMapInput!): MapData!
 }
 
 type Mutation {
-  createAccount(name: String!, passWord: String!): UserInfo!
-  editProfile(name: String!, passWord: String!, newName: String, newPassWord: String, newAvatar: String): UserInfo! 
-  initialMyMap(name: String!, passWord: String!, mapName: String!, xLen: Integer, yLen: Integer!, zLen: Integer!): Map!
-  editMyMap(name: String!, passWord: String!, mapName: String!, map: Map!): Map!
-
+  createAccount(data: checkUserInput!): UserInfo!
+  editProfile(data: editProfileInput!): UserInfo! 
+  initialMyMap(data: initialMyMapInput!): MapData!
+  editMyMap(data: editMyMapInput!): MapData!
   initialMap: Boolean!
-
-  deleteUser(name: String!, passWord: String!): Boolean!
-  deleteUserMap(name: String!, passWord: String!, mapName: String!): Boolean!
+  deleteUser(data: checkUserInput!): Boolean!
+  deleteUserMap(data: deleteUserMapInput!): Boolean!
 }
 
-
-type UserInfo {
+input checkMyMapInput {
   name: String!
-  passWord: String!
-  maps: [MapData]!
-  avatar: String!
-}
-
-
-type MapData {
-  xLen: Integer!
-  yLen: Integer!
-  zLen: Integer!
+  password: String! 
   mapName: String!
-  playground: [[[BlockData!]!]!]!
 }
 
-type BlockData {
-  x: Integer!
-  y: Integer!
-  z: Integer!
+input checkUserInput {
+  name: String!
+  password: String!
+}
+
+input checkMapInput {
+  mapName: String!
+}
+
+input editProfileInput {
+  name: String!
+  password: String!
+  newName: String
+  newPassword: String
+  newAvatar: String
+}
+
+input initialMyMapInput {
+  name: String!
+  password: String!
+  mapName: String!
+  xLen: Int!
+  yLen: Int!
+  zLen: Int!
+}
+
+input editMyMapInput {
+  name: String!
+  password: String!
+  mapName: String!
+  map: MapDataInput!
+}
+
+input deleteUserMapInput {
+  name: String!
+  password: String!
+  mapName: String!
+}
+
+input MapDataInput {
+  xLen: Int!
+  yLen: Int!
+  zLen: Int!
+  mapName: String!
+  playground: [[[BlockDataInput!]!]!]!
+}
+
+input BlockDataInput {
+  x: Int!
+  y: Int!
+  z: Int!
   blockName: String!
-  type: Integer!
-  states: BlockStates!
+  type: Int!
+  states: BlockStatesInput!
 }
 
-type BlockStates {
-  power: Integer!
+input BlockStatesInput {
+  power: Int!
   source: Boolean!
 
-  delay: Integer
+  delay: Int
   facing: String
   locked: Boolean
   powered: Boolean
 
   lit: Boolean
 
-  east: Integer
-  south: Integer
-  west: Integer
-  north: Integer
+  east: Int
+  south: Int
+  west: Int
+  north: Int
+}
+
+
+
+type UserInfo {
+  name: String!
+  password: String!
+  maps: [MapData]!
+  avatar: String!
+}
+
+
+type MapData {
+  xLen: Int!
+  yLen: Int!
+  zLen: Int!
+  mapName: String!
+  playground: [[[BlockData!]!]!]!
+}
+
+type BlockData {
+  x: Int!
+  y: Int!
+  z: Int!
+  blockName: String!
+  type: Int!
+  states: BlockStates!
+}
+
+type BlockStates {
+  power: Int!
+  source: Boolean!
+
+  delay: Int
+  facing: String
+  locked: Boolean
+  powered: Boolean
+
+  lit: Boolean
+
+  east: Int
+  south: Int
+  west: Int
+  north: Int
 }
 
 

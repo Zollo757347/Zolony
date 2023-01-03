@@ -1,5 +1,4 @@
-import UserModel from "../models/userinfo";
-import MapModel from "../models/map";
+import {UserModel, MapModel} from "../models.js";
 
 const Query = {
   

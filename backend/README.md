@@ -2,7 +2,7 @@
 
 ## **undo**
 
-resolver
+需更改一大堆function, 目前已debug成功的function: **createAccount** , **editProfile**
 
 ## **schema graphql**
 
@@ -27,3 +27,30 @@ resolver
 - **deleteUser:** 輸入user的名字、密碼，得到布林值，此function應在user delete他的資料時呼叫。
 
 - **deleteUserMap:** 輸入user的名字、密碼與地圖名字，得到布林值。適用於user刪掉自己的地圖時
+
+## **test data**
+
+``` graphql
+    mutation {
+        createAccount(data:{
+            name: "yohe",
+            password: "123"
+        }) {
+            name
+            password
+            avatar
+        }
+    }
+
+    mutation {
+        editProfile(data:{
+            name: "yohe",
+            password: "123",
+            newPassword: "12"
+        }) {
+            name
+            password
+            avatar
+        }
+    }
+```

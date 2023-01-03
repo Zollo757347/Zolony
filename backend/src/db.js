@@ -1,144 +1,14 @@
-import { BlockType } from "../../frontend/src/classes/Playground/BlockType";
+
 
 const maps = [
-  {
-    mapName: 'map1',
-    xLen: 5,
-    yLen: 5,
-    zLen: 5,
-    playground: [[[{
-            blockdata: {
-                x: 0,
-                y: 0,
-                z: 0,
-                blockName: 'concrete',
-                type: BlockType.Concrete,
-                status: {
-                  power: 0,
-                  source: false,
-                }
-            }
-          },{
-            blockdata: {
-                x: 0,
-                y: 0,
-                z: 1,
-                blockName: 'concrete',
-                type: BlockType.Concrete,
-                status: {
-                  power: 0,
-                  source: false,
-                }
-            }
-          },{
-            blockdata: {
-                x: 0,
-                y: 0,
-                z: 2,
-                blockName: 'concrete',
-                type: BlockType.Concrete,
-                status: {
-                  power: 0,
-                  source: false,
-                }
-            }
-          },{
-            blockdata: {
-                x: 0,
-                y: 0,
-                z: 3,
-                blockName: 'concrete',
-                type: BlockType.Concrete,
-                status: {
-                  power: 0,
-                  source: false,
-                }
-            }
-          },{
-            blockdata: {
-                x: 0,
-                y: 0,
-                z: 4,
-                blockName: 'concrete',
-                type: BlockType.Concrete,
-                status: {
-                  power: 0,
-                  source: false,
-                }
-            }
-          }
-        ],[{
-          blockdata: {
-              x: 0,
-              y: 0,
-              z: 0,
-              blockName: 'concrete',
-              type: BlockType.Concrete,
-              status: {
-                power: 0,
-                source: false,
-              }
-          }
-        },{
-          blockdata: {
-              x: 0,
-              y: 0,
-              z: 1,
-              blockName: 'concrete',
-              type: BlockType.Concrete,
-              status: {
-                power: 0,
-                source: false,
-              }
-          }
-        },{
-          blockdata: {
-              x: 0,
-              y: 0,
-              z: 2,
-              blockName: 'concrete',
-              type: BlockType.Concrete,
-              status: {
-                power: 0,
-                source: false,
-              }
-          }
-        },{
-          blockdata: {
-              x: 0,
-              y: 0,
-              z: 3,
-              blockName: 'concrete',
-              type: BlockType.Concrete,
-              status: {
-                power: 0,
-                source: false,
-              }
-          }
-        },{
-          blockdata: {
-              x: 0,
-              y: 0,
-              z: 4,
-              blockName: 'concrete',
-              type: BlockType.Concrete,
-              status: {
-                power: 0,
-                source: false,
-              }
-          }
-        }
-      ],
-      ], [], [], [], []
-    ]
-  }
+  
 ]
 
 
 
 
 
-
+/*
 const MapSchema = new Schema({
     mapName: {type: String, required: [true, 'map name is required.']},
     xLen: {type: Number, required: [true, 'x is required.']},
@@ -171,7 +41,7 @@ const MapSchema = new Schema({
     }]]],
   })
 
-
+*/
 
   const db = {
     maps
