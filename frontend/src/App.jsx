@@ -1,13 +1,25 @@
 import Canvas from './components/Canvas';
-import './App.css';
+import Header from './components/Header'
+import Sidebar from './components/Sidebar'
+import Page from './components/Page'
+import './components/css/App.css';
+import React, { useState } from 'react';
 
 const App = () => {
-  const w = 500;
-  const d = 5;
+  const [collapsed, setCollapsed] = useState(false);
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
+
+  const [pageNum, setPageNum] = useState(0);
 
   return (
     <div className="app">
-      <Canvas canvasWidth={w} canvasHeight={w} xLen={d} yLen={d} zLen={d} />
+      <Header collapsed={collapsed} toggleCollapsed={toggleCollapsed}/>
+      <div id='main-wrap'>
+        <Sidebar collapsed={collapsed} setPageNum={setPageNum}/>
+        <Page pageNum={pageNum}/>
+      </div>
     </div>
   );
 }
