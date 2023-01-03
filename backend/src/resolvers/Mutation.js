@@ -1,34 +1,157 @@
-//import uuidv4 from 'uuid/v4';
-import ChatBoxModel from "../models/map";
-import {v4 as uuidv4} from 'uuid';
+import UserModel from "../models/userinfo";
+import MapModel from "../models/map";
+import db from "../db";
 
-const makeName = (name1, name2) => {
-  return name1 + "_" + name2;
+const DEFAULT_AVATAR = 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'
+
+const initBlock = (x, y, z, type) => { //0 means air, 1 means concrete
+  let block = {};
+  if(type === 0){
+    block = {
+      x: x,
+      y: y,
+      z: z,
+      blockName: 'Air',
+      type: 0,
+      status: {
+        power: 0,
+        source: false,
+      }
+    }
+  }
+  else if(type === 1){
+    block = {
+      x: x,
+      y: y,
+      z: z,
+      blockName: 'Concrete',
+      type: 1,
+      status: {
+        power: 0,
+        source: false,
+      }
+    }
+  }
+  return block;
 }
 
-const checkOutChatBox = async(name1, name2) => {
-  let name = makeName(name1, name2);
-  let box = await ChatBoxModel.findOne({ name });
-  if (!box) box = await new ChatBoxModel({ name }).save();
-  return box;
+const initMap = (x, y, z, mapName) => {
+  let newPlayground = [];
+  let newBasePlayground = [];
+  for(let i = 0; i < y; i++){
+    let newSubPlayground = [];
+    for(let j = 0; j < z; j++){
+      const newBlock = initBlock(0, i, j, 1);
+      newSubPlayground.push( newBlock );
+    }
+    newBasePlayground.push( newSubPlayground );
+  }
+  newPlayground.push( newBasePlayground );
+
+  for(let i = 1; i < x; i++){
+    let newSubPlayground = [];
+    for(let j = 0; j < y; j++){
+      let newSubSubPlayground = [];
+      for(let k = 0; k < z; k++){
+        const newBlock = initBlock(i, j, k, 0);
+        newSubSubPlayground.push( newBlock );
+      }
+      newSubPlayground.push( newSubSubPlayground );
+    }
+    newPlayground.push( newSubPlayground );
+  }
+  const newMap = {
+    xLen: x,
+    yLen: y,
+    zLen: z,
+    mapName: mapName,
+    playground: newPlayground,
+  }
+  return newMap;
 }
 
 const Mutation = {
-  createChatBox: (parent, { name1, name2 } ) => {
-    return checkOutChatBox(name1, name2);
+  createAccount: async (parent, {name, passWord}) => {
+    const newUser = {
+      name: name,
+      password: passWord,
+      avatar: DEFAULT_AVATAR,
+      maps: [],
+    }
+    console.log( newUser );
+    await new UserModel( newUser ).save();
+    return newUser;
   },
 
-  createMessage: async (parent, { name, to, body }, { pubsub } ) => {
-  const chatBox = await checkOutChatBox(name, to);
-  const newMsg = { sender: name, body };
-  console.log(newMsg)
-  chatBox.messages.push(newMsg);
-  await chatBox.save();
-  const chatBoxName = makeName(name, to);
-  pubsub.publish(`chatBox ${chatBoxName}`, {
-  message: newMsg,
-  });
-  return newMsg;
+  editProfile: async (parent, {name, passWord, newAvatar, newName, newPassWord}) => {
+    let user = await UserModel.findOne({ name, passWord});
+    if(newName) user.name = newName;
+    if(newPassWord) user.password = newPassWord;
+    if(newAvatar) user.avatar = newAvatar;
+    console.log(user);
+    await user.save();
+    return user;
+  },
+
+  initialMyMap: async (parent, {name, passWord, mapName, xLen, yLen, zLen}) => {
+    let user = await UserModel.findOne({ name, passWord});
+    let newMap = initMap(xLen, yLen, zLen, mapName);
+    user.maps.push(newMap);
+    console.log(newMap);
+    await user.save();
+    return newMap;
+  },
+
+  editMyMap: async (parent, {name, passWord, mapName, map}) => {
+    let user = await UserModel.findOne({ name, passWord});
+    for(let i=0; i < user.maps.length(); i++){
+      if(user.maps[i].mapName === mapName){
+        user.maps[i] = map;
+        console.log(map);
+        await user.save();
+        return map;
+      }
+    }
+  },
+
+  initialMap: async () => {
+    let existing = await MapModel.findOne();
+    if(existing){
+      console.log('mapmodel database is not clean, clean the database first.');
+      return false;
+    }
+
+    for(let i=0; i < db.maps.length(); i++){
+      await MapModel.create(db.maps[i]);
+    }
+    console.log('import data from backend to database succeed.')
+    return true;
+  },
+
+  deleteUser: async (parent, {name, passWord}) => {
+    let msg = await UserModel.deleteOne( { name } );
+    if(msg.deletedCount === 0){
+      console.log('delete user fail.');
+      return false;
+    }
+    else{
+      console.log('delete user succeed.');
+      return true;
+    }
+  },
+
+  deleteUserMap: async (parent, {name, passWord, mapName}) => {
+    let user = await UserModel.findOne({ name, passWord});
+    for(let i=0; i < user.maps.length(); i++){
+      if(user.maps[i].mapName === mapName){
+        user.maps[i].delete();
+        await user.save();
+        console.log(`map ${mapName} delete succeed.`);
+        return map;
+      }
+    }
+    console.log('no map to delete.');
+    return false;
   },
 };
   
@@ -37,241 +160,3 @@ export { Mutation as default };
 
 
 
-
-
-
-
-
-
-
-/*
-
-const Mutation = {
-  createUser(parent, args, { db }, info) {
-    const emailTaken = db.users.some((user) => user.email === args.data.email);
-
-    if (emailTaken) {
-      throw new Error('Email taken');
-    }
-
-    const user = {
-      id: uuidv4(),
-      ...args.data,
-    };
-
-    db.users.push(user);
-
-    return user;
-  },
-  deleteUser(parent, args, { db }, info) {
-    const userIndex = db.users.findIndex((user) => user.id === args.id);
-
-    if (userIndex === -1) {
-      throw new Error('User not found');
-    }
-
-    const deletedUsers = db.users.splice(userIndex, 1);
-
-    db.posts = db.posts.filter((post) => {
-      const match = post.author === args.id;
-
-      if (match) {
-        db.comments = db.comments.filter((comment) => comment.post !== post.id);
-      }
-
-      return !match;
-    });
-    db.comments = db.comments.filter((comment) => comment.author !== args.id);
-
-    return deletedUsers[0];
-  },
-  updateUser(parent, args, { db }, info) {
-    const { id, data } = args;
-    const user = db.users.find((user) => user.id === id);
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    if (typeof data.email === 'string') {
-      const emailTaken = db.users.some((user) => user.email === data.email);
-
-      if (emailTaken) {
-        throw new Error('Email taken');
-      }
-
-      user.email = data.email;
-    }
-
-    if (typeof data.name === 'string') {
-      user.name = data.name;
-    }
-
-    if (typeof data.age !== 'undefined') {
-      user.age = data.age;
-    }
-
-    return user;
-  },
-  createPost(parent, args, { db, pubsub }, info) {
-    const userExists = db.users.some((user) => user.id === args.data.author);
-
-    if (!userExists) {
-      throw new Error('User not found');
-    }
-
-    const post = {
-      id: uuidv4(),
-      ...args.data,
-    };
-
-    db.posts.unshift(post);
-
-    if (args.data.published) {
-      pubsub.publish('post', {
-        post: {
-          mutation: 'CREATED',
-          data: post,
-        },
-      });
-    }
-
-    return post;
-  },
-  deletePost(parent, args, { db, pubsub }, info) {
-    const postIndex = db.posts.findIndex((post) => post.id === args.id);
-
-    if (postIndex === -1) {
-      throw new Error('Post not found');
-    }
-
-    const [post] = db.posts.splice(postIndex, 1);
-
-    db.comments = db.comments.filter((comment) => comment.post !== args.id);
-
-    if (post.published) {
-      pubsub.publish('post', {
-        post: {
-          mutation: 'DELETED',
-          data: post,
-        },
-      });
-    }
-
-    return post;
-  },
-  updatePost(parent, args, { db, pubsub }, info) {
-    const { id, data } = args;
-    const post = db.posts.find((post) => post.id === id);
-    const originalPost = { ...post };
-
-    if (!post) {
-      throw new Error('Post not found');
-    }
-
-    if (typeof data.title === 'string') {
-      post.title = data.title;
-    }
-
-    if (typeof data.body === 'string') {
-      post.body = data.body;
-    }
-
-    if (typeof data.published === 'boolean') {
-      post.published = data.published;
-
-      if (originalPost.published && !post.published) {
-        pubsub.publish('post', {
-          post: {
-            mutation: 'DELETED',
-            data: originalPost,
-          },
-        });
-      } else if (!originalPost.published && post.published) {
-        pubsub.publish('post', {
-          post: {
-            mutation: 'CREATED',
-            data: post,
-          },
-        });
-      }
-    } else if (post.published) {
-      pubsub.publish('post', {
-        post: {
-          mutation: 'UPDATED',
-          data: post,
-        },
-      });
-    }
-
-    return post;
-  },
-  createComment(parent, args, { db, pubsub }, info) {
-    const userExists = db.users.some((user) => user.id === args.data.author);
-    const postExists = db.posts.some(
-      (post) => post.id === args.data.post && post.published,
-    );
-
-    if (!userExists || !postExists) {
-      throw new Error('Unable to find user and post');
-    }
-
-    const comment = {
-      id: uuidv4(),
-      ...args.data,
-    };
-
-    db.comments.push(comment);
-    pubsub.publish(`comment ${args.data.post}`, {
-      comment: {
-        mutation: 'CREATED',
-        data: comment,
-      },
-    });
-
-    return comment;
-  },
-  deleteComment(parent, args, { db, pubsub }, info) {
-    const commentIndex = db.comments.findIndex(
-      (comment) => comment.id === args.id,
-    );
-
-    if (commentIndex === -1) {
-      throw new Error('Comment not found');
-    }
-
-    const [deletedComment] = db.comments.splice(commentIndex, 1);
-    pubsub.publish(`comment ${deletedComment.post}`, {
-      comment: {
-        mutation: 'DELETED',
-        data: deletedComment,
-      },
-    });
-
-    return deletedComment;
-  },
-  updateComment(parent, args, { db, pubsub }, info) {
-    const { id, data } = args;
-    const comment = db.comments.find((comment) => comment.id === id);
-
-    if (!comment) {
-      throw new Error('Comment not found');
-    }
-
-    if (typeof data.text === 'string') {
-      comment.text = data.text;
-    }
-
-    pubsub.publish(`comment ${comment.post}`, {
-      comment: {
-        mutation: 'UPDATED',
-        data: comment,
-      },
-    });
-
-    return comment;
-  },
-};
-
-export { Mutation as default };
-*/

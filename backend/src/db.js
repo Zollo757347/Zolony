@@ -1,3 +1,5 @@
+import { BlockType } from "../../frontend/src/classes/Playground/BlockType";
+
 const maps = [
   {
     mapName: 'map1',
@@ -9,10 +11,124 @@ const maps = [
                 x: 0,
                 y: 0,
                 z: 0,
-                blockName: 'concrete'
+                blockName: 'concrete',
+                type: BlockType.Concrete,
+                status: {
+                  power: 0,
+                  source: false,
+                }
             }
-          }, {}, {}, {}, {}
-        ],
+          },{
+            blockdata: {
+                x: 0,
+                y: 0,
+                z: 1,
+                blockName: 'concrete',
+                type: BlockType.Concrete,
+                status: {
+                  power: 0,
+                  source: false,
+                }
+            }
+          },{
+            blockdata: {
+                x: 0,
+                y: 0,
+                z: 2,
+                blockName: 'concrete',
+                type: BlockType.Concrete,
+                status: {
+                  power: 0,
+                  source: false,
+                }
+            }
+          },{
+            blockdata: {
+                x: 0,
+                y: 0,
+                z: 3,
+                blockName: 'concrete',
+                type: BlockType.Concrete,
+                status: {
+                  power: 0,
+                  source: false,
+                }
+            }
+          },{
+            blockdata: {
+                x: 0,
+                y: 0,
+                z: 4,
+                blockName: 'concrete',
+                type: BlockType.Concrete,
+                status: {
+                  power: 0,
+                  source: false,
+                }
+            }
+          }
+        ],[{
+          blockdata: {
+              x: 0,
+              y: 0,
+              z: 0,
+              blockName: 'concrete',
+              type: BlockType.Concrete,
+              status: {
+                power: 0,
+                source: false,
+              }
+          }
+        },{
+          blockdata: {
+              x: 0,
+              y: 0,
+              z: 1,
+              blockName: 'concrete',
+              type: BlockType.Concrete,
+              status: {
+                power: 0,
+                source: false,
+              }
+          }
+        },{
+          blockdata: {
+              x: 0,
+              y: 0,
+              z: 2,
+              blockName: 'concrete',
+              type: BlockType.Concrete,
+              status: {
+                power: 0,
+                source: false,
+              }
+          }
+        },{
+          blockdata: {
+              x: 0,
+              y: 0,
+              z: 3,
+              blockName: 'concrete',
+              type: BlockType.Concrete,
+              status: {
+                power: 0,
+                source: false,
+              }
+          }
+        },{
+          blockdata: {
+              x: 0,
+              y: 0,
+              z: 4,
+              blockName: 'concrete',
+              type: BlockType.Concrete,
+              status: {
+                power: 0,
+                source: false,
+              }
+          }
+        }
+      ],
       ], [], [], [], []
     ]
   }
@@ -58,7 +174,6 @@ const MapSchema = new Schema({
 
 
   const db = {
-    users,
     maps
   };
 

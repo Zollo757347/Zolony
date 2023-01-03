@@ -7,7 +7,7 @@ type Query {
 
 type Mutation {
   createAccount(name: String!, passWord: String!): UserInfo!
-  editProfile(name: String!, passWord: String!, avatar: String!): UserInfo! 
+  editProfile(name: String!, passWord: String!, newName: String, newPassWord: String, newAvatar: String): UserInfo! 
   initialMyMap(name: String!, passWord: String!, mapName: String!, xLen: Integer, yLen: Integer!, zLen: Integer!): Map!
   editMyMap(name: String!, passWord: String!, mapName: String!, map: Map!): Map!
 
