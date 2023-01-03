@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv-defaults';
 
 
-export default {
+export default { 
     connect: () => {
     dotenv.config();
     if (!process.env.MONGO_URL) {

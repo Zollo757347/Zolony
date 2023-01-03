@@ -6,27 +6,29 @@ const MapSchema = new Schema({
   xLen: {type: Number, required: [true, 'x is required.']},
   yLen: {type: Number, required: [true, 'y is required.']},
   zLen: {type: Number, required: [true, 'z is required.']},
+  belonging: { type: mongoose.Types.ObjectId, ref: 'User'},
   playground: [[[{
-    x: Number,
-    y: Number,
-    z: Number,
-    blockName: String,
-    type: Number,
+    x: { type: Number },
+    y: { type: Number },
+    z: { type: Number },
+    blockName: { type: String },
+    type: { type: Number },
+    breakable: { type: Boolean },
     states: {
-      power: Number,
-      source: Boolean,
+      power: { type: Number },
+      source: { type: Boolean },
 
-      delay: Number,
-      facing: String,
-      locked: Boolean,
-      powered: Boolean,
+      delay: { type: Number },
+      facing: { type: String },
+      locked: { type: Boolean },
+      powered: { type: Boolean },
 
-      lit: Boolean,
+      lit: { type: Boolean },
 
-      east: Number,
-      south: Number,
-      west: Number,
-      north: Number,
+      east: { type: Number },
+      south: { type: Number },
+      west: { type: Number },
+      north: { type: Number },
     }
   }]]],
 })
@@ -37,6 +39,8 @@ const UserSchema = new Schema({
   name: { type: String, required: [true, 'Name field is required.'] },
   password: { type: String, required: [true, 'password is required.']},
   avatar: { type: String, required: [true, 'picture url is required.']},
+  level: [{type: Boolean}],
+  bio: { type: String, required: [true, 'bio field is required.'] },
   maps: [{ type: mongoose.Types.ObjectId, ref: 'Map'}]
 })
 

@@ -2,6 +2,7 @@ import {UserModel, MapModel} from "../models.js";
 import db from "../db";
 
 const DEFAULT_AVATAR = 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'
+const DEFAULT_BIO = "newer"
 
 const initBlock = (x, y, z, type) => { //0 means air, 1 means concrete
   let block = {};
@@ -12,7 +13,8 @@ const initBlock = (x, y, z, type) => { //0 means air, 1 means concrete
       z: z,
       blockName: 'Air',
       type: 0,
-      status: {
+      breakable: false,
+      states: {
         power: 0,
         source: false,
       }
@@ -25,7 +27,8 @@ const initBlock = (x, y, z, type) => { //0 means air, 1 means concrete
       z: z,
       blockName: 'Concrete',
       type: 1,
-      status: {
+      breakable: false,
+      states: {
         power: 0,
         source: false,
       }
@@ -34,7 +37,7 @@ const initBlock = (x, y, z, type) => { //0 means air, 1 means concrete
   return block;
 }
 
-const initMap = (x, y, z, mapName) => {
+const initMap = (x, y, z, mapName, user) => {
   let newPlayground = [];
   let newBasePlayground = [];
   for(let i = 0; i < y; i++){
@@ -59,35 +62,48 @@ const initMap = (x, y, z, mapName) => {
     }
     newPlayground.push( newSubPlayground );
   }
-  
   const newMap = {
     xLen: x,
     yLen: y,
     zLen: z,
     mapName: mapName,
+    belonging: user._id,
     playground: newPlayground,
   }
+  console.log(newMap)
   return newMap;
 }
 
 const Mutation = {
   createAccount: async (parent, args) => {
+    let user = await UserModel.findOne({ name: args.data.name });
+    if(user){
+      console.log(`user ${args.data.name} already exist.`);
+      return null;
+    }
     const newUser = { 
       name: args.data.name,
       password: args.data.password,
       avatar: DEFAULT_AVATAR,
+      bio: DEFAULT_BIO,
       maps: [],
     }
-    console.log( newUser );
     await UserModel(newUser).save();
+    console.log(`user account ${args.data.name} created.`);
+    console.log( newUser );
     return newUser;
   },
 
   editProfile: async (parent, args) => {
     let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
-    if(args.data.newName) user.name = args.data.newName;
+    if(!user){
+      console.log(`user ${args.data.name} not found.`);
+      return null;
+    }
     if(args.data.newPassword) user.password = args.data.newPassword;
     if(args.data.newAvatar) user.avatar = args.data.newAvatar;
+    if(args.data.newBio) user.bio = args.data.newBio;
+    console.log(`new user ${args.data.name} info:`)
     console.log(user);
     await user.save();
     return user;
@@ -95,63 +111,71 @@ const Mutation = {
 
   initialMyMap: async (parent, args) => {
     let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
-    let newMap = initMap(args.data.xLen, args.data.yLen, args.data.zLen, args.data.mapName);
-    user.maps.push(MapModel(newMap));
-    console.log(user);
+    if(!user){
+      console.log(`user ${args.data.name} not found.`);
+      return null;
+    }
+    let sortMap = await MapModel.findOne({ mapName: args.data.mapName, belonging: user._id})
+    if(sortMap){
+      console.log(`map ${args.data.mapName} already existed.`);
+      return null;
+    }
+    let newMap = initMap(args.data.xLen, args.data.yLen, args.data.zLen, args.data.mapName, user);
+    let modelMap = MapModel(newMap);
+    user.maps.push(modelMap._id);
+    await modelMap.save();
     await user.save();
+    console.log(`map ${args.data.mapName} initialize succeed.`)
+    console.log(user);
+    console.log(modelMap);
+    
     return newMap;
   },
 
-  editMyMap: async (parent, {name, passWord, mapName, map}) => {
-    let user = await UserModel.findOne({ name, passWord});
-    for(let i=0; i < user.maps.length(); i++){
-      if(user.maps[i].mapName === mapName){
-        user.maps[i] = map;
-        console.log(map);
-        await user.save();
-        return map;
-      }
-    }
-  },
-
-  initialMap: async () => {
-    let existing = await MapModel.findOne();
-    if(existing){
-      console.log('mapmodel database is not clean, clean the database first.');
+  editMyMap: async (parent, args) => {
+    let user = await UserModel.findOne({ name: args.data.name, password: args.data.password });
+    if(!user){
+      console.log(`user ${args.data.name} not found.`);
       return false;
     }
-
-    for(let i=0; i < db.maps.length(); i++){
-      await MapModel.create(db.maps[i]);
+    let sortMap = await MapModel.findOne({ mapName: args.data.mapName, belonging: user._id})
+    if(!sortMap){
+      console.log(`user ${args.data.name} doesn't own map ${args.data.mapName}.`);
+      return null;
     }
-    console.log('import data from backend to database succeed.')
+    let addID = args.data.map;
+    addID.belonging = user._id;
+    await sortMap.replaceOne(addID);
+    console.log(`user ${args.data.name} save map ${args.data.mapName} succeed`);
+    console.log(sortMap);
+    return sortMap;
+  },
+
+  deleteUser: async (parent, args) => {
+    let user = await UserModel.findOne({name: args.data.name, password: args.data.password});
+    if(!user){
+      console.log(`user ${args.data.name} already deleted.`);
+      return false;
+    }
+    await MapModel.deleteMany({belonging: user._id});
+    await user.deleteOne();
+    console.log(`user ${args.data.name} delete succeed.`);
     return true;
   },
 
-  deleteUser: async (parent, {name, passWord}) => {
-    let msg = await UserModel.deleteOne( { name } );
-    if(msg.deletedCount === 0){
-      console.log('delete user fail.');
+  deleteUserMap: async (parent, args) => {
+    let user = await UserModel.findOne({name: args.data.name, password: args.data.password});
+    if(!user){
+      console.log(`user ${args.data.name} not found.`);
       return false;
     }
-    else{
-      console.log('delete user succeed.');
-      return true;
+    const count = await MapModel.deleteOne({mapName:args.data.mapName ,belonging: user._id });
+    if(count === 0){
+      console.log(`user ${args.data.name}'s map ${args.data.mapName} already daleted.`);
+      return false;
     }
-  },
-
-  deleteUserMap: async (parent, {name, passWord, mapName}) => {
-    let user = await UserModel.findOne({ name, passWord});
-    for(let i=0; i < user.maps.length(); i++){
-      if(user.maps[i].mapName === mapName){
-        user.maps[i].delete();
-        await user.save();
-        console.log(`map ${mapName} delete succeed.`);
-        return map;
-      }
-    }
-    console.log('no map to delete.');
-    return false;
+    console.log(`user ${args.data.name}'s map ${args.data.mapName} dalete succeed.`)
+    return true;
   },
 };
   

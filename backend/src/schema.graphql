@@ -1,40 +1,33 @@
 type Query {
-  checkMyMap(data: checkMyMapInput!): MapData
-  checkUser(data: checkUserInput!): UserInfo
-  checkMap(data: checkMapInput!): MapData
+  logIn(data: logInInput!): UserInfo
+  getMap(data: getMapInput!): MapData
 }
 
 type Mutation {
-  createAccount(data: checkUserInput!): UserInfo!
-  editProfile(data: editProfileInput!): UserInfo! 
-  initialMyMap(data: initialMyMapInput!): MapData!
-  editMyMap(data: editMyMapInput!): MapData!
-  initialMap: Boolean!
-  deleteUser(data: checkUserInput!): Boolean!
-  deleteUserMap(data: deleteUserMapInput!): Boolean!
+  createAccount(data: logInInput!): UserInfo
+  editProfile(data: editProfileInput!): UserInfo
+  initialMyMap(data: initialMyMapInput!): MapData
+  editMyMap(data: editMyMapInput!): MapData
+  deleteUser(data: logInInput!): Boolean
+  deleteUserMap(data: deleteUserMapInput!): Boolean
 }
 
-input checkMyMapInput {
-  name: String!
-  password: String! 
-  mapName: String!
-}
-
-input checkUserInput {
+input logInInput {
   name: String!
   password: String!
 }
 
-input checkMapInput {
+input getMapInput {
   mapName: String!
+  name: String!
 }
 
 input editProfileInput {
   name: String!
   password: String!
-  newName: String
   newPassword: String
   newAvatar: String
+  newBio: String
 }
 
 input initialMyMapInput {
@@ -64,7 +57,6 @@ input MapDataInput {
   yLen: Int!
   zLen: Int!
   mapName: String!
-  belong: String!
   playground: [[[BlockDataInput!]!]!]!
 }
 
@@ -73,6 +65,7 @@ input BlockDataInput {
   y: Int!
   z: Int!
   blockName: String!
+  breakable: Boolean!
   type: Int!
   states: BlockStatesInput!
 }
@@ -96,11 +89,14 @@ input BlockStatesInput {
 
 
 
+
+
 type UserInfo {
   name: String!
   password: String!
   maps: [MapData]!
   avatar: String!
+  bio: String!
 }
 
 
@@ -109,7 +105,7 @@ type MapData {
   yLen: Int!
   zLen: Int!
   mapName: String!
-  belong: String!
+  belonging: UserInfo!
   playground: [[[BlockData!]!]!]!
 }
 
@@ -118,6 +114,7 @@ type BlockData {
   y: Int!
   z: Int!
   blockName: String!
+  breakable: Boolean!
   type: Int!
   states: BlockStates!
 }
