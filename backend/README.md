@@ -1,9 +1,5 @@
 # backend
 
-## **undo**
-
-需更改一大堆function, 目前已debug成功的function: **createAccount** , **editProfile**
-
 ## **schema graphql**
 
 ### **各個function的作用：**
