@@ -6,6 +6,7 @@ import repeater from "./data/article/repeater.json"
 import { ScrollView } from 'react-native';
 import './css/Page.css'
 import Canvas from "./Canvas";
+import { UseHook } from "../hook/usehook"
 
 function getImage(name) {
     switch (name) {
@@ -43,9 +44,10 @@ function getImage(name) {
     }
 }
 
-const Page = ({pageNum, haveLoggedIn}) => {
+const Page = ({pageNum}) => {
     const pages = [index, signal, transmit, repeater];
     const contents = pages[(0 < pageNum && pageNum - 1 < pages.length ? pageNum - 1 : 0)]?.article;
+    const { isLogIn } = UseHook();
 
     const setContents = content => {
         if (typeof content === 'string') return content;
@@ -81,7 +83,7 @@ const Page = ({pageNum, haveLoggedIn}) => {
     return (
         <ScrollView>
             <article>
-                {pageNum === 0 && haveLoggedIn ? <Info/> : setContents(contents)}
+                {pageNum === 0 && isLogIn ? <Info/> : setContents(contents)}
             </article>
         </ScrollView>
     );

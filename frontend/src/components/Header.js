@@ -7,8 +7,6 @@ import Dropdown from './Dropdown';
 import './css/Header.css'
 
 const Header = ({
-    haveLoggedIn, 
-    setHaveLoggedIn, 
     collapsed, 
     toggleCollapsed, 
     toHomepage, 
@@ -29,8 +27,6 @@ const Header = ({
             <div id='header-right'>
                 <Dropdown 
                     setPageToInfo={setPageToInfo}
-                    haveLoggedIn={haveLoggedIn}
-                    setHaveLoggedIn={setHaveLoggedIn}
                     setOpenModal={setOpenModal}
                 />
             </div>

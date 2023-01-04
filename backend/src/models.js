@@ -7,6 +7,7 @@ const MapSchema = new Schema({
   yLen: {type: Number, required: [true, 'y is required.']},
   zLen: {type: Number, required: [true, 'z is required.']},
   belonging: { type: mongoose.Types.ObjectId, ref: 'User'},
+  availableBlocks: [Number],
   validation: {
     levers: [[ { type: Number } ]],
     lamps: [[ { type: Number } ]],

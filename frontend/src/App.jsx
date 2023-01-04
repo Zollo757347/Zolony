@@ -6,7 +6,6 @@ import SignModal from './components/SignModal'
 import './components/css/App.css';
 
 const App = () => {
-  const [haveLoggedIn, setHaveLoggedIn] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [pageNum, setPageNum] = useState(1);
   const [openModal, setOpenModal] = useState(0);
@@ -26,8 +25,6 @@ const App = () => {
   return (
     <div className="app">
       <Header 
-        haveLoggedIn={haveLoggedIn}
-        setHaveLoggedIn={setHaveLoggedIn}
         setOpenModal={setOpenModal}
         collapsed={collapsed}
         toggleCollapsed={toggleCollapsed}
@@ -36,9 +33,9 @@ const App = () => {
       />
       <div id='main-wrap'>
         <Sidebar collapsed={collapsed} setPageNum={setPageNum}/>
-        <Page pageNum={pageNum} haveLoggedIn={haveLoggedIn}/>
+        <Page pageNum={pageNum} />
       </div>
-      <SignModal open={openModal} setOpen={setOpenModal} setHaveLoggedIn={setHaveLoggedIn}/>
+      <SignModal open={openModal} setOpen={setOpenModal} />
     </div>
   );
 }
