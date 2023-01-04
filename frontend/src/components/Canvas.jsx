@@ -15,10 +15,10 @@ function preventDefault(e) {
   e.preventDefault();
 }
 
-const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen, storable }) => {
+const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen, storable, preloaddata: preLoadData }) => {
   const canvasRef = useRef(<canvas></canvas>);
   const spanRef = useRef(<span></span>);
-  const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen }));
+  const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData }));
 
   const [shiftDown, setShiftDown] = useState(false);
 
