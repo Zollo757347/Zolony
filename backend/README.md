@@ -14,7 +14,7 @@
     
 - **createAccount:** 輸入user的名字、密碼，得到user的一切資料，如果已有相同的使用者會回傳null。適用於user創建一個帳號時。
 
-- **editProfile:** 輸入user的名字、密碼、新名字、新密碼、新自介與新大頭貼網址時，得到user的一切資料。適用於user更改個人資料時。
+- **editProfile:** 輸入user的名字、密碼、新名字、新密碼、新自介、新通關數與新大頭貼網址時，得到user的一切資料。適用於user更改個人資料時。
 
 - **initialMyMap:** 輸入user的名字、密碼、地圖名稱與三軸限制，得到空的地圖。適用於user創建地圖時。
 
@@ -38,6 +38,7 @@
             password
             avatar
             bio
+            level
         }
     }
     mutation {
@@ -49,6 +50,7 @@
             password
             avatar
             bio
+            level
         }
     }
     mutation {
@@ -60,6 +62,7 @@
             password
             avatar
             bio
+            level
         }
     }
 ```
@@ -73,11 +76,13 @@
             password: "123",
             newPassword: "12"
             newBio: "modify",
+            newLevel: 3,
         }) {
             name
             password
             avatar
             bio
+            level
         }
     }
 ```
@@ -120,6 +125,7 @@
             password
             avatar
             bio
+            level
             maps {
                 xLen
                 yLen
@@ -146,6 +152,7 @@
             password
             avatar
             bio
+            level
         }
     }
 ```

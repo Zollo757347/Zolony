@@ -30,7 +30,7 @@ const MapSchema = new Schema({
   }]]],
 })
 
-const MapModel = mongoose.model('Map', MapSchema);
+const MapModel = mongoose.model('Map', MapSchema); 
 
 const UserSchema = new Schema({
   name: { type: String, required: [true, 'Name field is required.'] },

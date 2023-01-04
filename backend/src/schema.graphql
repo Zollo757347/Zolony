@@ -28,6 +28,7 @@ input editProfileInput {
   newPassword: String
   newAvatar: String
   newBio: String
+  newLevel: Int
 }
 
 input initialMyMapInput {
@@ -90,6 +91,7 @@ type UserInfo {
   maps: [MapData]!
   avatar: String!
   bio: String!
+  level: [Boolean]!
 }
 
 type MapData {

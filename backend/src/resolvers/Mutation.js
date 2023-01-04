@@ -79,6 +79,7 @@ const Mutation = {
       password: args.data.password,
       avatar: DEFAULT_AVATAR,
       bio: DEFAULT_BIO,
+      level: [],
       maps: [],
     }
     await UserModel(newUser).save();
@@ -87,7 +88,7 @@ const Mutation = {
     return newUser;
   },
 
-  editProfile: async (parent, args) => {
+  editProfile: async (parent, args) => { 
     let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
     if(!user){
       console.log(`user ${args.data.name} not found.`);
@@ -96,6 +97,7 @@ const Mutation = {
     if(args.data.newPassword) user.password = args.data.newPassword;
     if(args.data.newAvatar) user.avatar = args.data.newAvatar;
     if(args.data.newBio) user.bio = args.data.newBio;
+    if(args.data.newLevel) user.level[args.data.newLevel] = true;
     console.log(`new user ${args.data.name} info:`)
     console.log(user);
     await user.save();
