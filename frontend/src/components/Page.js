@@ -3,7 +3,6 @@ import index from "./data/article/index.json"
 import signal from "./data/article/signal.json"
 import transmit from "./data/article/transmit.json"
 import repeater from "./data/article/repeater.json"
-import { ScrollView } from 'react-native';
 import './css/Page.css'
 import Canvas from "./Canvas";
 
@@ -51,7 +50,7 @@ const Page = ({pageNum, haveLoggedIn}) => {
         if (typeof content === 'string') return content;
 
         return <>
-        {content.map(e => {
+        {content.map((e, i) => {
             const ctnt = setContents(e.content);
 
             const props = {};
@@ -65,13 +64,13 @@ const Page = ({pageNum, haveLoggedIn}) => {
             }
 
             if (['hr', 'br', 'img'].includes(e.tagName))
-                return <e.tagName {...props} />
+                return <e.tagName {...props} key={i} />
             
             if (e.tagName === 'Canvas')
-                return <Canvas {...props} />;
+                return <Canvas {...props} key={i} />;
 
             if (e.tagName !== 'text')
-                return <e.tagName {...props}>{ctnt}</e.tagName>
+                return <e.tagName {...props} key={i}>{ctnt}</e.tagName>
             else
                 return ctnt;
         })}
@@ -79,11 +78,9 @@ const Page = ({pageNum, haveLoggedIn}) => {
     }
 
     return (
-        <ScrollView>
-            <article>
-                {pageNum === 0 && haveLoggedIn ? <Info/> : setContents(contents)}
-            </article>
-        </ScrollView>
+        <article style={{ "height": "auto", "overflow-y": "auto" }}>
+            {pageNum === 0 && haveLoggedIn ? <Info/> : setContents(contents)}
+        </article>
     );
 }
 
