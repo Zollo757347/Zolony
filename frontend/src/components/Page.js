@@ -85,7 +85,7 @@ const Page = ({pageNum, setOpenModal}) => {
 
     return (
         <article style={{ "height": "auto", "overflow-y": "auto" }}>
-            {pageNum === 0 && haveLoggedIn ? <Info setOpenModal={setOpenModal}/> : setContents(contents)}
+            {pageNum === 0 && isLogIn ? <Info setOpenModal={setOpenModal}/> : setContents(contents)}
         </article>
     );
 }
