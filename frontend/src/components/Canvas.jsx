@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Playground } from "../classes/Playground";
 
 function getPosition(canvas, event) {
@@ -10,7 +9,11 @@ function getPosition(canvas, event) {
   };
 }
 
-const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
+function preventDefault(e) {
+  e.preventDefault();
+}
+
+const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen }) => {
   const canvasRef = useRef(<canvas></canvas>);
   const spanRef = useRef(<span></span>);
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen }));
@@ -32,6 +35,14 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
   function handleMouseMove(e) {
     const p = getPosition(canvasRef.current, e);
     playgroundRef.current.setCursor(p.x, p.y);
+  }
+
+  function handleMouseEnter() {
+    document.addEventListener('wheel', preventDefault, { passive: false });
+  }
+
+  function handleMouseLeave() {
+    document.removeEventListener('wheel', preventDefault, false);
   }
 
   function handleDrag(e) {
@@ -71,27 +82,29 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
   
   return (
     <>
-      <canvas
-        ref={canvasRef}
-        width={canvasWidth}
-        height={canvasHeight}
+        <canvas
+          ref={canvasRef}
+          width={canvasWidth}
+          height={canvasHeight}
 
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
-        onKeyUp={handleKeyUp}
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
 
-        onMouseMove={handleMouseMove}
-        
-        draggable={true}
-        onDrag={handleDrag}
-        onDragStart={handleDragStart}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          
+          draggable={true}
+          onDrag={handleDrag}
+          onDragStart={handleDragStart}
 
-        onClick={handleClick}
-        onContextMenu={handleContextMenu}
+          onClick={handleClick}
+          onContextMenu={handleContextMenu}
 
-        onWheelCapture={handleScroll}
-      />
-      <span ref={spanRef} style={{ display: 'none' }} />
+          onWheelCapture={handleScroll}
+        />
+        <span ref={spanRef} style={{ display: 'none' }} />
     </>
   )
 }
