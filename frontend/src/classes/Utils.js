@@ -37,32 +37,31 @@ class Utils extends null {
   /**
    * 
    */
-  static NewBlock(engine, type, x, y, z) {
+  static NewBlock(type) {
     switch (type) {
       case BlockType.AirBlock:
-        return new AirBlock({ x, y, z, engine });
+        return AirBlock;
         
       case BlockType.Concrete:
-        return new Concrete({ x, y, z, engine });
+        return Concrete;
         
       case BlockType.GlassBlock:
-        return new GlassBlock({ x, y, z, engine });
+        return GlassBlock;
         
       case BlockType.Lever:
-        return new Lever({ x, y, z, engine });
+        return Lever;
 
       case BlockType.RedstoneDust:
-        return new RedstoneDust({ x, y, z, engine });
+        return RedstoneDust;
         
       case BlockType.RedstoneLamp:
-        return new RedstoneLamp({ x, y, z, engine });
+        return RedstoneLamp;
         
       case BlockType.RedstoneRepeater:
-        return new RedstoneRepeater({ x, y, z, engine });
+        return RedstoneRepeater;
         
       case BlockType.RedstoneTorch:
-        return new RedstoneTorch({ x, y, z, engine });
-        
+        return RedstoneTorch;
 
       default: 
         throw new Error(`Unknown block type ${type}`);

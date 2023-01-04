@@ -32,10 +32,11 @@ class RedstoneTorch extends Block {
 
   /**
    * 設定紅石火把面向的方向
-   * @param {symbol} dir 
+   * @param {symbol} normDir 指定面的法向量方向
+   * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
    */
-  setFacing(dir) {
-    switch (dir) {
+  setFacing(normDir, facingDir) {
+    switch (normDir) {
       case Axis.PX: 
         this.states.facing = 'east';
         this._xAngle = 0;

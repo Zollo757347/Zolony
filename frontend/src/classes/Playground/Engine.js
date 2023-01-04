@@ -5,7 +5,7 @@ import { BlockType } from "./BlockType";
 
 
 /**
- * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], lampUnlit: [number, number, number] }} TaskParams
+ * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], lampUnlit: [number, number, number] }} TaskParams
  */
 
 /**
@@ -293,11 +293,12 @@ class Engine {
    * @param {number} y 
    * @param {number} z 
    * @param {boolean} shiftDown 
-   * @param {symbol} dir 指定面的法向量方向
+   * @param {symbol} normDir 指定面的法向量方向
+   * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
    * @param {new () => Block} B 在不觸發互動時所放下的方塊
    * @private
    */
-  _rightClick(x, y, z, shiftDown, dir, B) {
+  _rightClick(x, y, z, shiftDown, normDir, facingDir, B) {
     // 如果指向的方塊可以互動，就互動
     if (!shiftDown && this._pg[x][y][z].interactable) {
       this._pg[x][y][z].interact();
@@ -305,7 +306,7 @@ class Engine {
     }
 
     // 其他情形則直接把方塊放在指定位置上
-    let norm = Axis.VECTOR[dir];
+    let norm = Axis.VECTOR[normDir];
     x += norm.x;
     y += norm.y;
     z += norm.z;
@@ -317,7 +318,7 @@ class Engine {
     if (this._pg[x][y][z].type !== 0) return;
 
     const newBlock = new B({ x, y, z, engine: this });
-    newBlock.setFacing?.(dir);
+    newBlock.setFacing?.(normDir, facingDir);
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 
     this._pg[x][y][z] = newBlock;

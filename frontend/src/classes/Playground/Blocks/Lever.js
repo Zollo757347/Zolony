@@ -14,7 +14,7 @@ import { Block } from "./Block";
  */
 
 /**
- * 代表一個紅石燈
+ * 代表一個控制桿
  */
 class Lever extends Block {
   constructor(options) {
@@ -39,10 +39,11 @@ class Lever extends Block {
 
   /**
    * 設定控制桿面向的方向
-   * @param {symbol} dir 
+   * @param {symbol} normDir 指定面的法向量方向
+   * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
    */
-  setFacing(dir) {
-    switch (dir) {
+  setFacing(normDir, facingDir) {
+    switch (normDir) {
       case Axis.PX: 
         this.states.face = 'wall';
         this.states.facing = 'east';

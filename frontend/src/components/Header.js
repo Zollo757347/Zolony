@@ -7,8 +7,6 @@ import Dropdown from './Dropdown';
 import './css/Header.css'
 
 const Header = ({
-    haveLoggedIn, 
-    setHaveLoggedIn, 
     collapsed, 
     toggleCollapsed, 
     toHomepage, 
@@ -24,13 +22,11 @@ const Header = ({
                 >
                     {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 </Button>
-                <div id="wordmark" onClick={toHomepage}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>`
+                <div id="wordmark" onClick={toHomepage}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>
             </div>
             <div id='header-right'>
                 <Dropdown 
                     setPageToInfo={setPageToInfo}
-                    haveLoggedIn={haveLoggedIn}
-                    setHaveLoggedIn={setHaveLoggedIn}
                     setOpenModal={setOpenModal}
                 />
             </div>

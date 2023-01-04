@@ -58,6 +58,7 @@ input MapDataInput {
   yLen: Int!
   zLen: Int!
   mapName: String!
+  availableBlocks: [Int!]
   validation: ValidationDataInput
   playground: [[[BlockDataInput!]!]!]!
 }
@@ -108,6 +109,7 @@ type MapData {
   yLen: Int!
   zLen: Int!
   mapName: String!
+  availableBlocks: [Int!]
   belonging: UserInfo!
   validation: ValidationData
   playground: [[[BlockData]!]!]!

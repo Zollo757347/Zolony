@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const CREATE_ACCOUNT = gql`
     mutation createAccount(
-        $name: String!
+        $name: String!,
         $password: String!
     ) {
         createAccount(data:{
@@ -20,11 +20,11 @@ export const CREATE_ACCOUNT = gql`
 
 export const EDIT_PROFILE = gql`
     mutation editProfile(
-        $name: String!
-        $password: String!
-        $newPassword: String
-        $newAvatar: String
-        $newBio: String
+        $name: String!,
+        $password: String!,
+        $newPassword: String,
+        $newAvatar: String,
+        $newBio: String,
         $newLevel: Int
     ) {
         editProfile(data:{
@@ -46,12 +46,12 @@ export const EDIT_PROFILE = gql`
 
 export const INITIAL_MY_MAP = gql`
     mutation initialMyMap(
-        $name: String!
-        $password: String!
-        $mapName: String!
-        $xLen: Int!
-        $yLen: Int!
-        $zLen: Int!
+        $name: String!,
+        $password: String!,
+        $mapName: String!,
+        $xLen: Int!,
+        $yLen: Int!,
+        $zLen: Int!,
     ) {
         initialMyMap(data:{
             name: $name,
@@ -93,10 +93,10 @@ export const INITIAL_MY_MAP = gql`
 
 export const EDIT_MY_MAP = gql`
     mutation editMyMap(
-        $name: String!
-        $password: String!
-        $mapName: String!
-        $map: MapDataInput!
+        $name: String!,
+        $password: String!,
+        $mapName: String!,
+        $map: MapDataInput!,
     ) {
         editMyMap(data:{
             name: $name,
@@ -136,8 +136,8 @@ export const EDIT_MY_MAP = gql`
 
 export const DELETE_USER = gql`
     mutation deleteUser(
-        $name: String!
-        $password: String!
+        $name: String!,
+        $password: String!,
     ){
         deleteUser(data:{
             name: $name,
@@ -148,9 +148,9 @@ export const DELETE_USER = gql`
 
 export const DELETE_USER_MAP = gql`
     mutation deleteUserMap(
-        $name: String!
-        $password: String!
-        $mapName: String!
+        $name: String!,
+        $password: String!,
+        $mapName: String!,
     ) {
         deleteUserMap(data:{
             name: $name,
