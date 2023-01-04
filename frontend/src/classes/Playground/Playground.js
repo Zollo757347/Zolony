@@ -237,7 +237,7 @@ class Playground {
   render() {
     if (this.canvas) {
       const context = this.canvas.getContext('2d', { alpha: false });
-      context.fillStyle = 'white';
+      context.fillStyle = 'rgb(255, 246, 168)';
       context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
   
       const target = this._getTarget(this.cursorX, this.cursorY);
