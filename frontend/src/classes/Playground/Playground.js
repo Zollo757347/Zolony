@@ -41,19 +41,19 @@ class Playground {
      * 畫布中物體的 x 軸長度，單位為格
      * @type {number}
      */
-    this.xLen = preLoadData.xLen ?? xLen;
+    this.xLen = preLoadData?.xLen ?? xLen;
     
     /**
      * 畫布中物體的 y 軸長度，單位為格
      * @type {number}
      */
-    this.yLen = preLoadData.yLen ?? yLen;
+    this.yLen = preLoadData?.yLen ?? yLen;
     
     /**
      * 畫布中物體的 z 軸長度，單位為格
      * @type {number}
      */
-    this.zLen = preLoadData.zLen ?? zLen;
+    this.zLen = preLoadData?.zLen ?? zLen;
 
     /**
      * 畫布的中心點位置
