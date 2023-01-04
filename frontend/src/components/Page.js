@@ -3,6 +3,7 @@ import signal from "./data/article/signal.json"
 import transmit from "./data/article/transmit.json"
 import repeater from "./data/article/repeater.json"
 import { ScrollView } from 'react-native';
+import './css/Page.css'
 
 function getImage(name) {
     switch (name) {
@@ -42,7 +43,7 @@ function getImage(name) {
 
 const Page = ({pageNum}) => {
     const pages = [index, signal, transmit, repeater];
-    const contents = pages[pageNum - 1].article;
+    const contents = pages[(pageNum - 1 < pages.length ? pageNum - 1 : 0)].article;
 
     const setContents = content => {
         if(typeof content === 'string') return content;

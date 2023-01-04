@@ -7,6 +7,7 @@ import {
   PieChartOutlined,
 } from '@ant-design/icons';
 import { Menu } from 'antd';
+import './css/Sidebar.css'
 
 const Sidebar = ({collapsed, setPageNum}) => {
   function getItem(label, key, icon, children, type) {
@@ -20,17 +21,17 @@ const Sidebar = ({collapsed, setPageNum}) => {
   }
 
   const items = [
-    getItem('Index', '1'),
+    getItem('Zolony', '1'),
     getItem('Signal', '2'),
     getItem('Transmit', '3'),
     getItem('Repeater', '4'),
-    getItem('Navigation Two', 'sub2', <AppstoreOutlined />, [
-        getItem('Option 9', '9'),
-        getItem('Option 10', '10'),
+    getItem('Navigation Two', 'sub', <AppstoreOutlined />, [
+        getItem('Option 5', '5'),
+        getItem('Option 6', '6'),
     ]),
   ];
 
-  function handleSelect({ item, key, keyPath, selectedKeys, domEvent }) {
+  function handleSelect({ key }) {
     setPageNum(key);
   }
   
