@@ -2,16 +2,14 @@ import { Image } from 'antd';
 import { useEffect, useRef } from "react";
 import Canvas from "./Canvas";
 import Info from "./Info"
+import { UseHook } from "../hook/usehook"
 import './css/Page.css'
 
 import index from "./data/article/index.json"
 import signal from "./data/article/signal.json"
 import transmit from "./data/article/transmit.json"
 import repeater from "./data/article/repeater.json"
-import { Image } from 'antd';
 import './css/Page.css'
-import Canvas from "./Canvas";
-import { UseHook } from "../hook/usehook"
 
 import 'katex/dist/katex.min.css';
 import Latex from 'react-latex-next';
