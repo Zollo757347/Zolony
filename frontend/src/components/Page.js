@@ -4,6 +4,7 @@ import transmit from "./data/article/transmit.json"
 import repeater from "./data/article/repeater.json"
 import { ScrollView } from 'react-native';
 import './css/Page.css'
+import Canvas from "./Canvas";
 
 function getImage(name) {
     switch (name) {
@@ -46,7 +47,7 @@ const Page = ({pageNum}) => {
     const contents = pages[(pageNum - 1 < pages.length ? pageNum - 1 : 0)].article;
 
     const setContents = content => {
-        if(typeof content === 'string') return content;
+        if (typeof content === 'string') return content;
 
         return <>
         {content.map(e => {
@@ -64,8 +65,11 @@ const Page = ({pageNum}) => {
 
             if (['hr', 'br', 'img'].includes(e.tagName))
                 return <e.tagName {...props} />
+            
+            if (e.tagName === 'Canvas')
+                return <Canvas {...props} />;
 
-            if(e.tagName !== 'text')
+            if (e.tagName !== 'text')
                 return <e.tagName {...props}>{ctnt}</e.tagName>
             else
                 return ctnt;
