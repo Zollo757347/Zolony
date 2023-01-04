@@ -1,5 +1,7 @@
+import { Button } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Playground } from "../classes/Playground";
+import "./css/Canvas.css"
 
 function getPosition(canvas, event) {
   const p = canvas.getBoundingClientRect();
@@ -13,7 +15,7 @@ function preventDefault(e) {
   e.preventDefault();
 }
 
-const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen }) => {
+const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen, storable }) => {
   const canvasRef = useRef(<canvas></canvas>);
   const spanRef = useRef(<span></span>);
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen }));
@@ -81,7 +83,8 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
   }
   
   return (
-    <>
+    <div className="redstone-canvas">
+      <div className="redstone-canvas-top">
         <canvas
           ref={canvasRef}
           width={canvasWidth}
@@ -105,7 +108,15 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
           onWheelCapture={handleScroll}
         />
         <span ref={spanRef} style={{ display: 'none' }} />
-    </>
+      </div>
+      {
+        storable ? 
+          <div className="redstone-canvas-bottom">
+            <Button>儲存地圖</Button>
+          </div> :
+          <></>
+      }
+    </div>
   )
 }
 
