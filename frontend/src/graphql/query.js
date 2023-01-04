@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const LOG_IN = gql`
     query logIn(
-        $name: String!
+        $name: String!,
         $password: String!
     ) {
         logIn(data:{
@@ -48,7 +48,7 @@ export const LOG_IN = gql`
 
 export const GET_MAP =  gql`
     query getMap(
-        $mapName: String!
+        $mapName: String!,
         $name: String!
     ) {
         getMap(data:{
