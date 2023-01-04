@@ -4,8 +4,7 @@ import { Input, Modal } from 'antd';
 import './css/Modal.css'
 import { UseHook } from '../hook/usehook';
 
-
-
+const { TextArea } = Input;
 const Modal_Components = ({open, setOpen}) => {
     const [inputError, setInputError] = useState(0);
     const { LogIn, CreateAccount} = UseHook();
@@ -56,15 +55,32 @@ const Modal_Components = ({open, setOpen}) => {
         <Input.Password placeholder="確認你的密碼" onChange={e => {checkPasswordKey = e.target.value}}/>
     </>
 
+    const modifyModal = <>
+        {inputError ? <p>error message...</p> : <></>}
+        <Input.Password placeholder="輸入你的原密碼" onChange={e => console.log(e.target.value)}/>
+        <br/>
+        <br/>
+        <Input.Password placeholder="輸入你的新密碼" onChange={e => console.log(e.target.value)}/>
+        <br/>
+        <br/>
+        <Input.Password placeholder="確認你的密碼" onChange={e => console.log(e.target.value)}/>
+        <br/>
+        <br/>
+        <TextArea placeholder="輸入你的自介" rows={4} onChange={e => console.log(e.target.value)}/>
+        <br/>
+        <br/>
+        <Input.Password placeholder="確認你的密碼" onChange={e => {checkPasswordKey = e.target.value}}/>
+    </>
+
     return (
         <Modal
-            title={["登入","註冊"][open - 1]}
+            title={["登入","註冊", "修改密碼/編輯個人資料"][open - 1]}
             centered
             open={(open > 0)}
             onOk={async () => ClickOk()}
             onCancel={() => setOpen(false)}
         >
-            {open === 1? signInModal : signUpModal}
+            {[signInModal, signUpModal, modifyModal][open - 1]}
         </Modal>
     );
 };
