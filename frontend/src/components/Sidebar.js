@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  AppstoreOutlined,
-  ContainerOutlined,
-  DesktopOutlined,
-  MailOutlined,
-  PieChartOutlined,
-} from '@ant-design/icons';
+import { AppstoreOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import './css/Sidebar.css'
 
