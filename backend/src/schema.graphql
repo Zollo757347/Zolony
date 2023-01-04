@@ -58,7 +58,15 @@ input MapDataInput {
   yLen: Int!
   zLen: Int!
   mapName: String!
+  validation: ValidationDataInput
   playground: [[[BlockDataInput!]!]!]!
+}
+
+input ValidationDataInput {
+  levers: [[Int!]!]
+  lamps: [[Int!]!]
+  boolFuncs: [[[Int!]!]!]
+  timeout: Int!
 }
 
 input BlockDataInput {
@@ -100,19 +108,27 @@ type MapData {
   zLen: Int!
   mapName: String!
   belonging: UserInfo!
-  playground: [[[BlockData!]!]!]!
+  validation: ValidationData
+  playground: [[[BlockData]!]!]!
+}
+
+type ValidationData {
+  levers: [[Int!]!]
+  lamps: [[Int!]!]
+  boolFuncs: [[[Int!]!]!]
+  timeout: Int!
 }
 
 type BlockData {
-  blockName: String!
-  breakable: Boolean!
-  type: Int!
-  states: BlockStates!
+  blockName: String
+  breakable: Boolean
+  type: Int
+  states: BlockStates
 }
 
 type BlockStates {
-  power: Int!
-  source: Boolean!
+  power: Int
+  source: Boolean
 
   delay: Int
   facing: String
