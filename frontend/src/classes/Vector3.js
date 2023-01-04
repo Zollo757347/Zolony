@@ -3,8 +3,22 @@
  */
 class Vector3 {
   constructor(x, y, z) {
+    /**
+     * 此向量的 x 座標
+     * @type {number}
+     */
     this.x = x || 0;
+    
+    /**
+     * 此向量的 y 座標
+     * @type {number}
+     */
     this.y = y || 0;
+    
+    /**
+     * 此向量的 z 座標
+     * @type {number}
+     */
     this.z = z || 0;
   }
 

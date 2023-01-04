@@ -130,6 +130,15 @@
             "alt": "被鎖定的紅石中繼器",
             "width": "50%",
             "content": ""
+        }, 
+        {
+            "tagName": "Canvas", 
+            "canvaswidth": "500", 
+            "canvasheight": "500", 
+            "xlen": "5", 
+            "ylen": "5", 
+            "zlen": "5",
+            "content": ""
         }
     ]
 }

@@ -75,6 +75,7 @@ export const INITIAL_MY_MAP = gql`
 
                     delay
                     facing
+                    face
                     locked
                     powered
 
@@ -117,6 +118,7 @@ export const EDIT_MY_MAP = gql`
 
                     delay
                     facing
+                    face
                     locked
                     powered
 

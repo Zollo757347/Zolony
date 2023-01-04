@@ -29,6 +29,7 @@ export const LOG_IN = gql`
 
                         delay
                         facing
+                        face
                         locked
                         powered
 
@@ -69,6 +70,7 @@ export const GET_MAP =  gql`
 
                     delay
                     facing
+                    face
                     locked
                     powered
 

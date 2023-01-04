@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Canvas from './components/Canvas';
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Page from './components/Page'

@@ -1,6 +1,7 @@
 import Axis from "../Axis";
 import Vector3 from "../Vector3";
 import { Concrete, GlassBlock, RedstoneDust, RedstoneRepeater, RedstoneTorch } from "./Blocks";
+import { Lever } from "./Blocks/Lever";
 import { RedstoneLamp } from "./Blocks/RedstoneLamp";
 import { Engine } from "./Engine";
 
@@ -26,6 +27,7 @@ import { Engine } from "./Engine";
  * @typedef TargetBlock 目標方塊的資訊
  * @type {object}
  * @property {Vector3} cords 目標方塊在旋轉前的三維坐標
+ * @property {Vector3[]} points 目標平面在旋轉、投影後的三維座標
  * @property {symbol} dir 目標平面在旋轉前的法向量
  */
 
@@ -33,7 +35,7 @@ import { Engine } from "./Engine";
  * 3D 渲染的邏輯實作
  */
 class Playground {
-  constructor({ canvasWidth, canvasHeight, xLen, yLen, zLen, angles, canvas }) {
+  constructor({ canvasWidth, canvasHeight, xLen, yLen, zLen, angles, canvas, preLoadData }) {
     /**
      * 畫布中物體的 x 軸長度，單位為格
      * @type {number}
@@ -124,13 +126,13 @@ class Playground {
      * 快捷欄上的方塊
      * @type {(new () => import("./Blocks/Block").Block)[]}
      */
-    this.hotbar = [Concrete, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater];
+    this.hotbar = [Concrete, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, Lever];
 
     /**
      * 快捷欄上方塊的名稱
      * @type {string[]}
      */
-    this.hotbarName = ['Concrete', 'Glass Block', 'Redstone Lamp', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater'];
+    this.hotbarName = ['Concrete', 'Glass Block', 'Redstone Lamp', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater', 'Lever'];
 
     /**
      * 快捷欄當前方塊的駐標
@@ -142,7 +144,7 @@ class Playground {
      * 遊戲引擎
      * @type {Engine}
      */
-    this.engine = new Engine({ xLen, yLen, zLen });
+    this.engine = preLoadData ? Engine.spawn(preLoadData) : new Engine({ xLen, yLen, zLen });
 
     this.render = this.render.bind(this);
     requestAnimationFrame(this.render);
