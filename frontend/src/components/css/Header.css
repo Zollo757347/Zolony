@@ -1,0 +1,51 @@
+header {
+    background-color: rgb(245, 213, 37);
+    width: 100%;
+    z-index: 10000;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#header-left {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+#wordmark {
+    height: 70px;
+    margin-left: 15px;
+}
+  
+#wordmark img {
+    height: 70px;
+    cursor: pointer;
+}
+
+#header-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.ant-space-item {
+    color: brown;
+}
+
+.ant-dropdown-menu {
+    background-color: rgb(255, 246, 168) !important;
+}
+
+.ant-dropdown-menu-item {
+    background-color: rgb(255, 246, 168) !important;
+}
+
+.ant-dropdown-menu-item-active {
+    background-color: rgb(245, 213, 37) !important;
+}
+
+.ant-dropdown-menu-item-active.ant-dropdown-menu-item-danger  {
+    background-color: red !important;
+}
