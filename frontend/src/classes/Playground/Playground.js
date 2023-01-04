@@ -27,6 +27,7 @@ import { Engine } from "./Engine";
  * @typedef TargetBlock 目標方塊的資訊
  * @type {object}
  * @property {Vector3} cords 目標方塊在旋轉前的三維坐標
+ * @property {Vector3[]} points 目標平面在旋轉、投影後的三維座標
  * @property {symbol} dir 目標平面在旋轉前的法向量
  */
 
