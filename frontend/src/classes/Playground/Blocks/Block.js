@@ -22,8 +22,8 @@ import Utils from "../../Utils";
 /**
  * @typedef BlockData 方塊的數據
  * @type {object}
- * @property {string} blockName 方塊的名稱
  * @property {import("../BlockType")} type 方塊的種類
+ * @property {boolean} breakable 方塊可否被破壞
  * @property {BlockStates} states 方塊的狀態
  */
 
@@ -94,6 +94,12 @@ class Block {
     this.upperSupport = options.fullSupport ?? options.upperSupport ?? false;
 
     /**
+     * 此方塊是否提供底部支撐點
+     * @type {boolean}
+     */
+    this.bottomSupport = options.fullSupport ?? options.bottomSupport ?? false;
+
+    /**
      * 此方塊是否提供側面支撐點
      * @type {boolean}
      */
@@ -130,8 +136,9 @@ class Block {
    * @param {BlockData} data 
    * @returns {Block}
    */
-  static spawn(engine, { x, y, z, type, states }) {
+  static spawn(engine, { x, y, z, type, states, breakable }) {
     const block = Utils.NewBlock(engine, type, x, y, z);
+    block.breakable = breakable;
     block.states = states;
     return block;
   }
@@ -143,10 +150,10 @@ class Block {
    */
   static extract(block) {
     return {
-      blockName: block.blockName, 
       type: block.type, 
+      breakable: block.breakable, 
       states: block.states
-    }
+    };
   }
 
   /**

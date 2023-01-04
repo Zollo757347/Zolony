@@ -3,6 +3,7 @@ export * from "./Block";
 export * from "./Concrete";
 export * from "./FullBlock";
 export * from "./GlassBlock";
+export * from "./Lever";
 export * from "./RedstoneDust";
 export * from "./RedstoneLamp";
 export * from "./RedstoneRepeater";

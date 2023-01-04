@@ -19,7 +19,7 @@ import { BlockType } from "./BlockType";
  * @property {number} yLen y 軸的長度
  * @property {number} zLen z 軸的長度
  * @property {string} mapName 地圖的名稱
- * @property {import("./Blocks/Block").BlockData[][][]} playground 地圖上所有方塊的狀態
+ * @property {(import("./Blocks/Block").BlockData | null)[][][]} playground 地圖上所有方塊的狀態
  */
 
 class Engine {
@@ -78,7 +78,7 @@ class Engine {
     playground.forEach((layer, i) => {
       layer.forEach((line, j) => {
         line.forEach((block, k) => {
-          engine._pg[i][j][k] = Block.spawn(engine, { ...block, x: i, y: j, z: k });
+          engine._pg[i][j][k] = block ? Block.spawn(engine, { ...block, x: i, y: j, z: k }) : new AirBlock({ x: i, y: j, z: k, engine });
         })
       })
     });
@@ -98,10 +98,89 @@ class Engine {
       mapName: engine.mapName, 
       playground: engine._pg.map(layer => {
         return layer.map(line => {
-          return line.map(block => Block.extract(block));
+          return line.map(block => block.type === BlockType.AirBlock ? null : Block.extract(block));
         })
       })
     };
+  }
+
+  /**
+   * 檢查控制感與紅石燈的關係是否符合給定布林表達式的要求
+   * @param {Engine} engine 
+   * @param {[number, number, number][]} levers 目標控制桿的位置
+   * @param {[number, number, number][]} lamps 目標紅石燈的位置
+   * @param {number[][][]} boolFuncs 每個紅石燈對應的布林表達式
+   * @param {number} timeout 每次對控制桿操作後要等待多久才判斷輸出的正確性
+   * @returns {boolean}
+   */
+  static async validate(engine, { levers, lamps, boolFuncs, timeout }) {
+    const leverBlocks = [];
+    const lampBlocks = []
+
+    for (const [x, y, z] of levers) {
+      const block = engine.block(x, y, z);
+      if (block?.type !== BlockType.Lever) {
+        throw new Error(`Position [${x}, ${y}, ${z}] is ${block.blockName}, not Lever.`);
+      }
+      if (block.states.powered) {
+        block.interact();
+      }
+      leverBlocks.push(block);
+    }
+
+    for (const [x, y, z] of lamps) {
+      const block = engine.block(x, y, z);
+      if (block?.type !== BlockType.RedstoneLamp) {
+        throw new Error(`Position [${x}, ${y}, ${z}] is ${block.blockName}, not Redstone Lamp.`);
+      }
+      lampBlocks.push(block);
+    }
+
+    const count = Math.round(2 ** levers.length);
+    let output = true;
+    for (let i = 1; i <= count; i++) {
+      let temp = 1, c = 0;
+      while (temp <= i && c < levers.length) {
+        if (i % temp === 0) {
+          leverBlocks[c].interact();
+        }
+        temp <<= 1;
+        c++;
+      }
+
+      await Utils.Sleep(timeout);
+
+      const leverStatus = leverBlocks.map(b => b.states.powered);
+      const lampStatus = lampBlocks.map(b => b.states.lit);
+
+      for (let i = 0; i < lamps.length; i++) {
+        const func = boolFuncs[i];
+
+        let ans = false;
+        for (let j = 0; j < func.length; j++) {
+          if (func[j].every(ele => ele > 0 ? leverStatus[ele - 1] : !leverStatus[-ele - 1])) {
+            ans = true;
+            break;
+          }
+        }
+
+        if (ans !== lampStatus[i]) {
+          output = false;
+          break;
+        }
+      }
+
+      if (!output) {
+        break;
+      }
+    }
+
+    leverBlocks.forEach(b => {
+      if (b.states.powered) {
+        b.interact();
+      }
+    });
+    return output;
   }
 
   /**
@@ -188,7 +267,7 @@ class Engine {
       }
 
       this.taskQueue.push(...nextQueue);
-    }, 100);
+    }, 50);
   }
 
   /**
