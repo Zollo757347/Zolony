@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useEffect, useRef } from "react";
 import { Playground } from "../classes/Playground";
-import data from "../classes/Playground/data.json"
 
 function getPosition(canvas, event) {
   const p = canvas.getBoundingClientRect();
@@ -14,7 +13,7 @@ function getPosition(canvas, event) {
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen }) => {
   const canvasRef = useRef(<canvas></canvas>);
   const spanRef = useRef(<span></span>);
-  const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData: data.mapData }));
+  const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen }));
 
   const [shiftDown, setShiftDown] = useState(false);
 

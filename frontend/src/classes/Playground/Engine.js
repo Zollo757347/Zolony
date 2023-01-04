@@ -113,7 +113,7 @@ class Engine {
    * @param {number} timeout 每次對控制桿操作後要等待多久才判斷輸出的正確性
    * @returns {boolean}
    */
-  static async validate(engine, levers, lamps, boolFuncs, timeout) {
+  static async validate(engine, { levers, lamps, boolFuncs, timeout }) {
     const leverBlocks = [];
     const lampBlocks = []
 
@@ -140,7 +140,7 @@ class Engine {
     let output = true;
     for (let i = 1; i <= count; i++) {
       let temp = 1, c = 0;
-      while (temp < i) {
+      while (temp <= i && c < levers.length) {
         if (i % temp === 0) {
           leverBlocks[c].interact();
         }
@@ -267,7 +267,7 @@ class Engine {
       }
 
       this.taskQueue.push(...nextQueue);
-    }, 100);
+    }, 50);
   }
 
   /**
