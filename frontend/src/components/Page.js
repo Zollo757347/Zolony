@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import Info from "./Info"
 import index from "./data/article/index.json"
 import signal from "./data/article/signal.json"
@@ -44,8 +45,14 @@ function getImage(name) {
 }
 
 const Page = ({ pageNum, haveLoggedIn, setOpenModal }) => {
+    const h1Ref = useRef(<h1></h1>);
+
     const pages = [index, signal, transmit, repeater];
     const contents = pages[(0 < pageNum && pageNum - 1 < pages.length ? pageNum - 1 : 0)]?.article;
+
+    useEffect(() => {
+        h1Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, [pageNum]);
 
     const setContents = content => {
         if (typeof content === 'string') return content;
@@ -66,6 +73,9 @@ const Page = ({ pageNum, haveLoggedIn, setOpenModal }) => {
 
             if (['hr', 'br'].includes(e.tagName))
                 return <e.tagName {...props} key={i} />
+
+            if (e.tagName === 'h1')
+                return <h1 {...props} ref={h1Ref}>{ctnt}</h1>
             
             if(e.tagName === 'img')
                 return <Image {...props}/>
