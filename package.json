@@ -2,9 +2,12 @@
   "name": "zolony",
   "version": "0.0.0",
   "main": "index.js",
-  "license": "MIT", 
+  "license": "MIT",
   "scripts": {
-    "start": "cd frontend & yarn start", 
+    "start": "cd frontend & yarn start",
     "server": "cd backend & yarn start"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.7.3"
   }
 }
