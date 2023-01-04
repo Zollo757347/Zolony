@@ -36,12 +36,12 @@ const Dropdown_Components = ({ setPageToInfo, haveLoggedIn, setHaveLoggedIn, set
             trigger={['click']}
             id="dropdown"
         >
-            <a onClick={(e) => e.preventDefault()}>
+            <span onClick={(e) => e.preventDefault()}>
                 <Space>
                     <b>Account</b>
                     <DownOutlined />
                 </Space>
-            </a>
+            </span>
         </Dropdown>
     )
 }

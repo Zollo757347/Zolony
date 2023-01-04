@@ -24,7 +24,7 @@ const Header = ({
                 >
                     {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 </Button>
-                <div id="wordmark" onClick={toHomepage}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>`
+                <div id="wordmark" onClick={toHomepage}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>
             </div>
             <div id='header-right'>
                 <Dropdown 

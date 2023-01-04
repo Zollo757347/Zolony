@@ -1,6 +1,7 @@
 import Axis from "../Axis";
+import Utils from "../Utils";
 import Vector3 from "../Vector3";
-import { Concrete, GlassBlock, RedstoneDust, RedstoneRepeater, RedstoneTorch } from "./Blocks";
+import { AirBlock, Concrete, GlassBlock, RedstoneDust, RedstoneRepeater, RedstoneTorch } from "./Blocks";
 import { Lever } from "./Blocks/Lever";
 import { RedstoneLamp } from "./Blocks/RedstoneLamp";
 import { Engine } from "./Engine";
@@ -28,7 +29,8 @@ import { Engine } from "./Engine";
  * @type {object}
  * @property {Vector3} cords 目標方塊在旋轉前的三維坐標
  * @property {Vector3[]} points 目標平面在旋轉、投影後的三維座標
- * @property {symbol} dir 目標平面在旋轉前的法向量
+ * @property {symbol} normDir 目標平面在旋轉前的法向量
+ * @property {symbol} facingDir 與觀察者視角最接近的軸向量
  */
 
 /**
@@ -40,25 +42,25 @@ class Playground {
      * 畫布中物體的 x 軸長度，單位為格
      * @type {number}
      */
-    this.xLen = xLen;
+    this.xLen = preLoadData?.xLen ?? xLen;
     
     /**
      * 畫布中物體的 y 軸長度，單位為格
      * @type {number}
      */
-    this.yLen = yLen;
+    this.yLen = preLoadData?.yLen ?? yLen;
     
     /**
      * 畫布中物體的 z 軸長度，單位為格
      * @type {number}
      */
-    this.zLen = zLen;
+    this.zLen = preLoadData?.zLen ?? zLen;
 
     /**
      * 畫布的中心點位置
      * @type {Vector3}
      */
-    this.center = new Vector3(xLen / 2, yLen / 2, zLen / 2);
+    this.center = new Vector3(this.xLen / 2, this.yLen / 2, this.zLen / 2);
 
     /**
      * 物體的旋轉角度
@@ -102,7 +104,7 @@ class Playground {
      * 物體的縮放倍率
      * @type {number}
      */
-    this.stretchMult = Math.min(canvasWidth, canvasHeight) / Math.max(xLen, yLen, zLen);
+    this.stretchMult = Math.min(canvasWidth, canvasHeight) / Math.max(this.xLen, this.yLen, this.zLen);
 
     /**
      * 投影面的 z 座標
@@ -126,13 +128,13 @@ class Playground {
      * 快捷欄上的方塊
      * @type {(new () => import("./Blocks/Block").Block)[]}
      */
-    this.hotbar = [Concrete, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, Lever];
+    this.hotbar = preLoadData?.availableBlocks?.map(t => Utils.NewBlock(t)) ?? [Concrete, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, Lever];
 
     /**
      * 快捷欄上方塊的名稱
      * @type {string[]}
      */
-    this.hotbarName = ['Concrete', 'Glass Block', 'Redstone Lamp', 'Redstone Dust', 'Redstone Torch', 'Redstone Repeater', 'Lever'];
+    this.hotbarName = this.hotbar.map(B => new B().blockName);
 
     /**
      * 快捷欄當前方塊的駐標
@@ -196,6 +198,8 @@ class Playground {
    */
   scrollHotbar(deltaY) {
     this._prevRefWheel += deltaY;
+
+    if (!this.hotbar.length) return;
     this.hotbarTarget = (Math.trunc(this._prevRefWheel / 100) % this.hotbar.length + this.hotbar.length) % this.hotbar.length;
   }
 
@@ -221,12 +225,13 @@ class Playground {
    * @param {boolean} shiftDown 是否有按下 Shift 鍵
    */
   rightClick(canvasX, canvasY, shiftDown) {
+
     const target = this._getTarget(canvasX, canvasY);
     if (!target) return;
 
-    let { cords: { x, y, z }, dir } = target;
+    let { cords: { x, y, z }, normDir, pointingDir } = target;
     
-    this.engine.addTask('rightClick', [x, y, z, shiftDown, dir, this.hotbar[this.hotbarTarget]]);
+    this.engine.addTask('rightClick', [x, y, z, shiftDown, normDir, pointingDir, this.hotbar[this.hotbarTarget] ?? AirBlock]);
   }
 
 
@@ -275,7 +280,9 @@ class Playground {
   
       context.fillStyle = 'black';
       context.font = '30px Arias';
-      context.fillText(this.hotbarName[this.hotbarTarget], 20, 50);
+      if (this.hotbar.length) {
+        context.fillText(this.hotbarName[this.hotbarTarget], 20, 50);
+      }
     }
 
     requestAnimationFrame(this.render);
@@ -312,10 +319,24 @@ class Playground {
       }
 
       maxZ = min;
-      target = { cords, dir, points };
+      target = { cords, normDir: dir, points };
     });
 
-    return target;
+    const newAxes = Axis.VectorMap(v => v
+      .rotateY(this.angles.theta)
+      .rotateX(this.angles.phi)
+    );
+    let pointingDir = null, dot = -Infinity;
+    [Axis.PX, Axis.NX, Axis.PZ, Axis.NZ].forEach(dir => {
+      const newDot = newAxes[dir].dot(new Vector3(0, 0, -1));
+      if (newDot > dot) {
+        pointingDir = dir;
+        dot = newDot;
+      }
+    });
+
+    if (!target) return null;
+    return { pointingDir, ...target };
   }
 
   /**

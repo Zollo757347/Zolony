@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UserOutlined, RightOutlined } from '@ant-design/icons';
 import { Input, Modal } from 'antd';
 import './css/Modal.css'
