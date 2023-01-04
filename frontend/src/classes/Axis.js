@@ -56,7 +56,7 @@ class Axis extends null {
   /**
    * 對每個單位軸向量呼叫 cb 後，回傳一個新的物件，運作方式與 Array.map() 相似
    * @template T
-   * @param {(Vector3) => T} cb 要執行的函式
+   * @param {(v: Vector3) => T} cb 要執行的函式
    * @returns {{ [key: symbol]: T }}
    */
   static VectorMap(cb) {

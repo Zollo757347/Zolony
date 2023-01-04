@@ -29,7 +29,8 @@ import { Engine } from "./Engine";
  * @type {object}
  * @property {Vector3} cords 目標方塊在旋轉前的三維坐標
  * @property {Vector3[]} points 目標平面在旋轉、投影後的三維座標
- * @property {symbol} dir 目標平面在旋轉前的法向量
+ * @property {symbol} normDir 目標平面在旋轉前的法向量
+ * @property {symbol} facingDir 與觀察者視角最接近的軸向量
  */
 
 /**
@@ -228,9 +229,9 @@ class Playground {
     const target = this._getTarget(canvasX, canvasY);
     if (!target) return;
 
-    let { cords: { x, y, z }, dir } = target;
+    let { cords: { x, y, z }, normDir, pointingDir } = target;
     
-    this.engine.addTask('rightClick', [x, y, z, shiftDown, dir, this.hotbar[this.hotbarTarget] ?? AirBlock]);
+    this.engine.addTask('rightClick', [x, y, z, shiftDown, normDir, pointingDir, this.hotbar[this.hotbarTarget] ?? AirBlock]);
   }
 
 
@@ -318,10 +319,24 @@ class Playground {
       }
 
       maxZ = min;
-      target = { cords, dir, points };
+      target = { cords, normDir: dir, points };
     });
 
-    return target;
+    const newAxes = Axis.VectorMap(v => v
+      .rotateY(this.angles.theta)
+      .rotateX(this.angles.phi)
+    );
+    let pointingDir = null, dot = -Infinity;
+    [Axis.PX, Axis.NX, Axis.PZ, Axis.NZ].forEach(dir => {
+      const newDot = newAxes[dir].dot(new Vector3(0, 0, -1));
+      if (newDot > dot) {
+        pointingDir = dir;
+        dot = newDot;
+      }
+    });
+
+    if (!target) return null;
+    return { pointingDir, ...target };
   }
 
   /**

@@ -34,22 +34,27 @@ class RedstoneRepeater extends Block {
     return 0;
   }
 
-  setFacing(dir) {
-    switch (dir) {
+  /**
+   * 設定中繼器面向的方向
+   * @param {symbol} normDir 指定面的法向量方向
+   * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
+   */
+  setFacing(normDir, facingDir) {
+    switch (facingDir) {
       case Axis.PX:
-        this.states.facing = 'west';
-        return;
-
-      case Axis.NX:
         this.states.facing = 'east';
         return;
 
+      case Axis.NX:
+        this.states.facing = 'west';
+        return;
+
       case Axis.PZ:
-        this.states.facing = 'north';
+        this.states.facing = 'south';
         return;
 
       case Axis.NZ:
-        this.states.facing = 'south';
+        this.states.facing = 'north';
         return;
 
       default:
