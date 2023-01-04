@@ -29,23 +29,3 @@ header {
     justify-content: center;
     align-items: center;
 }
-
-.ant-space-item {
-    color: brown;
-}
-
-.ant-dropdown-menu {
-    background-color: rgb(255, 246, 168) !important;
-}
-
-.ant-dropdown-menu-item {
-    background-color: rgb(255, 246, 168) !important;
-}
-
-.ant-dropdown-menu-item-active {
-    background-color: rgb(245, 213, 37) !important;
-}
-
-.ant-dropdown-menu-item-active.ant-dropdown-menu-item-danger  {
-    background-color: red !important;
-}

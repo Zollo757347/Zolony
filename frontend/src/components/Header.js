@@ -6,7 +6,15 @@ import { Button } from 'antd';
 import Dropdown from './Dropdown';
 import './css/Header.css'
 
-const Header = ({haveLoggedIn, setOpenModal, collapsed, toggleCollapsed, homepageClick}) => {
+const Header = ({
+    haveLoggedIn, 
+    setHaveLoggedIn, 
+    collapsed, 
+    toggleCollapsed, 
+    toHomepage, 
+    setPageToInfo,
+    setOpenModal}) => 
+{
     return (
         <header>
             <div id='header-left'>
@@ -16,10 +24,15 @@ const Header = ({haveLoggedIn, setOpenModal, collapsed, toggleCollapsed, homepag
                 >
                     {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 </Button>
-                <div id="wordmark" onClick={homepageClick}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>`
+                <div id="wordmark" onClick={toHomepage}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>`
             </div>
             <div id='header-right'>
-                <Dropdown haveLoggedIn={haveLoggedIn} setOpenModal={setOpenModal} />
+                <Dropdown 
+                    setPageToInfo={setPageToInfo}
+                    haveLoggedIn={haveLoggedIn}
+                    setHaveLoggedIn={setHaveLoggedIn}
+                    setOpenModal={setOpenModal}
+                />
             </div>
         </header>
     );

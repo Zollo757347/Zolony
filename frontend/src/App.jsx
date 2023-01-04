@@ -3,7 +3,7 @@ import Canvas from './components/Canvas';
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Page from './components/Page'
-import Modal from './components/Modal'
+import SignModal from './components/SignModal'
 import './components/css/App.css';
 
 const App = () => {
@@ -16,24 +16,30 @@ const App = () => {
     setCollapsed(!collapsed);
   };
 
-  const homepageClick = () => {
+  const toHomepage = () => {
     setPageNum(1);
+  }
+
+  const setPageToInfo = () => {
+    setPageNum(0);
   }
 
   return (
     <div className="app">
       <Header 
         haveLoggedIn={haveLoggedIn}
+        setHaveLoggedIn={setHaveLoggedIn}
         setOpenModal={setOpenModal}
         collapsed={collapsed}
         toggleCollapsed={toggleCollapsed}
-        homepageClick={homepageClick}
+        toHomepage={toHomepage}
+        setPageToInfo={setPageToInfo}
       />
       <div id='main-wrap'>
         <Sidebar collapsed={collapsed} setPageNum={setPageNum}/>
-        <Page pageNum={pageNum}/>
+        <Page pageNum={pageNum} haveLoggedIn={haveLoggedIn}/>
       </div>
-      <Modal open={openModal} setOpen={setOpenModal}/>
+      <SignModal open={openModal} setOpen={setOpenModal} setHaveLoggedIn={setHaveLoggedIn}/>
     </div>
   );
 }

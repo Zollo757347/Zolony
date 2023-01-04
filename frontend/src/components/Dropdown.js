@@ -1,17 +1,18 @@
 import React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
+import './css/Dropdown.css'
 
-const dropdown = ({ haveLoggedIn, setOpenModal }) => {
+const Dropdown_Components = ({ setPageToInfo, haveLoggedIn, setHaveLoggedIn, setOpenModal}) => {
     const items = [
         {
             key: '1',
-            label: 'Your profile',
+            label: <div onClick={setPageToInfo}>Your Profile</div>,
             disabled: (!haveLoggedIn)
         },
         {
             key: '2',
-            label: <div onClick={() => setOpenModal(1)}>Sign in</div>,
+            label: <div onClick={() => setOpenModal(1)}>Log in</div>,
             disabled: (haveLoggedIn)
         },
         {
@@ -22,7 +23,7 @@ const dropdown = ({ haveLoggedIn, setOpenModal }) => {
         {
             key: '4',
             danger: true,
-            label: 'Sign out',
+            label: <div onClick={() => setHaveLoggedIn(false) }>Log out</div>,
             disabled: (!haveLoggedIn)
         }
     ];
@@ -45,8 +46,4 @@ const dropdown = ({ haveLoggedIn, setOpenModal }) => {
     )
 }
 
-export default dropdown;
-
-/*<Button type="primary" onClick={() => setOpen(true)}>
-        Open Modal of 1000px width
-      </Button> */
+export default Dropdown_Components;

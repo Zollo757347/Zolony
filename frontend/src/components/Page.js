@@ -1,3 +1,4 @@
+import Info from "./Info"
 import index from "./data/article/index.json"
 import signal from "./data/article/signal.json"
 import transmit from "./data/article/transmit.json"
@@ -41,9 +42,9 @@ function getImage(name) {
     }
 }
 
-const Page = ({pageNum}) => {
+const Page = ({pageNum, haveLoggedIn}) => {
     const pages = [index, signal, transmit, repeater];
-    const contents = pages[(pageNum - 1 < pages.length ? pageNum - 1 : 0)].article;
+    const contents = pages[(0 < pageNum && pageNum - 1 < pages.length ? pageNum - 1 : 0)]?.article;
 
     const setContents = content => {
         if(typeof content === 'string') return content;
@@ -76,7 +77,7 @@ const Page = ({pageNum}) => {
     return (
         <ScrollView>
             <article>
-                {setContents(contents)}
+                {pageNum === 0 && haveLoggedIn ? <Info/> : setContents(contents)}
             </article>
         </ScrollView>
     );
