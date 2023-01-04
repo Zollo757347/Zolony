@@ -137,7 +137,7 @@ class Block {
    * @returns {Block}
    */
   static spawn(engine, { x, y, z, type, states, breakable }) {
-    const block = Utils.NewBlock(engine, type, x, y, z);
+    const block = new (Utils.NewBlock(type))({ x, y, z, engine });
     block.breakable = breakable;
     block.states = states;
     return block;
