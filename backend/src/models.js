@@ -8,9 +8,6 @@ const MapSchema = new Schema({
   zLen: {type: Number, required: [true, 'z is required.']},
   belonging: { type: mongoose.Types.ObjectId, ref: 'User'},
   playground: [[[{
-    x: { type: Number },
-    y: { type: Number },
-    z: { type: Number },
     blockName: { type: String },
     type: { type: Number },
     breakable: { type: Boolean },

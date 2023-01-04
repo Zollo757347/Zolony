@@ -78,7 +78,7 @@ class Engine {
     playground.forEach((layer, i) => {
       layer.forEach((line, j) => {
         line.forEach((block, k) => {
-          engine._pg[i][j][k] = Block.spawn(engine, block);
+          engine._pg[i][j][k] = Block.spawn(engine, { ...block, x: i, y: j, z: k });
         })
       })
     });

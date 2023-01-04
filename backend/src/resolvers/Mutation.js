@@ -1,16 +1,12 @@
 import {UserModel, MapModel} from "../models.js";
-import db from "../db";
 
 const DEFAULT_AVATAR = 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'
 const DEFAULT_BIO = "newer"
 
-const initBlock = (x, y, z, type) => { //0 means air, 1 means concrete
+const initBlock = (type) => { //0 means air, 1 means concrete
   let block = {};
   if(type === 0){
     block = {
-      x: x,
-      y: y,
-      z: z,
       blockName: 'Air',
       type: 0,
       breakable: false,
@@ -22,9 +18,6 @@ const initBlock = (x, y, z, type) => { //0 means air, 1 means concrete
   }
   else if(type === 1){
     block = {
-      x: x,
-      y: y,
-      z: z,
       blockName: 'Concrete',
       type: 1,
       breakable: false,
@@ -43,7 +36,7 @@ const initMap = (x, y, z, mapName, user) => {
   for(let i = 0; i < y; i++){
     let newSubPlayground = [];
     for(let j = 0; j < z; j++){
-      const newBlock = initBlock(0, i, j, 1);
+      const newBlock = initBlock(1);
       newSubPlayground.push( newBlock );
     }
     newBasePlayground.push( newSubPlayground );
@@ -55,7 +48,7 @@ const initMap = (x, y, z, mapName, user) => {
     for(let j = 0; j < y; j++){
       let newSubSubPlayground = [];
       for(let k = 0; k < z; k++){
-        const newBlock = initBlock(i, j, k, 0);
+        const newBlock = initBlock(0);
         newSubSubPlayground.push( newBlock );
       }
       newSubPlayground.push( newSubSubPlayground );

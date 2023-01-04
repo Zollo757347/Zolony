@@ -96,9 +96,6 @@
         }) {
             mapName
             playground {
-                x
-                y
-                z
                 blockName
                 type
                 breakable
@@ -129,9 +126,6 @@
                 zLen
                 mapName
                 playground {
-                    x
-                    y
-                    z
                     blockName
                     type
                     breakable
@@ -169,9 +163,6 @@
             yLen
             zLen
             playground {
-                x
-                y
-                z
                 blockName
                 type
                 breakable
@@ -222,9 +213,6 @@
                 mapName: "yoheMap10",
                 playground: [[[
                     {
-                        x: 0,
-                        y: 0,
-                        z: 0,
                         blockName: "Concrete",
                         type: 1,
                         breakable: false,
@@ -234,9 +222,6 @@
                         }
                     },
                     {
-                        x: 0,
-                        y: 0,
-                        z: 1,
                         blockName: "Concrete",
                         type: 1,
                         breakable: false
@@ -253,9 +238,6 @@
             yLen
             zLen
             playground {
-                x
-                y
-                z
                 blockName
                 type
                 breakable

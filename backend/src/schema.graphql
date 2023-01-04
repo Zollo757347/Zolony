@@ -61,9 +61,6 @@ input MapDataInput {
 }
 
 input BlockDataInput {
-  x: Int!
-  y: Int!
-  z: Int!
   blockName: String!
   breakable: Boolean!
   type: Int!
@@ -87,10 +84,6 @@ input BlockStatesInput {
   north: Int
 }
 
-
-
-
-
 type UserInfo {
   name: String!
   password: String!
@@ -98,7 +91,6 @@ type UserInfo {
   avatar: String!
   bio: String!
 }
-
 
 type MapData {
   xLen: Int!
@@ -110,9 +102,6 @@ type MapData {
 }
 
 type BlockData {
-  x: Int!
-  y: Int!
-  z: Int!
   blockName: String!
   breakable: Boolean!
   type: Int!
@@ -135,16 +124,3 @@ type BlockStates {
   west: Int
   north: Int
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
