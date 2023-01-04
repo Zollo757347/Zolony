@@ -94,6 +94,12 @@ class Block {
     this.upperSupport = options.fullSupport ?? options.upperSupport ?? false;
 
     /**
+     * 此方塊是否提供底部支撐點
+     * @type {boolean}
+     */
+    this.bottomSupport = options.fullSupport ?? options.bottomSupport ?? false;
+
+    /**
      * 此方塊是否提供側面支撐點
      * @type {boolean}
      */
