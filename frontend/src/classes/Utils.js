@@ -1,4 +1,4 @@
-import { AirBlock, Concrete, GlassBlock, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "./Playground/Blocks";
+import { AirBlock, Concrete, GlassBlock, Lever, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "./Playground/Blocks";
 import { BlockType } from "./Playground/BlockType";
 
 class Utils extends null {
@@ -26,6 +26,14 @@ class Utils extends null {
     return true;
   }
 
+  static Sleep(ms, value) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(value);
+      }, ms);
+    });
+  }
+
   /**
    * 
    */
@@ -40,6 +48,9 @@ class Utils extends null {
       case BlockType.GlassBlock:
         return new GlassBlock({ x, y, z, engine });
         
+      case BlockType.Lever:
+        return new Lever({ x, y, z, engine });
+
       case BlockType.RedstoneDust:
         return new RedstoneDust({ x, y, z, engine });
         
@@ -52,6 +63,7 @@ class Utils extends null {
       case BlockType.RedstoneTorch:
         return new RedstoneTorch({ x, y, z, engine });
         
+
       default: 
         throw new Error(`Unknown block type ${type}`);
     }

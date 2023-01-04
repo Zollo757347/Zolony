@@ -35,7 +35,7 @@ import { Engine } from "./Engine";
  * 3D 渲染的邏輯實作
  */
 class Playground {
-  constructor({ canvasWidth, canvasHeight, xLen, yLen, zLen, angles, canvas }) {
+  constructor({ canvasWidth, canvasHeight, xLen, yLen, zLen, angles, canvas, preLoadData }) {
     /**
      * 畫布中物體的 x 軸長度，單位為格
      * @type {number}
@@ -144,7 +144,7 @@ class Playground {
      * 遊戲引擎
      * @type {Engine}
      */
-    this.engine = new Engine({ xLen, yLen, zLen });
+    this.engine = preLoadData ? Engine.spawn(preLoadData) : new Engine({ xLen, yLen, zLen });
 
     this.render = this.render.bind(this);
     requestAnimationFrame(this.render);
