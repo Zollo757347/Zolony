@@ -4,7 +4,7 @@ import { Dropdown, Space } from 'antd';
 import './css/Dropdown.css'
 import { UseHook } from '../hook/usehook';
 
-const Dropdown_Components = ({ setPageToInfo, haveLoggedIn, setHaveLoggedIn, setOpenModal}) => {
+const Dropdown_Components = ({ setPageToInfo, setOpenModal}) => {
     const { isLogIn , LogOut} = UseHook();
     const items = [
         {

@@ -8,7 +8,7 @@ import wsConnect from './wsConnect'
 import { v4 as uuidv4 } from 'uuid';
 */
 import server from './server';
-import mongo from './mongo';
+import mongo from './mongo'; 
 
 
 mongo.connect();

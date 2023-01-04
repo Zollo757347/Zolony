@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Page from './components/Page'
-import SignModal from './components/SignModal'
+import Modal from './components/Modal'
 import './components/css/App.css';
 
 const App = () => {
@@ -35,7 +35,7 @@ const App = () => {
         <Sidebar collapsed={collapsed} setPageNum={setPageNum}/>
         <Page pageNum={pageNum} />
       </div>
-      <SignModal open={openModal} setOpen={setOpenModal} />
+      <Modal open={openModal} setOpen={setOpenModal} />
     </div>
   );
 }
