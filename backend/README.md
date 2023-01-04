@@ -99,7 +99,16 @@
             yLen: 3,
             zLen: 3,
         }) {
+            xLen
+            yLen
+            zLen
             mapName
+            validation {
+                levers
+                lamps
+                boolFuncs
+                timeout
+            }
             playground {
                 blockName
                 type
@@ -107,6 +116,18 @@
                 states {
                     power 
                     source
+
+                    delay
+                    facing
+                    locked
+                    powered
+
+                    lit
+
+                    east
+                    south
+                    west
+                    north
                 }
             }
         }
@@ -131,6 +152,12 @@
                 yLen
                 zLen
                 mapName
+                validation {
+                    levers
+                    lamps
+                    boolFuncs
+                    timeout
+                }
                 playground {
                     blockName
                     type
@@ -138,6 +165,18 @@
                     states {
                         power 
                         source
+
+                        delay
+                        facing
+                        locked
+                        powered
+
+                        lit
+
+                        east
+                        south
+                        west
+                        north
                     }
                 }
             }
@@ -153,6 +192,39 @@
             avatar
             bio
             level
+            maps {
+                xLen
+                yLen
+                zLen
+                mapName
+                validation {
+                    levers
+                    lamps
+                    boolFuncs
+                    timeout
+                }
+                playground {
+                    blockName
+                    type
+                    breakable
+                    states {
+                        power 
+                        source
+
+                        delay
+                        facing
+                        locked
+                        powered
+
+                        lit
+
+                        east
+                        south
+                        west
+                        north
+                    }
+                }
+            }
         }
     }
 ```
@@ -165,10 +237,16 @@
             name: "yohe",
             mapName: "yoheMap"
         }) {
-            mapName
             xLen
             yLen
             zLen
+            mapName
+            validation {
+                levers
+                lamps
+                boolFuncs
+                timeout
+            }
             playground {
                 blockName
                 type
@@ -176,6 +254,18 @@
                 states {
                     power 
                     source
+
+                    delay
+                    facing
+                    locked
+                    powered
+
+                    lit
+
+                    east
+                    south
+                    west
+                    north
                 }
             }
         }
@@ -205,7 +295,7 @@
     }
 ```
 
-### **editProfile:**
+### **editMyMap:**
 
 ``` graphql
     mutation {
@@ -240,10 +330,16 @@
                 ]]]
             }
         }) {
-            mapName
             xLen
             yLen
             zLen
+            mapName
+            validation {
+                levers
+                lamps
+                boolFuncs
+                timeout
+            }
             playground {
                 blockName
                 type
@@ -251,6 +347,90 @@
                 states {
                     power 
                     source
+
+                    delay
+                    facing
+                    locked
+                    powered
+
+                    lit
+
+                    east
+                    south
+                    west
+                    north
+                }
+            }
+        }
+    }
+
+    mutation {
+        editMyMap(data:{
+            name: "admin",
+            password: "123",
+            mapName: "Map1",
+            map: {
+                xLen: 1,
+                yLen: 1,
+                zLen: 2,
+                mapName: "yoheMap10",
+                validation: {
+                    levers: [[0, 0, 0]],
+                    lamps: [[1, 1, 1], [2, 2, 2]],
+                    boolFuncs: [[[1]], [[1]]],
+                    timeout: 500
+                }
+                playground: [[[
+                    {
+                        blockName: "Concrete",
+                        type: 1,
+                        breakable: false,
+                        states: {
+                            power: 0,
+                            source: false,
+                        }
+                    },
+                    {
+                        blockName: "Concrete",
+                        type: 1,
+                        breakable: false
+                        states: {
+                            power: 0,
+                            source: false,
+                        }
+                    }
+                ]]]
+            }
+        }) {
+            xLen
+            yLen
+            zLen
+            mapName
+            validation {
+                levers
+                lamps
+                boolFuncs
+                timeout
+            }
+            playground {
+                blockName
+                type
+                breakable
+                states {
+                    power 
+                    source
+
+                    delay
+                    facing
+                    locked
+                    powered
+
+                    lit
+
+                    east
+                    south
+                    west
+                    north
                 }
             }
         }

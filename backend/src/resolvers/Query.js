@@ -5,7 +5,7 @@ const Query = {
   logIn: async (parent, args) => {
     let user = await UserModel.findOne({ name: args.data.name, password: args.data.password}).populate(`maps`);
     if(!user){
-      console.log(`user ${args.data.name} not found.`);
+      console.log(`user ${args.data.name} not found, or wrong password.`);
       return null;
     }
     else{

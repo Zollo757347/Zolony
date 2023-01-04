@@ -6,15 +6,7 @@ const DEFAULT_BIO = "newer"
 const initBlock = (type) => { //0 means air, 1 means concrete
   let block = {};
   if(type === 0){
-    block = {
-      blockName: 'Air',
-      type: 0,
-      breakable: false,
-      states: {
-        power: 0,
-        source: false,
-      }
-    }
+    block = null;
   }
   else if(type === 1){
     block = {
@@ -61,6 +53,7 @@ const initMap = (x, y, z, mapName, user) => {
     zLen: z,
     mapName: mapName,
     belonging: user._id,
+    validation: null,
     playground: newPlayground,
   }
   console.log(newMap)
@@ -131,7 +124,7 @@ const Mutation = {
     let user = await UserModel.findOne({ name: args.data.name, password: args.data.password });
     if(!user){
       console.log(`user ${args.data.name} not found.`);
-      return false;
+      return null;
     }
     let sortMap = await MapModel.findOne({ mapName: args.data.mapName, belonging: user._id})
     if(!sortMap){
@@ -140,6 +133,10 @@ const Mutation = {
     }
     let addID = args.data.map;
     addID.belonging = user._id;
+    if(user.name !== 'admin' && addID.validation !== null){
+      console.log(`you don't hava authority to modify validation.`);
+      addID.validation = undefined;  // avoid normal user modify map to validation map
+    } 
     await sortMap.replaceOne(addID);
     console.log(`user ${args.data.name} save map ${args.data.mapName} succeed`);
     console.log(sortMap);
