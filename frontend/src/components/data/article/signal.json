@@ -349,7 +349,7 @@
                                 {
                                     "tagName": "td",
                                     "rowSpan": "2",
-                                    "content": "\\( N \\) 為實體數量"
+                                    "content": "$ N $ 為實體數量"
                                 }
                             ]
                         },
@@ -380,7 +380,7 @@
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "待補"
+                                    "content": "日照強度足夠大"
                                 },
                                 {
                                     "tagName": "td",
@@ -389,7 +389,7 @@
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "待補"
+                                    "content": "與日照強度呈正相關"
                                 },
                                 {
                                     "tagName": "td",
@@ -406,11 +406,11 @@
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "待補"
+                                    "content": "日照強度足夠小"
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "待補"
+                                    "content": "與日照強度呈負相關"
                                 },
                                 {
                                     "tagName": "td",
@@ -466,7 +466,7 @@
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "\\( N \\) 為開啟儲物箱的玩家數"
+                                    "content": "$ N $ 為開啟儲物箱的玩家數"
                                 }
                             ]
                         },
@@ -492,7 +492,7 @@
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "啟動時間（紅石刻）無條件進位至十位數<"
+                                    "content": "啟動時間（紅石刻）無條件進位至十位數"
                                 }
                             ]
                         }
@@ -765,7 +765,7 @@
                                 {
                                     "tagName": "td",
                                     "rowSpan": "2",
-                                    "content": "\\( D \\) 為與中心的距離（格）"
+                                    "content": "$ D $ 為與中心的距離（格）"
                                 }
                             ]
                         },
@@ -796,7 +796,7 @@
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "待補"
+                                    "content": "4"
                                 },
                                 {
                                     "tagName": "td",
@@ -839,11 +839,11 @@
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "待補"
+                                    "content": "20"
                                 },
                                 {
                                     "tagName": "td",
-                                    "content": "待補"
+                                    "content": "無"
                                 },
                                 {
                                     "tagName": "td",
