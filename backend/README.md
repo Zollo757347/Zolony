@@ -119,6 +119,7 @@
 
                     delay
                     facing
+                    face
                     locked
                     powered
 
@@ -168,6 +169,7 @@
 
                         delay
                         facing
+                        face
                         locked
                         powered
 
@@ -213,6 +215,7 @@
 
                         delay
                         facing
+                        face
                         locked
                         powered
 
@@ -257,6 +260,7 @@
 
                     delay
                     facing
+                    face
                     locked
                     powered
 
@@ -350,6 +354,7 @@
 
                     delay
                     facing
+                    face
                     locked
                     powered
 
@@ -422,6 +427,7 @@
 
                     delay
                     facing
+                    face
                     locked
                     powered
 

@@ -23,6 +23,7 @@ const MapSchema = new Schema({
 
       delay: { type: Number },
       facing: { type: String },
+      face: { type: String},
       locked: { type: Boolean },
       powered: { type: Boolean },
 
