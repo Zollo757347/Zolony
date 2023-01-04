@@ -37,3 +37,7 @@
 .ant-btn:hover span{
     color:brown !important;
 }
+
+textarea:focus {
+    border-color: rgb(245, 213, 37) !important;
+}

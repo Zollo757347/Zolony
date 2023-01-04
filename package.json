@@ -8,6 +8,7 @@
     "server": "cd backend & yarn start"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.3"
+    "@apollo/client": "^3.7.3",
+    "graphql": "^16.6.0"
   }
 }

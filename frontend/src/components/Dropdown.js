@@ -3,7 +3,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 import './css/Dropdown.css'
 
-const Dropdown_Components = ({ setPageToInfo, haveLoggedIn, setHaveLoggedIn, setOpenModal}) => {
+const Dropdown_Components = ({ setPageToInfo, haveLoggedIn, setHaveLoggedIn, setOpenModal }) => {
     const items = [
         {
             key: '1',

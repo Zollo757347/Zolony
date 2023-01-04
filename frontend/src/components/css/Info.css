@@ -1,0 +1,34 @@
+#Info-wrapper {
+    display: flex;
+    height: 100%;
+}
+
+#Info-left-wrapper {
+    flex: 3;
+    padding: 25px 10px 0 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+#Info-right-wrapper {
+    height: 100%;
+    flex: 7;
+    padding: 20px 10px 20px 10px;
+}
+
+#Info-avator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#Info-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ant-input:hover {
+    border-color: rgb(245, 213, 37);
+}

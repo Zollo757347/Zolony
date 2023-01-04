@@ -4,6 +4,7 @@ import signal from "./data/article/signal.json"
 import transmit from "./data/article/transmit.json"
 import repeater from "./data/article/repeater.json"
 import { ScrollView } from 'react-native';
+import { Image } from 'antd';
 import './css/Page.css'
 import Canvas from "./Canvas";
 
@@ -43,7 +44,7 @@ function getImage(name) {
     }
 }
 
-const Page = ({pageNum, haveLoggedIn}) => {
+const Page = ({ pageNum, haveLoggedIn, setOpenModal }) => {
     const pages = [index, signal, transmit, repeater];
     const contents = pages[(0 < pageNum && pageNum - 1 < pages.length ? pageNum - 1 : 0)]?.article;
 
@@ -64,8 +65,11 @@ const Page = ({pageNum, haveLoggedIn}) => {
                 }
             }
 
-            if (['hr', 'br', 'img'].includes(e.tagName))
+            if (['hr', 'br'].includes(e.tagName))
                 return <e.tagName {...props} />
+            
+            if(e.tagName === 'img')
+                return <Image {...props}/>
             
             if (e.tagName === 'Canvas')
                 return <Canvas {...props} />;
@@ -79,10 +83,14 @@ const Page = ({pageNum, haveLoggedIn}) => {
     }
 
     return (
-        <ScrollView>
+        <ScrollView style={{height: '700px'}}>
+        {
+            pageNum === 0 && haveLoggedIn ? 
+            <Info setOpenModal={setOpenModal}/> : 
             <article>
-                {pageNum === 0 && haveLoggedIn ? <Info/> : setContents(contents)}
+                {setContents(contents)}
             </article>
+        }
         </ScrollView>
     );
 }
