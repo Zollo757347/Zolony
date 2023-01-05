@@ -10,25 +10,31 @@ const HookContext = createContext({
   GetMap: () => {},
   createAccount: async () => {},
   editProfile: async () => {},
-  InitialMyMap: () => {},
+  initialMyMap: () => {},
   EditMyMap: () => {},
   DeleteUser: () => {},
   DeleteUserMap: () => {},
   setUser: () => {}, 
+  setPassword: () => {},
   setBio: () => {}, 
   setAvatar: () => {},
+  setMaps: () => {},
   user: '',
+  password: '',
   bio: '',
   avatar: '',
   isLogIn: false,
+  maps: []
 });
 
 
 const HookProvider = (props) => {
   const [user, setUser] = useState('');
+  const [password, setPassword] = useState('');
   const [bio, setBio] = useState('');
   const [avatar, setAvatar] = useState('');
   const [isLogIn, setIsLogIn] = useState(false);
+  const [maps, setMaps] = useState([]);
 
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [editProfileMutation] = useMutation(EDIT_PROFILE);
@@ -63,6 +69,7 @@ const HookProvider = (props) => {
       setIsLogIn(true);
       setAvatar(data.logIn.avatar);
       setBio(data.logIn.bio);
+      setMaps(data.logIn.maps);
       return data.logIn;
     }
   }
@@ -153,31 +160,33 @@ const HookProvider = (props) => {
     }
   }
 
-  const InitialMyMap = async (user, pwd, xLen, yLen, zLen, mapName) => {
+  const initialMyMap = async (name, pwd, xLen, yLen, zLen, mapName) => {
     const cryptopwd = CryptoJs.MD5(pwd).toString();
     
     const {loading, data, error} = await initialMyMapMutation({
       variables: {
-        name: user,
+        name: name,
         password: cryptopwd,
         mapName: mapName,
         xLen: xLen,
         yLen: yLen,
         zLen: zLen,
       }
-    })
-    if(loading) return 'loading...';
-    if(error){
+    });
+
+    if (loading) return 'loading...';
+    if (error) {
       console.log(`[initialMyMap function error]: ${error.message}.`);
       return 'error';
     }
     else {
-      if(!data.initialMyMap){
+      if (!data.initialMyMap) {
         console.log(`map already exist.`);
         return 'map already exist';
       } 
       console.log(`initialmap succeed`);
       console.log(data.initialMyMap);
+      setMaps([...maps, data.initialMyMap]);
       return data.initialMyMap;
     }
   }
@@ -280,17 +289,21 @@ const HookProvider = (props) => {
         GetMap,
         createAccount,
         editProfile,
-        InitialMyMap,
+        initialMyMap,
         EditMyMap,
         DeleteUser,
         DeleteUserMap,
         setUser,
+        setPassword,
         setBio, 
         setAvatar, 
+        setMaps,
         user,
+        password,
         bio, 
         avatar, 
         isLogIn,
+        maps
       }}
       {...props}
     />

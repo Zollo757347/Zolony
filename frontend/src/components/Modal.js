@@ -6,11 +6,10 @@ import { UseHook } from '../hook/usehook';
 
 const { TextArea } = Input;  
 const Modal_Components = ({open, setOpen}) => {
-  const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
   
-  const { logIn, createAccount, editProfile, setUser, setBio, setAvatar, user, bio, avatar } = UseHook();
+  const { logIn, createAccount, editProfile, setUser, setPassword, setBio, setAvatar, user, password, bio, avatar } = UseHook();
 
   const handleOk = async () => {
     if (open === 1) { // signin
@@ -26,7 +25,6 @@ const Modal_Components = ({open, setOpen}) => {
         Message.success({ content: '登入成功！', duration: 1 });
         setOpen(0);
       }
-      setPassword('');
     }
     else if (open === 2) { // signup
       if (password !== checkPassword) {
@@ -46,7 +44,6 @@ const Modal_Components = ({open, setOpen}) => {
           setOpen(0);
         }
       }
-      setPassword('');
       setCheckPassword('');
     }
     else {
@@ -74,7 +71,6 @@ const Modal_Components = ({open, setOpen}) => {
           setOpen(0);
         }
       }
-      setPassword('');
       setCheckPassword('');
       setNewPassword('');
     }

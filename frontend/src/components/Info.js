@@ -1,37 +1,44 @@
-import React, { useState } from 'react';
-import { Form, Input, Avatar, Image, Button, Select, Modal, Slider } from 'antd';
+import { useEffect, useState } from 'react';
+import { Form, Input, Avatar, Image, Button, Select, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import Canvas from './Canvas';
 import './css/Info.css'
 import { UseHook } from '../hook/usehook';
+import Utils from '../classes/Utils';
 
 const { TextArea } = Input;
 const Info = ({ setOpenModal }) => {
     const [selectItems, setSelectItems] = useState([]);
     const [openMapModal, setOpenMapModal] = useState(false);
-    const [xlen, setXlen] = useState(5);
-    const [ylen, setYlen] = useState(5);
-    const [zlen, setZlen] = useState(5);
 
-    const { user, bio } = UseHook();
+  const [mapName, setMapName] = useState('');
+  const [xLen, setXLen] = useState(0);
+  const [yLen, setYLen] = useState(0);
+  const [zLen, setZLen] = useState(0);
+  const [cvs, setCvs] = useState(null);
 
-  const check = () => setSelectItems([
-    {
-      value: 'jack',
-      label: 'Jack',
-    },
-    {
-      value: 'lucy',
-      label: 'Lucy',
-    },
-    {
-      value: 'tom',
-      label: 'Tom',
-    },
-  ])
+  const { initialMyMap, user, password, bio, maps } = UseHook();
 
-  const onSelect = (value) => {
-    console.log(value)
+  useEffect(() => {
+    setSelectItems(maps.map(a => ({ label: a.mapName, value: a.mapName })));
+  }, [maps]);
+
+
+  const onSelect = async (value) => {
+    const data = JSON.parse(JSON.stringify(maps.filter(m => m.mapName === value)[0]));
+
+    setCvs(null);
+    await Utils.Sleep(0);
+    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} />);
+  }
+
+  const handleModalOk = async () => {
+    const data = await initialMyMap(user, password, parseInt(xLen), parseInt(yLen), parseInt(zLen), mapName);
+
+    setCvs(null);
+    await Utils.Sleep(0);
+    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} />);
+    setOpenMapModal(false);
   }
 
   const profileForm = <>
@@ -66,14 +73,14 @@ const Info = ({ setOpenModal }) => {
   </>
 
   const MapModal = <>
-    <Input placeholder="輸入你的地圖名稱" prefix={<RightOutlined />} onChange={e => console.log(e.target.value)}/>
+    <Input placeholder="輸入你的地圖名稱" prefix={<RightOutlined />} onChange={e => setMapName(e.target.value)}/>
     <br/>
     <br/>
     <span> 輸入長寬高↓ </span>
     <div id='Map-Modal-xyz-wrapper'>
-      <Input placeholder="xlen" className='Map-Modal-xyz' onChange={e => console.log(e.target.value)}/>
-      <Input placeholder="ylen" className='Map-Modal-xyz' onChange={e => console.log(e.target.value)}/>
-      <Input placeholder="zlen" className='Map-Modal-xyz' onChange={e => console.log(e.target.value)}/>
+      <Input placeholder="xlen" className='Map-Modal-xyz' onChange={e => setXLen(e.target.value)}/>
+      <Input placeholder="ylen" className='Map-Modal-xyz' onChange={e => setYLen(e.target.value)}/>
+      <Input placeholder="zlen" className='Map-Modal-xyz' onChange={e => setZLen(e.target.value)}/>
     </div>
   </>
 
@@ -90,6 +97,7 @@ const Info = ({ setOpenModal }) => {
               placeholder="Select a map"
               optionFilterProp="children"
               onSelect={onSelect}
+              onChange={onSelect}
               style = {{
                 width: '100%'
               }}
@@ -100,7 +108,7 @@ const Info = ({ setOpenModal }) => {
             /></Form.Item></Form>
           </div>
           <div id='Info-del'>
-            <Button onClick={check} className="Info-del-btn">
+            <Button onClick={console.log} className="Info-del-btn">
               刪減目前地圖
             </Button>
           </div>
@@ -111,7 +119,7 @@ const Info = ({ setOpenModal }) => {
           </div>
         </div>
         <div id='Info-right-section'>
-          <Canvas canvaswidth={500} canvasheight={500} xlen={5} ylen={5} zlen={5}/>
+            {cvs ?? <></>}
         </div>
       </div>
 
@@ -119,7 +127,7 @@ const Info = ({ setOpenModal }) => {
         title="新增地圖"
         centered
         open={openMapModal}
-        onOk={() => {setOpenMapModal(false);}}
+        onOk={() => handleModalOk()}
         onCancel={() => setOpenMapModal(false)}
       >
         {MapModal}

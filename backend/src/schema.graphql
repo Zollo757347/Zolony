@@ -123,15 +123,15 @@ type ValidationData {
 }
 
 type BlockData {
-  blockName: String
-  breakable: Boolean
-  type: Int
-  states: BlockStates
+  blockName: String!
+  breakable: Boolean!
+  type: Int!
+  states: BlockStates!
 }
 
 type BlockStates {
-  power: Int
-  source: Boolean
+  power: Int!
+  source: Boolean!
 
   delay: Int
   facing: String
