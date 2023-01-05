@@ -122,6 +122,9 @@ const HookProvider = (props) => {
       }
       
       setIsLogIn(true);
+      setAvatar(data.createAccount.avatar);
+      setBio(data.createAccount.bio);
+      setMaps([]);
       return data.createAccount;
     }
   }
