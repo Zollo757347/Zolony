@@ -17,9 +17,10 @@ const Info = ({ setOpenModal }) => {
   const [zLen, setZLen] = useState(0);
   const [cvs, setCvs] = useState(null);
 
-  const { initialMyMap, user, password, bio, maps } = UseHook();
+  const { initialMyMap, deleteUserMap, user, password, bio, maps } = UseHook();
 
   useEffect(() => {
+    console.log(maps);
     setSelectItems(maps.map(a => ({ label: a.mapName, value: a.mapName })));
   }, [maps]);
 
@@ -27,6 +28,7 @@ const Info = ({ setOpenModal }) => {
   const onSelect = async (value) => {
     const data = JSON.parse(JSON.stringify(maps.filter(m => m.mapName === value)[0]));
 
+    setMapName(value);
     setCvs(null);
     await Utils.Sleep(0);
     setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} />);
@@ -39,6 +41,12 @@ const Info = ({ setOpenModal }) => {
     await Utils.Sleep(0);
     setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} />);
     setOpenMapModal(false);
+  }
+
+  const handleMapDelete = async () => {
+    const data = await deleteUserMap(user, password, mapName);
+    console.log(data);
+    setCvs(null);
   }
 
   const profileForm = <>
@@ -108,7 +116,7 @@ const Info = ({ setOpenModal }) => {
             /></Form.Item></Form>
           </div>
           <div id='Info-del'>
-            <Button onClick={console.log} className="Info-del-btn">
+            <Button onClick={handleMapDelete} className="Info-del-btn" disabled={!cvs}>
               刪減目前地圖
             </Button>
           </div>

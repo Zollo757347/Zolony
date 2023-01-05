@@ -13,7 +13,7 @@ const HookContext = createContext({
   initialMyMap: () => {},
   EditMyMap: () => {},
   DeleteUser: () => {},
-  DeleteUserMap: () => {},
+  deleteUserMap: () => {},
   setUser: () => {}, 
   setPassword: () => {},
   setBio: () => {}, 
@@ -247,13 +247,13 @@ const HookProvider = (props) => {
     }
   }
 
-  const DeleteUser = async (user, pwd) => {
+  const DeleteUser = async (name, pwd) => {
     const cryptopwd = CryptoJs.MD5(pwd).toString();
     
     const {loading, data, error} = await deleteUserMutation({
       variables: {
-        name: user,
-        password: cryptopwd,
+        name: name,
+        password: cryptopwd
       }
     })
     if(loading) return 'loading...';
@@ -265,13 +265,15 @@ const HookProvider = (props) => {
     return data.deleteUser;
   }
 
-  const DeleteUserMap = async (user, pwd, mapName) => {
-    
+  const deleteUserMap = async (name, pwd, mapName) => {
+    const cryptopwd = CryptoJs.MD5(pwd).toString();
+
+    console.log(name, pwd, mapName);
     const {loading, data, error} = await deleteUserMapMutation({
       variables: {
-        name: user,
-        password: pwd,
-        mapName: mapName,
+        name: name,
+        password: cryptopwd,
+        mapName: mapName
       }
     })
     if(loading) return 'loading...';
@@ -279,6 +281,9 @@ const HookProvider = (props) => {
       console.log(`[deleteUserMap function error]: ${error.message}.`);
       return false;
     }
+
+    console.log(maps, mapName);
+    setMaps(maps.filter(m => m.mapName !== mapName));
     return data.deleteUserMap;
   }
   return (
@@ -292,7 +297,7 @@ const HookProvider = (props) => {
         initialMyMap,
         EditMyMap,
         DeleteUser,
-        DeleteUserMap,
+        deleteUserMap,
         setUser,
         setPassword,
         setBio, 
