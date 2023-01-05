@@ -1,11 +1,12 @@
 #Info-wrapper {
     display: flex;
+    width: 100%;
     height: 100%;
 }
 
 #Info-left-wrapper {
     flex: 3;
-    padding: 25px 10px 0 50px;
+    padding: 30px 10px 0 50px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -17,6 +18,10 @@
     padding: 20px 10px 20px 50px;
     display: flex;
     flex-direction: column;
+}
+
+#Info-username {
+    padding-top: 30px;
 }
 
 #Info-avator {
@@ -35,6 +40,7 @@
     padding: 5px 10px 0px 10px;
     flex: 1;
     display: flex;
+    justify-content: space-between;
 }
 
 #Info-right-section {
@@ -50,12 +56,12 @@
 
 #Info-del {
     flex: 2;
-    padding-left: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 #Info-add {
     flex: 2;
-    padding-left: 10px;
 }
 
 .Info-del-btn:hover {
@@ -66,11 +72,15 @@
     background-color: rgb(245, 213, 37) !important;
 }
 
-#Map-Modal-xyz-wrapper {
+#Map-modal-xyz-wrapper {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
-.Map-Modal-xyz {
-    margin: 0 5px 0 5px;
+.ant-select-selector:hover {
+    border-color: rgb(245, 213, 37) !important;
+}
+
+.ant-select-focused .ant-select-selector{
+    border-color: rgb(245, 213, 37) !important;
 }
