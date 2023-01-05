@@ -1,5 +1,4 @@
 import * as fs from 'fs'
-import { createServer } from 'node:http'
 import { createSchema, createYoga } from 'graphql-yoga'
 import {UserModel, MapModel} from './models'
 import express from 'express'
@@ -28,8 +27,8 @@ const yoga = createYoga({
 if (process.env.NODE_ENV === "production") {
   console.log("enter to production field")
   const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, "../frontend", "build")));
-  app.get("/*", function (req, res) {
+  server.use(express.static(path.join(__dirname, "../frontend", "build")));
+  server.get("/*", function (req, res) {
     res.sendFile(path.join(__dirname, "../frontend", "build", "index.html"));
   });
 }
