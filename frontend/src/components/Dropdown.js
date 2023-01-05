@@ -4,22 +4,43 @@ import { Dropdown, Space } from 'antd';
 import './css/Dropdown.css'
 import { UseHook } from '../hook/usehook';
 
-const Dropdown_Components = ({ setPageToInfo, setOpenModal}) => {
+const Dropdown_Components = ({ setOpenModal }) => {
     const { isLogIn , LogOut, setPageNum } = UseHook();
+    
+    const onClick = ({ key }) => {
+        switch(key) {
+            case '1': 
+                setPageNum(0);
+                break;
+            case '2': 
+                setOpenModal(1);
+                break;
+            case '3': 
+                setOpenModal(2);
+                break;
+            case '4': 
+                LogOut(); 
+                setPageNum(1);
+                break;
+            default:
+                break;
+        }
+    };
+    
     const items = [
         {
             key: '1',
-            label: <div onClick={setPageToInfo}>Your Profile</div>,
+            label: <div>Your Profile</div>,
             disabled: (!isLogIn)
         },
         {
             key: '2',
-            label: <div onClick={() => setOpenModal(1)}>Log in</div>,
+            label: <div>Log in</div>,
             disabled: (isLogIn)
         },
         {
             key: '3',
-            label: <div onClick={() => setOpenModal(2)}>Sign up</div>,
+            label: <div>Sign up</div>,
             disabled: (isLogIn)
         },
         {
@@ -33,7 +54,8 @@ const Dropdown_Components = ({ setPageToInfo, setOpenModal}) => {
     return(
         <Dropdown
             menu={{
-                items
+                items,
+                onClick
             }}
             trigger={['click']}
             id="dropdown"

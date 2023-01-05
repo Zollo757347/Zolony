@@ -7,7 +7,6 @@ import './components/css/App.css';
 import { UseHook } from './hook/usehook';
 
 const App = () => {
-  const { setPageNum } = UseHook();
   const [collapsed, setCollapsed] = useState(false);
   const [openModal, setOpenModal] = useState(0);
   
