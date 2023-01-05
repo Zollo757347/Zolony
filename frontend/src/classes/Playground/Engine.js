@@ -19,11 +19,12 @@ import { BlockType } from "./BlockType";
  * @property {number} yLen y 軸的長度
  * @property {number} zLen z 軸的長度
  * @property {string} mapName 地圖的名稱
+ * @property {object?} validation 檢查條件
  * @property {(import("./Blocks/Block").BlockData | null)[][][]} playground 地圖上所有方塊的狀態
  */
 
 class Engine {
-  constructor({ xLen, yLen, zLen, mapName }) {
+  constructor({ xLen, yLen, zLen, mapName, validation }) {
     /**
      * x 軸的長度
      * @type {number}
@@ -47,6 +48,12 @@ class Engine {
      * @type {string}
      */
     this.mapName = mapName;
+
+    /**
+     * 檢查條件
+     * @type {object}
+     */
+    this.validation = validation;
 
     /**
      * 工作佇列
@@ -73,8 +80,8 @@ class Engine {
    * @param {MapData} data
    * @returns {Engine} 
    */
-  static spawn({ xLen, yLen, zLen, mapName, playground }) {
-    const engine = new Engine({ xLen, yLen, zLen, mapName });
+  static spawn({ xLen, yLen, zLen, mapName, playground, validation }) {
+    const engine = new Engine({ xLen, yLen, zLen, mapName, validation });
     playground.forEach((layer, i) => {
       layer.forEach((line, j) => {
         line.forEach((block, k) => {
@@ -111,7 +118,7 @@ class Engine {
    * @param {[number, number, number][]} lamps 目標紅石燈的位置
    * @param {number[][][]} boolFuncs 每個紅石燈對應的布林表達式
    * @param {number} timeout 每次對控制桿操作後要等待多久才判斷輸出的正確性
-   * @returns {boolean}
+   * @returns {Promise<boolean>}
    */
   static async validate(engine, { levers, lamps, boolFuncs, timeout }) {
     const leverBlocks = [];

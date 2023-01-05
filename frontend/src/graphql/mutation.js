@@ -95,7 +95,7 @@ export const EDIT_MY_MAP = gql`
         $name: String!,
         $password: String!,
         $mapName: String!,
-        $map: MapDataInput!,
+        $map: MapDataInput!
     ) {
         editMyMap(data:{
             name: $name,
@@ -107,6 +107,13 @@ export const EDIT_MY_MAP = gql`
             xLen
             yLen
             zLen
+            availableBlocks
+            validation {
+                levers
+                lamps
+                boolFuncs
+                timeout
+            }
             playground {
                 type
                 breakable

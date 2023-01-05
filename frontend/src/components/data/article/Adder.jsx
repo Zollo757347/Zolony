@@ -1,4 +1,6 @@
 import { Image } from 'antd';
+import Canvas from '../../Canvas';
+import data from "../levels/Official Map 5.json"
 
 const Adder = () => {
   return (
@@ -174,6 +176,12 @@ const Adder = () => {
       <p>有了單位數的加法器以後，只需要將加法器緊緊並排，就可以得到多位數加法器了，而下圖是一個四位數加法器的例子，可以計算 0~15 + 0~15 之內的加法運算。</p>
       <Image src={require("../img/adder/4-bits-adder.png")} alt="四位數全加器" width="50%"/>
     </section>
+
+    <section>
+      <h2>隨堂不小考</h2>
+        <p>在下面的模擬 Minecraft 中是一個全加器，這次的文章沒有小考，祝大家跟全加器玩得愉快！</p>
+        <Canvas canvasheight={500} canvaswidth={500} preloaddata={data}></Canvas>
+      </section>
   </article>
   );
 }

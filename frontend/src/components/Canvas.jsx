@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, message as Message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Engine, Playground } from "../classes/Playground";
 import { UseHook } from "../hook/usehook";
@@ -16,7 +16,7 @@ function preventDefault(e) {
   e.preventDefault();
 }
 
-const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen, storable, preloaddata: preLoadData }) => {
+const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen, storable, checkable, preloaddata: preLoadData }) => {
   const canvasRef = useRef(<canvas></canvas>);
   const spanRef = useRef(<span></span>);
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData }));
@@ -88,6 +88,15 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
     const map = Engine.extract(playgroundRef.current.engine);
     editMyMap(user, password, map);
   }
+
+  async function handleCheckMap() {
+    if (await Engine.validate(playgroundRef.current.engine, playgroundRef.current.engine.validation)) {
+      Message.success({ content: '恭喜你通過檢查！', duration: 2 });
+    }
+    else {
+      Message.error({ content: '很抱歉，但你沒有通過檢查 :(', duration: 2 });
+    }
+  }
   
   return (
     <div className="redstone-canvas">
@@ -117,9 +126,10 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
         <span ref={spanRef} style={{ display: 'none' }} />
       </div>
       {
-        storable ? 
+        storable || (checkable && playgroundRef.current.engine.validation) ? 
           <div className="redstone-canvas-bottom">
-            <Button onClick={handleSaveMap}>儲存地圖</Button>
+            {storable ? <Button onClick={handleSaveMap}>儲存地圖</Button> : <></>}
+            {checkable && playgroundRef.current.engine.validation ? <Button onClick={handleCheckMap}>檢查地圖</Button> : <></>}
           </div> :
           <></>
       }

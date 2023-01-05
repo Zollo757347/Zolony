@@ -14,6 +14,9 @@ class Utils extends null {
     if (typeof thing1 !== 'object' || typeof thing2 !== 'object') {
       return thing1 === thing2;
     }
+    if (thing1 === null || thing2 === null) {
+        return thing1 === thing2;
+    }
 
     if (Object.keys(thing1).length !== Object.keys(thing2).length) {
       return false;

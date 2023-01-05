@@ -1,4 +1,6 @@
 import { Image } from 'antd';
+import Canvas from '../../Canvas';
+import data from "../levels/Official Map 2.json"
 
 const Repeater = () => {
   return (
@@ -47,6 +49,14 @@ const Repeater = () => {
         <h3>訊號鎖定</h3>
         <p>當一個中繼器被另一個啟動的中繼器從左右任一側輸入訊號時，它的狀態會被鎖定，被鎖定的中繼器無法透過後方的輸入來調整其狀態，直到側邊的訊號解除。下左圖的中繼器被鎖定在啟動狀態，因此就算後方輸入被關閉，中繼器還是啟動著；下右圖則是另一個相反的情形。</p>
         <Image src={require("../img/repeater/lock.png")} alt="被鎖定的紅石中繼器" width="50%"/>
+      </section>
+
+      <section>
+        <h2>隨堂小考</h2>
+        <p>在下面的模擬 Minecraft 中，你會需要利用紅石中繼器與紅石粉把所有紅石燈串聯起來，讓角落的控制器啟動時，所有紅石燈都會被點亮。</p>
+        <p>就像在玩 Minecraft 一樣，你可以使用滑鼠滾輪來切換方塊，左鍵來破壞方塊，右鍵來放置方塊，對控制器按下右鍵時可以啟動控制器，點亮相鄰的紅石粉，也可以對中繼器按下右鍵來調整延遲。</p>
+        <p>當你把所有紅石燈都接好時，可以按下下方的「檢查地圖」按鈕來檢查你的答案是否正確！</p>
+        <Canvas canvasheight={500} canvaswidth={500} checkable={true} preloaddata={data}></Canvas>
       </section>
     </article>
   );

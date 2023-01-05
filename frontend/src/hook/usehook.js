@@ -246,6 +246,13 @@ const HookProvider = (props) => {
       } 
       console.log(`edit map succeed.`)
       console.log(data.editMyMap);
+
+      const index = maps.findIndex(a => a.mapName === map.mapName);
+      if (index !== -1) {
+        maps[index] = data.editMyMap;
+        setMaps(maps);
+      }
+
       return data.editMyMap;
     }
   }

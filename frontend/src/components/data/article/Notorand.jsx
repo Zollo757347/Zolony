@@ -1,4 +1,6 @@
 import { Image } from 'antd';
+import Canvas from '../../Canvas';
+import data from "../levels/Official Map 4.json"
 
 const Notorand = () => {
   return (
@@ -170,6 +172,14 @@ const Notorand = () => {
         <p>因為 XOR Gate 並不是最基本的邏輯閘，所以在紅石電路中製作 XOR Gate 會相對比較複雜，因此根據不同的需求（如最小、最快、最易得等等）也有許多不同的方法，這邊就舉其中一個實作的方法，這種方法會需要用到 5 個紅石火把、2 個紅石中繼器：</p>
         <Image src={require("../img/notorand/xor-gate.png")} alt="紅石電路中的 XOR Gate" width="50%"/>
 
+      </section>
+
+      <section>
+        <h2>隨堂小考</h2>
+        <p>在下面的模擬 Minecraft 中，一共有三個不同的控制器，請設計出一個紅石電路，使得當三個控制器都被啟動時，場上唯一的紅石燈才會亮起，也就是說，請實作一個三個輸入的 AND Gate。</p>
+        <p>就像在玩 Minecraft 一樣，你可以使用滑鼠滾輪來切換方塊，左鍵來破壞方塊，右鍵來放置方塊，對控制器按下右鍵時可以啟動控制器，點亮相鄰的紅石粉。</p>
+        <p>當你把線路都接好時，可以按下下方的「檢查地圖」按鈕來檢查你的答案是否正確！</p>
+        <Canvas canvasheight={500} canvaswidth={500} checkable={true} preloaddata={data}></Canvas>
       </section>
     </article>
   );

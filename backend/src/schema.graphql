@@ -118,7 +118,7 @@ type ValidationData {
   levers: [[Int!]!]
   lamps: [[Int!]!]
   boolFuncs: [[[Int!]!]!]
-  timeout: Int!
+  timeout: Int
 }
 
 type BlockData {

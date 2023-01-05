@@ -1,4 +1,6 @@
 import { Image } from 'antd';
+import Canvas from '../../Canvas';
+import data from "../levels/Official Map 3.json"
 
 const Torch = () => {
   return (
@@ -36,6 +38,14 @@ const Torch = () => {
 
         <p>當有生物踩在壓力板上時，黃色混凝土被紅石粉充能，因此紅石火把會被熄滅，與紅石火把相鄰的紅石粉也會跟著熄滅，因此活塞會縮回，讓經過的生物或玩家有機會掉進洞中。</p>
 
+      </section>
+
+      <section>
+        <h2>隨堂小考</h2>
+        <p>在下面的模擬 Minecraft 中，你會需要利用紅石火把與紅石粉把所有紅石燈串聯起來，讓角落的控制器啟動時，所有紅石燈都會被點亮。</p>
+        <p>就像在玩 Minecraft 一樣，你可以使用滑鼠滾輪來切換方塊，左鍵來破壞方塊，右鍵來放置方塊，對控制器按下右鍵時可以啟動控制器，點亮相鄰的紅石粉。</p>
+        <p>當你把所有紅石燈都接好時，可以按下下方的「檢查地圖」按鈕來檢查你的答案是否正確！</p>
+        <Canvas canvasheight={500} canvaswidth={500} checkable={true} preloaddata={data}></Canvas>
       </section>
     </article>
   );

@@ -38,7 +38,14 @@ export const LOG_IN = gql`
                         south
                         west
                         north
+                    }
                 }
+                availableBlocks
+                validation {
+                    levers
+                    lamps
+                    boolFuncs
+                    timeout
                 }
             }
         }

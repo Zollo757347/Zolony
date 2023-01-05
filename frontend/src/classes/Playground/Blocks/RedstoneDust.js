@@ -133,7 +133,7 @@ class RedstoneDust extends Block {
 
     const explicitDir = Object.entries(this.states)
       .map(([dir, val]) => val ? dir : undefined)
-      .filter((dir) => dir && dir !== 'power' && dir !== 'source');
+      .filter((dir) => dir && dir !== 'power' && dir !== 'source' && dir !== '__typename');
     
     if (explicitDir.length === 0) {
       if (this.crossMode) {
