@@ -248,6 +248,7 @@ const HookProvider = (props) => {
       console.log(data.editMyMap);
 
       const index = maps.findIndex(a => a.mapName === map.mapName);
+      console.log(index, maps.map(a => a.mapName), map.mapName);
       if (index !== -1) {
         maps[index] = data.editMyMap;
         setMaps(maps);
