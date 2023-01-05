@@ -25,7 +25,8 @@
     padding-top: 30px;
 }
 
-#Info-avator {
+#Info-avatar {
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center;

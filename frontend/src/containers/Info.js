@@ -54,7 +54,7 @@ const Info = ({ setOpenModal }) => {
           <Input defaultValue={user} disabled={true}/>
         </Form.Item>
       </div>
-      <div id='Info-avator' className='Info-left'>
+      <div id='Info-avatar' className='Info-left'>
         <Avatar
           src={<Image src={avatar}/>}
           style={{
