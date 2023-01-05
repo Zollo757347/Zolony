@@ -17,7 +17,7 @@ const Info = ({ setOpenModal }) => {
   const [zLen, setZLen] = useState(0);
   const [cvs, setCvs] = useState(null);
 
-  const { initialMyMap, deleteUserMap, user, password, bio, maps } = UseHook();
+  const { initialMyMap, deleteUserMap, user, password, bio, maps, avatar } = UseHook();
 
   useEffect(() => {
     setSelectItems(maps.map(a => ({ label: a.mapName, value: a.mapName })));
@@ -56,7 +56,7 @@ const Info = ({ setOpenModal }) => {
       </div>
       <div id='Info-avator' className='Info-left'>
         <Avatar
-          src={<Image src={require("./data/img/header/wordmark.png")}/>}
+          src={<Image src={avatar}/>}
           style={{
             width: 400,
             height: 400,
