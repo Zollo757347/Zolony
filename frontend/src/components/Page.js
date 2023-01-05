@@ -20,7 +20,7 @@ const Page = ({ pageNum, setOpenModal }) => {
   useEffect(() => {
     // h1Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [pageNum]);
-  return <div style={{ paddingBottom: 100 }}>
+  return <div style={{ paddingBottom: 100, width: "100%" }}>
     {pageNum === 0 && isLogIn ? <Info setOpenModal={setOpenModal}/> : pages[pageNum - 1]}
   </div>;
 }
