@@ -110,7 +110,6 @@
                 timeout
             }
             playground {
-                blockName
                 type
                 breakable
                 states {
@@ -160,7 +159,6 @@
                     timeout
                 }
                 playground {
-                    blockName
                     type
                     breakable
                     states {
@@ -206,7 +204,6 @@
                     timeout
                 }
                 playground {
-                    blockName
                     type
                     breakable
                     states {
@@ -251,7 +248,6 @@
                 timeout
             }
             playground {
-                blockName
                 type
                 breakable
                 states {
@@ -314,7 +310,6 @@
                 mapName: "yoheMap10",
                 playground: [[[
                     {
-                        blockName: "Concrete",
                         type: 1,
                         breakable: false,
                         states: {
@@ -323,7 +318,6 @@
                         }
                     },
                     {
-                        blockName: "Concrete",
                         type: 1,
                         breakable: false
                         states: {
@@ -345,7 +339,6 @@
                 timeout
             }
             playground {
-                blockName
                 type
                 breakable
                 states {
@@ -387,7 +380,6 @@
                 }
                 playground: [[[
                     {
-                        blockName: "Concrete",
                         type: 1,
                         breakable: false,
                         states: {
@@ -396,7 +388,6 @@
                         }
                     },
                     {
-                        blockName: "Concrete",
                         type: 1,
                         breakable: false
                         states: {
@@ -418,7 +409,6 @@
                 timeout
             }
             playground {
-                blockName
                 type
                 breakable
                 states {

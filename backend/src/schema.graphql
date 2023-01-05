@@ -60,7 +60,7 @@ input MapDataInput {
   mapName: String!
   availableBlocks: [Int!]
   validation: ValidationDataInput
-  playground: [[[BlockDataInput!]!]!]!
+  playground: [[[BlockDataInput]!]!]!
 }
 
 input ValidationDataInput {
@@ -71,7 +71,6 @@ input ValidationDataInput {
 }
 
 input BlockDataInput {
-  blockName: String!
   breakable: Boolean!
   type: Int!
   states: BlockStatesInput!
@@ -123,7 +122,6 @@ type ValidationData {
 }
 
 type BlockData {
-  blockName: String!
   breakable: Boolean!
   type: Int!
   states: BlockStates!

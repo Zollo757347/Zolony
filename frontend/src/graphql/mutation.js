@@ -66,7 +66,6 @@ export const INITIAL_MY_MAP = gql`
             zLen
             mapName
             playground {
-                blockName
                 type
                 breakable
                 states {
@@ -109,7 +108,6 @@ export const EDIT_MY_MAP = gql`
             yLen
             zLen
             playground {
-                blockName
                 type
                 breakable
                 states {

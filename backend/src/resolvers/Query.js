@@ -10,7 +10,6 @@ const Query = {
     }
     else{
       console.log(`user ${args.data.name} login:`)
-      console.log(user);
       return user;
     }
   },

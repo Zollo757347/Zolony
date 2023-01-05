@@ -149,10 +149,12 @@ class Block {
    * @returns {BlockData}
    */
   static extract(block) {
+    const states = JSON.parse(JSON.stringify(block.states));
+    delete states.__typename;
     return {
       type: block.type, 
       breakable: block.breakable, 
-      states: block.states
+      states: states
     };
   }
 

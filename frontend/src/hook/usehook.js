@@ -11,7 +11,7 @@ const HookContext = createContext({
   createAccount: async () => {},
   editProfile: async () => {},
   initialMyMap: () => {},
-  EditMyMap: () => {},
+  editMyMap: () => {},
   DeleteUser: () => {},
   deleteUserMap: () => {},
   setUser: () => {}, 
@@ -199,7 +199,6 @@ const HookProvider = (props) => {
     zLen,
     mapName,
     playground [[[{
-      blockName,
       type,
       breakable,
       states {
@@ -220,17 +219,18 @@ const HookProvider = (props) => {
   }
   */
 
-  const EditMyMap = async (user, pwd, map) => {
+  const editMyMap = async (name, pwd, map) => {
     const cryptopwd = CryptoJs.MD5(pwd).toString();
     
     const {loading, data, error} = await editMyMapMutation({
       variables: {
-        name: user,
+        name: name,
         password: cryptopwd,
         mapName: map.mapName,
-        map: map,
+        map: map
       }
-    })
+    }).catch(e => console.log(JSON.stringify(e, null, 2)));
+
     if(loading) return 'loading...';
     if(error){
       console.log(`[editMyMap function error]: ${error.message}.`);
@@ -295,7 +295,7 @@ const HookProvider = (props) => {
         createAccount,
         editProfile,
         initialMyMap,
-        EditMyMap,
+        editMyMap,
         DeleteUser,
         deleteUserMap,
         setUser,

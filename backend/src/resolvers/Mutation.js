@@ -10,7 +10,6 @@ const initBlock = (type) => { //0 means air, 1 means concrete
   }
   else if(type === 1){
     block = {
-      blockName: 'Concrete',
       type: 1,
       breakable: false,
       states: {
@@ -109,6 +108,7 @@ const Mutation = {
   },
 
   editMyMap: async (parent, args) => {
+    console.log(args.data);
     let user = await UserModel.findOne({ name: args.data.name, password: args.data.password });
     if(!user){
       console.log(`user ${args.data.name} not found.`);

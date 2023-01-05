@@ -20,7 +20,6 @@ const Info = ({ setOpenModal }) => {
   const { initialMyMap, deleteUserMap, user, password, bio, maps } = UseHook();
 
   useEffect(() => {
-    console.log(maps);
     setSelectItems(maps.map(a => ({ label: a.mapName, value: a.mapName })));
   }, [maps]);
 
@@ -31,7 +30,7 @@ const Info = ({ setOpenModal }) => {
     setMapName(value);
     setCvs(null);
     await Utils.Sleep(0);
-    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} />);
+    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} storable={true} />);
   }
 
   const handleModalOk = async () => {
@@ -39,13 +38,12 @@ const Info = ({ setOpenModal }) => {
 
     setCvs(null);
     await Utils.Sleep(0);
-    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} />);
+    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} storable={true} />);
     setOpenMapModal(false);
   }
 
   const handleMapDelete = async () => {
     const data = await deleteUserMap(user, password, mapName);
-    console.log(data);
     setCvs(null);
   }
 

@@ -15,7 +15,6 @@ const MapSchema = new Schema({
     timeout: { type: Number },
   },
   playground: [[[{
-    blockName: { type: String },
     type: { type: Number },
     breakable: { type: Boolean },
     states: {

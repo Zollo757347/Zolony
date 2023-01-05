@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { Playground } from "../classes/Playground";
+import { Engine, Playground } from "../classes/Playground";
+import { UseHook } from "../hook/usehook";
 import "./css/Canvas.css"
 
 function getPosition(canvas, event) {
@@ -21,6 +22,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData }));
 
   const [shiftDown, setShiftDown] = useState(false);
+  const { editMyMap, user, password } = UseHook();
 
   useEffect(() => {
     playgroundRef.current.setCanvas(canvasRef.current);
@@ -81,6 +83,11 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
   function handleScroll(e) {
     playgroundRef.current.scrollHotbar(e.deltaY);
   }
+
+  function handleSaveMap() {
+    const map = Engine.extract(playgroundRef.current.engine);
+    editMyMap(user, password, map);
+  }
   
   return (
     <div className="redstone-canvas">
@@ -112,7 +119,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
       {
         storable ? 
           <div className="redstone-canvas-bottom">
-            <Button>儲存地圖</Button>
+            <Button onClick={handleSaveMap}>儲存地圖</Button>
           </div> :
           <></>
       }
