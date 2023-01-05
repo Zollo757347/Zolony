@@ -18,12 +18,14 @@ const HookContext = createContext({
   setPassword: () => {},
   setBio: () => {}, 
   setAvatar: () => {},
+  setPageNum: () => {},
   setMaps: () => {},
   user: '',
   password: '',
   bio: '',
   avatar: '',
   isLogIn: false,
+  pageNum: 1, 
   maps: []
 });
 
@@ -34,6 +36,7 @@ const HookProvider = (props) => {
   const [bio, setBio] = useState('');
   const [avatar, setAvatar] = useState('');
   const [isLogIn, setIsLogIn] = useState(false);
+  const [pageNum, setPageNum] = useState(1);
   const [maps, setMaps] = useState([]);
 
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
@@ -302,12 +305,14 @@ const HookProvider = (props) => {
         setPassword,
         setBio, 
         setAvatar, 
-        setMaps,
+        setPageNum, 
+        setMaps, 
         user,
         password,
         bio, 
         avatar, 
         isLogIn,
+        pageNum, 
         maps
       }}
       {...props}

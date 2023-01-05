@@ -5,14 +5,10 @@ import {
 import { Button } from 'antd';
 import Dropdown from './Dropdown';
 import './css/Header.css'
+import { UseHook } from '../hook/usehook';
 
-const Header = ({
-    collapsed, 
-    toggleCollapsed, 
-    toHomepage, 
-    setPageToInfo,
-    setOpenModal}) => 
-{
+const Header = ({ collapsed, toggleCollapsed, setOpenModal }) => {
+    const { setPageNum } = UseHook();
     return (
         <header>
             <div id='header-left'>
@@ -22,11 +18,11 @@ const Header = ({
                 >
                     {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 </Button>
-                <div id="wordmark" onClick={toHomepage}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>
+                <div id="wordmark" onClick={() => setPageNum(1)}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>
             </div>
             <div id='header-right'>
                 <Dropdown 
-                    setPageToInfo={setPageToInfo}
+                    setPageToInfo={() => setPageNum(0)}
                     setOpenModal={setOpenModal}
                 />
             </div>

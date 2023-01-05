@@ -5,7 +5,7 @@ import './css/Dropdown.css'
 import { UseHook } from '../hook/usehook';
 
 const Dropdown_Components = ({ setPageToInfo, setOpenModal}) => {
-    const { isLogIn , LogOut} = UseHook();
+    const { isLogIn , LogOut, setPageNum } = UseHook();
     const items = [
         {
             key: '1',
@@ -25,7 +25,7 @@ const Dropdown_Components = ({ setPageToInfo, setOpenModal}) => {
         {
             key: '4',
             danger: true,
-            label: <div onClick={() => LogOut() }>Log out</div>,
+            label: <div onClick={() => {LogOut(); setPageNum(1);}}>Log out</div>,
             disabled: (!isLogIn)
         }
     ];

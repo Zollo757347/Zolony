@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppstoreOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import './css/Sidebar.css'
+import { UseHook } from '../hook/usehook';
 
-const Sidebar = ({collapsed, setPageNum}) => {
+const Sidebar = ({ collapsed }) => {
+  const { pageNum, setPageNum } = UseHook();
   function getItem(label, key, icon, children, type) {
     return {
       key,
@@ -26,20 +28,28 @@ const Sidebar = ({collapsed, setPageNum}) => {
     ])
   ];
 
+  let [selectedKeys, setSelectedKeys] = useState([]);
+
   function handleSelect({ key }) {
     setPageNum(key);
+    setSelectedKeys(['1']);
   }
-  
+
+  useEffect(() => {
+    setSelectedKeys([pageNum.toString()]);
+  },[pageNum]);
+
   return (
     <div className="sidebar">
       <Menu
         defaultSelectedKeys={['1']}
         defaultOpenKeys={['sub1']}
-        mode="vertical"
+        mode="inline"
         theme="light"
         inlineCollapsed={collapsed}
         items={items}
         onSelect={handleSelect}
+        selectedKeys={selectedKeys}
       />
     </div>
   );

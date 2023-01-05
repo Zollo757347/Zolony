@@ -11,9 +11,9 @@ import Torch from "./data/article/Torch";
 import Notorand from "./data/article/Notorand";
 import Adder from "./data/article/Adder";
 
-const Page = ({ pageNum, setOpenModal }) => {
+const Page = ({ setOpenModal }) => {
   // const h1Ref = useRef(<h1></h1>);
-  const { isLogIn } = UseHook();
+  const { isLogIn, pageNum } = UseHook();
 
   const pages = [<MainPage/>, <Signal/>, <Transmit/>, <Repeater/>, <Torch/>, <Notorand/>, <Adder/>];
 
@@ -21,7 +21,7 @@ const Page = ({ pageNum, setOpenModal }) => {
     // h1Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [pageNum]);
   return <div style={{ paddingBottom: 100, width: "100%" }}>
-    {pageNum === 0 && isLogIn ? <Info setOpenModal={setOpenModal}/> : pages[pageNum - 1]}
+    {pageNum === 0 && isLogIn ? <Info setOpenModal={setOpenModal}/> : (pages[pageNum - 1])}
   </div>;
 }
 
