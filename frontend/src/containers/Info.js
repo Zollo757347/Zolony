@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Form, Input, Avatar, Image, Button, Select, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import Canvas from './Canvas';
+import Canvas from '../components/Canvas';
 import './css/Info.css'
 import { UseHook } from '../hook/usehook';
 import Utils from '../classes/Utils';

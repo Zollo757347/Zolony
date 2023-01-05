@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
-import Page from './components/Page'
+import Page from './containers/Page'
 import Modal from './components/Modal'
 import './components/css/App.css';
 import { UseHook } from './hook/usehook';
