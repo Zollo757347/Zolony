@@ -2,10 +2,10 @@ import React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, Space } from 'antd';
 import './css/Dropdown.css'
-import { UseHook } from '../hook/usehook';
+import { useHook } from '../hooks/useHook';
 
 const Dropdown_Components = ({ setOpenModal }) => {
-    const { isLogin , LogOut, avatar, setPageNum } = UseHook();
+    const { loggedIn, logout, avatar, setPageNum } = useHook();
     
     const onClick = ({ key }) => {
         switch(key) {
@@ -19,7 +19,7 @@ const Dropdown_Components = ({ setOpenModal }) => {
                 setOpenModal(2);
                 break;
             case '4': 
-                LogOut(); 
+                logout(); 
                 setPageNum(1);
                 break;
             default:
@@ -31,23 +31,23 @@ const Dropdown_Components = ({ setOpenModal }) => {
         {
             key: '1',
             label: 'Your Profile',
-            disabled: (!isLogin)
+            disabled: (!loggedIn)
         },
         {
             key: '2',
             label: 'Log in',
-            disabled: (isLogin)
+            disabled: (loggedIn)
         },
         {
             key: '3',
             label: 'Sign up',
-            disabled: (isLogin)
+            disabled: (loggedIn)
         },
         {
             key: '4',
             danger: true,
             label: 'Log out',
-            disabled: (!isLogin)
+            disabled: (!loggedIn)
         }
     ];
 
@@ -62,7 +62,7 @@ const Dropdown_Components = ({ setOpenModal }) => {
         >
             <span onClick={(e) => e.preventDefault()}>
                 <Space>
-                    {isLogin ? <Avatar src={avatar}/> :  <b>Account</b>}
+                    {loggedIn ? <Avatar src={avatar}/> :  <b>Account</b>}
                     <DownOutlined />
                 </Space>
             </span>

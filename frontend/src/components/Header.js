@@ -5,29 +5,29 @@ import {
 import { Button } from 'antd';
 import Dropdown from './Dropdown';
 import './css/Header.css'
-import { UseHook } from '../hook/usehook';
+import { useHook } from '../hooks/useHook';
 
 const Header = ({ collapsed, toggleCollapsed, setOpenModal }) => {
-    const { setPageNum } = UseHook();
-    return (
-        <header>
-            <div id='header-left'>
-                <Button
-                    onClick={toggleCollapsed}
-                    id="sidebar-button"
-                >
-                    {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                </Button>
-                <div id="wordmark" onClick={() => setPageNum(1)}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>
-            </div>
-            <div id='header-right'>
-                <Dropdown 
-                    setPageToInfo={() => setPageNum(0)}
-                    setOpenModal={setOpenModal}
-                />
-            </div>
-        </header>
-    );
+  const { setPageNum } = useHook();
+  return (
+    <header>
+      <div id='header-left'>
+        <Button
+          onClick={toggleCollapsed}
+          id="sidebar-button"
+        >
+          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        </Button>
+        <div id="wordmark" onClick={() => setPageNum(1)}><img src={require("./data/img/header/wordmark.png")} alt="Wordmark"/></div>
+      </div>
+      <div id='header-right'>
+        <Dropdown 
+          setPageToInfo={() => setPageNum(0)}
+          setOpenModal={setOpenModal}
+        />
+      </div>
+    </header>
+  );
 }
 
 export default Header;
@@ -39,50 +39,50 @@ import { DownOutlined, SmileOutlined } from '@ant-design/icons';
 import { Dropdown, Space } from 'antd';
 const items = [
   {
-    key: '1',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-        1st menu item
-      </a>
-    ),
+  key: '1',
+  label: (
+    <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+    1st menu item
+    </a>
+  ),
   },
   {
-    key: '2',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-        2nd menu item (disabled)
-      </a>
-    ),
-    icon: <SmileOutlined />,
-    disabled: true,
+  key: '2',
+  label: (
+    <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+    2nd menu item (disabled)
+    </a>
+  ),
+  icon: <SmileOutlined />,
+  disabled: true,
   },
   {
-    key: '3',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-        3rd menu item (disabled)
-      </a>
-    ),
-    disabled: true,
+  key: '3',
+  label: (
+    <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+    3rd menu item (disabled)
+    </a>
+  ),
+  disabled: true,
   },
   {
-    key: '4',
-    danger: true,
-    label: 'a danger item',
+  key: '4',
+  danger: true,
+  label: 'a danger item',
   },
 ];
 const App = () => (
   <Dropdown
-    menu={{
-      items,
-    }}
+  menu={{
+    items,
+  }}
   >
-    <a onClick={(e) => e.preventDefault()}>
-      <Space>
-        Hover me
-        <DownOutlined />
-      </Space>
-    </a>
+  <a onClick={(e) => e.preventDefault()}>
+    <Space>
+    Hover me
+    <DownOutlined />
+    </Space>
+  </a>
   </Dropdown>
 );
 export default App;

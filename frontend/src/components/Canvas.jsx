@@ -2,7 +2,7 @@ import { message as Message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { ButtonTexture } from "../classes/ButtonTexture";
 import { Engine, Playground } from "../classes/Playground";
-import { UseHook } from "../hook/usehook";
+import { useHook } from "../hooks/useHook";
 import Button from "./Button";
 import "./css/Canvas.css"
 
@@ -24,7 +24,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData }));
 
   const [shiftDown, setShiftDown] = useState(false);
-  const { editMyMap, user, password } = UseHook();
+  const { editMyMap, username, password } = useHook();
 
   useEffect(() => {
     playgroundRef.current.setCanvas(canvasRef.current);
@@ -88,7 +88,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
 
   function handleSaveMap() {
     const map = Engine.extract(playgroundRef.current.engine);
-    editMyMap(user, password, map);
+    editMyMap(username, password, map);
   }
 
   async function handleCheckMap() {

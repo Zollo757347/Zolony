@@ -3,10 +3,9 @@ import CryptoJs from 'crypto-js'
 import { createContext, useContext, useState } from "react";
 import { LOG_IN, GET_MAP, CREATE_ACCOUNT, EDIT_PROFILE, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
 
-
 const HookContext = createContext({
   login: async () => {},
-  LogOut: () => {},
+  logout: () => {},
   GetMap: () => {},
   createAccount: async () => {},
   editProfile: async () => {},
@@ -14,30 +13,30 @@ const HookContext = createContext({
   editMyMap: () => {},
   DeleteUser: () => {},
   deleteUserMap: () => {},
-  setUser: () => {}, 
+  setUsername: () => {}, 
   setPassword: () => {},
   setBio: () => {}, 
   setAvatar: () => {},
   setPageNum: () => {},
   setMaps: () => {},
-  user: '',
+  username: '',
   password: '',
-  bio: '',
+  loggedIn: !!'',
   avatar: '',
-  isLogin: false,
-  pageNum: 1,
-  maps: []
+  bio: '',
+  maps: [],
+  pageNum: 1
 });
 
 
 const HookProvider = (props) => {
-  const [user, setUser] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [bio, setBio] = useState('');
+  const [loggedIn, setLoggedIn] = useState(!!'');
   const [avatar, setAvatar] = useState('');
-  const [isLogin, setIsLogin] = useState(false);
-  const [pageNum, setPageNum] = useState(1);
+  const [bio, setBio] = useState('');
   const [maps, setMaps] = useState([]);
+  const [pageNum, setPageNum] = useState(1);
 
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
   const [editProfileMutation] = useMutation(EDIT_PROFILE);
@@ -63,11 +62,20 @@ const HookProvider = (props) => {
 
     const user = data.login.data;
     
-    setIsLogin(true);
+    setLoggedIn(true);
     setAvatar(user.avatar);
     setBio(user.bio);
     setMaps(user.maps);
     return { error: null, data: user };
+  }
+
+  const logout = () => {
+    setLoggedIn(false);
+    setUsername('');
+    setPassword('');
+    setAvatar('');
+    setBio('');
+    setMaps([]);
   }
 
   const GetMap = async (name, mapName) => {
@@ -114,17 +122,12 @@ const HookProvider = (props) => {
         return 'exist';
       }
       
-      setIsLogin(true);
+      setLoggedIn(true);
       setAvatar(data.createAccount.avatar);
       setBio(data.createAccount.bio);
       setMaps([]);
       return data.createAccount;
     }
-  }
-
-  const LogOut = () => {
-    setUser('');
-    setIsLogin(false);
   }
 
   const editProfile = async (name, pwd, input) => {
@@ -190,34 +193,6 @@ const HookProvider = (props) => {
     }
   }
 
-  /* must wrap into a object
-
-  map = {
-    xLen,
-    yLen,
-    zLen,
-    mapName,
-    playground [[[{
-      type,
-      breakable,
-      states {
-        power,
-        source,
-        delay,
-        facing,
-        face,
-        locked,
-        powered,
-        lit,
-        east,
-        south,
-        west,
-        north,
-      }
-    }]]],
-  }
-  */
-
   const editMyMap = async (name, pwd, map) => {
     const cryptopwd = CryptoJs.MD5(pwd).toString();
     
@@ -268,7 +243,7 @@ const HookProvider = (props) => {
       console.log(`[deleteUser function error]: ${error.message}.`);
       return false;
     }
-    LogOut();
+    logout();
     return data.deleteUser;
   }
 
@@ -297,7 +272,7 @@ const HookProvider = (props) => {
     <HookContext.Provider
       value = {{
         login,
-        LogOut,
+        logout,
         GetMap,
         createAccount,
         editProfile,
@@ -305,24 +280,24 @@ const HookProvider = (props) => {
         editMyMap,
         DeleteUser,
         deleteUserMap,
-        setUser,
+        setUsername,
         setPassword,
         setBio, 
         setAvatar, 
         setPageNum, 
         setMaps, 
-        user,
+        username,
         password,
-        bio, 
+        loggedIn,
         avatar, 
-        isLogin,
-        pageNum,
-        maps
+        bio, 
+        maps,
+        pageNum
       }}
       {...props}
     />
   );  
 }
 
-const UseHook = () => useContext(HookContext);
-export { HookProvider, UseHook };
+const useHook = () => useContext(HookContext);
+export { HookProvider, useHook };

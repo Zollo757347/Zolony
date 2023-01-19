@@ -3,7 +3,7 @@ import { Form, Input, Avatar, Image, Select, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import Canvas from '../components/Canvas';
 import './css/Info.css'
-import { UseHook } from '../hook/usehook';
+import { useHook } from '../hooks/useHook';
 import Utils from '../classes/Utils';
 import Button from '../components/Button';
 import { ButtonTexture } from '../classes/ButtonTexture';
@@ -19,7 +19,7 @@ const Info = ({ setOpenModal }) => {
   const [zLen, setZLen] = useState(0);
   const [cvs, setCvs] = useState(null);
 
-  const { initialMyMap, deleteUserMap, user, password, bio, maps, avatar } = UseHook();
+  const { initialMyMap, deleteUserMap, username, password, bio, maps, avatar } = useHook();
 
   useEffect(() => {
     setSelectItems(maps.map(a => ({ label: a.mapName, value: a.mapName })));
@@ -36,7 +36,7 @@ const Info = ({ setOpenModal }) => {
   }
 
   const handleModalOk = async () => {
-    const data = await initialMyMap(user, password, parseInt(xLen), parseInt(yLen), parseInt(zLen), mapName);
+    const data = await initialMyMap(username, password, parseInt(xLen), parseInt(yLen), parseInt(zLen), mapName);
 
     setCvs(null);
     await Utils.Sleep(0);
@@ -45,7 +45,7 @@ const Info = ({ setOpenModal }) => {
   }
 
   const handleMapDelete = async () => {
-    await deleteUserMap(user, password, mapName);
+    await deleteUserMap(username, password, mapName);
     setCvs(null);
   }
 
@@ -53,7 +53,7 @@ const Info = ({ setOpenModal }) => {
     <Form>
       <div id='Info-username' className='Info-left'>
         <Form.Item label="Username">
-          <Input defaultValue={user} disabled={true}/>
+          <Input defaultValue={username} disabled={true}/>
         </Form.Item>
       </div>
       <div id='Info-avatar' className='Info-left'>

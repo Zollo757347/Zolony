@@ -4,7 +4,7 @@ import App from './App';
 import {
   ApolloClient, InMemoryCache, ApolloProvider, HttpLink,
 } from '@apollo/client';
-import { HookProvider } from './hook/usehook';
+import { HookProvider } from './hooks/useHook';
 
 const LINK = process.env.NODE_ENV === "production" ? "/" : "http://localhost:4000/";
 

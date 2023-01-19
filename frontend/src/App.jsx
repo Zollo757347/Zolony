@@ -4,7 +4,6 @@ import Sidebar from './components/Sidebar'
 import Page from './containers/Page'
 import Modal from './components/Modal'
 import './components/css/App.css';
-import { UseHook } from './hook/usehook';
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { AppstoreOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import './css/Sidebar.css'
-import { UseHook } from '../hook/usehook';
+import { useHook } from '../hooks/useHook';
 
 const Sidebar = ({ collapsed }) => {
-  const { pageNum, setPageNum } = UseHook();
+  const { pageNum, setPageNum } = useHook();
   function getItem(label, key, icon, children, type) {
     return {
       key,
