@@ -1,4 +1,4 @@
-import {UserModel, MapModel} from "../models.js";
+import { MapModel, UserModel } from "../models.js";
 
 const DEFAULT_AVATAR = 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'
 const DEFAULT_BIO = "newer"

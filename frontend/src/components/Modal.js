@@ -9,16 +9,16 @@ const Modal_Components = ({open, setOpen}) => {
   const [newPassword, setNewPassword] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
   
-  const { logIn, createAccount, editProfile, setUser, setPassword, setBio, setAvatar, user, password, bio, avatar } = UseHook();
+  const { login, createAccount, editProfile, setUser, setPassword, setBio, setAvatar, user, password, bio, avatar } = UseHook();
 
   const handleOk = async () => {
     if (open === 1) { // signin
-      const data = await logIn(user, password);
+      const { error } = await login(user, password);
 
-      if (data === 'error') {
+      if (error === 'error') {
         Message.error({ content: '發生了一些錯誤！', duration: 1 });
       }
-      else if (data === 'invalid') {
+      else if (error === 'invalid') {
         Message.error({ content: '你輸入了無效的帳號或密碼！', duration: 1 });
       }
       else {

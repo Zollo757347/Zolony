@@ -45,7 +45,7 @@ const Info = ({ setOpenModal }) => {
   }
 
   const handleMapDelete = async () => {
-    const data = await deleteUserMap(user, password, mapName);
+    await deleteUserMap(user, password, mapName);
     setCvs(null);
   }
 

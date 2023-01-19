@@ -40,7 +40,7 @@ const MapSchema = new Schema({
 const MapModel = mongoose.model('Map', MapSchema); 
 
 const UserSchema = new Schema({
-  name: { type: String, required: [true, 'Name field is required.'] },
+  username: { type: String, required: [true, 'Name field is required.'] },
   password: { type: String, required: [true, 'password is required.']},
   avatar: { type: String, required: [true, 'picture url is required.']},
   level: [{type: Boolean}],

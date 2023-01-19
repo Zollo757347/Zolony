@@ -1,92 +1,55 @@
 import { gql } from '@apollo/client';
 
 export const LOG_IN = gql`
-    query logIn(
-        $name: String!,
-        $password: String!
-    ) {
-        logIn(data:{
-            name: $name,
-            password: $password
-        }){
-            name
-            password
-            avatar
-            bio
-            level
-            maps {
-                xLen
-                yLen
-                zLen
-                mapName
-                playground {
-                    type
-                    breakable
-                    states {
-                        power 
-                        source
-
-                        delay
-                        facing
-                        face
-                        locked
-                        powered
-
-                        lit
-
-                        east
-                        south
-                        west
-                        north
-                    }
-                }
-                availableBlocks
-                validation {
-                    levers
-                    lamps
-                    boolFuncs
-                    timeout
-                }
-            }
-        }
+  query login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      error
+      data {
+        username
+        avatar
+        bio
+        level
+        maps
+      }
     }
+  }
 `;
 
 export const GET_MAP =  gql`
-    query getMap(
-        $mapName: String!,
-        $name: String!
-    ) {
-        getMap(data:{
-            mapName: $mapName,
-            name: $name
-        } 
-        ){
-            xLen
-            yLen
-            zLen
-            mapName
-            playground {
-                type
-                breakable
-                states {
-                    power 
-                    source
+  query getMap(
+    $mapName: String!,
+    $username: String!
+  ) {
+    getMap(data:{
+      mapName: $mapName,
+      username: $username
+    } 
+    ){
+      xLen
+      yLen
+      zLen
+      mapName
+      playground {
+        type
+        breakable
+        states {
+          power 
+          source
 
-                    delay
-                    facing
-                    face
-                    locked
-                    powered
+          delay
+          facing
+          face
+          locked
+          powered
 
-                    lit
+          lit
 
-                    east
-                    south
-                    west
-                    north
-                }
-            }
+          east
+          south
+          west
+          north
         }
+      }
     }
+  }
 `;

@@ -1,20 +1,28 @@
 type Query {
-  logIn(data: logInInput!): UserInfo
+  login(username: String!, password: String!): LoginInfo
   getMap(data: getMapInput!): MapData
 }
 
 type Mutation {
-  createAccount(data: logInInput!): UserInfo
+  createAccount(username: String!, password: String!): UserInfo
   editProfile(data: editProfileInput!): UserInfo
   initialMyMap(data: initialMyMapInput!): MapData
   editMyMap(data: editMyMapInput!): MapData
-  deleteUser(data: logInInput!): Boolean
+  deleteUser(username: String!, password: String!): Boolean
   deleteUserMap(data: deleteUserMapInput!): Boolean
 }
 
-input logInInput {
-  name: String!
-  password: String!
+type LoginInfo {
+  error: String
+  data: UserLoginInfo
+}
+
+type UserLoginInfo {
+  username: String!
+  avatar: String!
+  bio: String!
+  level: [Boolean!]!
+  maps: [String!]!
 }
 
 input getMapInput {
@@ -95,7 +103,7 @@ input BlockStatesInput {
 }
 
 type UserInfo {
-  name: String!
+  username: String!
   password: String!
   maps: [MapData]!
   avatar: String!

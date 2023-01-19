@@ -1,11 +1,11 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
 import CryptoJs from 'crypto-js'
 import { createContext, useContext, useState } from "react";
-import {LOG_IN, GET_MAP, CREATE_ACCOUNT, EDIT_PROFILE, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP} from '../graphql';
+import { LOG_IN, GET_MAP, CREATE_ACCOUNT, EDIT_PROFILE, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
 
 
 const HookContext = createContext({
-  logIn: async () => {},
+  login: async () => {},
   LogOut: () => {},
   GetMap: () => {},
   createAccount: async () => {},
@@ -24,8 +24,8 @@ const HookContext = createContext({
   password: '',
   bio: '',
   avatar: '',
-  isLogIn: false,
-  pageNum: 1, 
+  isLogin: false,
+  pageNum: 1,
   maps: []
 });
 
@@ -35,7 +35,7 @@ const HookProvider = (props) => {
   const [password, setPassword] = useState('');
   const [bio, setBio] = useState('');
   const [avatar, setAvatar] = useState('');
-  const [isLogIn, setIsLogIn] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   const [pageNum, setPageNum] = useState(1);
   const [maps, setMaps] = useState([]);
 
@@ -45,36 +45,36 @@ const HookProvider = (props) => {
   const [editMyMapMutation] = useMutation(EDIT_MY_MAP);
   const [deleteUserMutation] = useMutation(DELETE_USER);
   const [deleteUserMapMutation] = useMutation(DELETE_USER_MAP);
-  const [logInQuery] = useLazyQuery(LOG_IN);
+  const [loginQuery] = useLazyQuery(LOG_IN);
   const [getMapQuery] = useLazyQuery(GET_MAP);
 
-  const logIn = async (name, pwd) => {
-    const cryptopwd = CryptoJs.MD5(pwd).toString();
+  const login = async (username, password) => {
+    password = CryptoJs.MD5(password).toString();
 
-    const {error, loading, data} = await logInQuery({
-      variables: {
-        name: name,
-        password: cryptopwd,
-      }
-    }).catch(console.log);
+    const result = await loginQuery({
+      variables: { username, password }
+    }).catch(console.error);
+    if (!result) return { error: 'connection', data: null };
 
-    if (loading) return 'loading...';
+    const { error, loading, data } = result;
+    if (loading) return { error: 'loading', data: null };
     if (error) {
-      console.log(`[logIn function error]: ${error.message}.`);
-      return 'error';
+      console.error(error);
+      return { error: 'error' };
     }
-    else {
-      if (!data.logIn) {
-        console.log(`user not found.`);
-        return 'invalid';
-      }
-      
-      setIsLogIn(true);
-      setAvatar(data.logIn.avatar);
-      setBio(data.logIn.bio);
-      setMaps(data.logIn.maps);
-      return data.logIn;
+
+    if (!data.login) {
+      console.log(`user not found.`);
+      return 'invalid';
     }
+
+    const user = data.login.data;
+    
+    setIsLogin(true);
+    setAvatar(user.avatar);
+    setBio(user.bio);
+    setMaps(user.maps);
+    return { error: null, data: user };
   }
 
   const GetMap = async (name, mapName) => {
@@ -121,7 +121,7 @@ const HookProvider = (props) => {
         return 'exist';
       }
       
-      setIsLogIn(true);
+      setIsLogin(true);
       setAvatar(data.createAccount.avatar);
       setBio(data.createAccount.bio);
       setMaps([]);
@@ -131,7 +131,7 @@ const HookProvider = (props) => {
 
   const LogOut = () => {
     setUser('');
-    setIsLogIn(false);
+    setIsLogin(false);
   }
 
   const editProfile = async (name, pwd, input) => {
@@ -303,7 +303,7 @@ const HookProvider = (props) => {
   return (
     <HookContext.Provider
       value = {{
-        logIn,
+        login,
         LogOut,
         GetMap,
         createAccount,
@@ -322,8 +322,8 @@ const HookProvider = (props) => {
         password,
         bio, 
         avatar, 
-        isLogIn,
-        pageNum, 
+        isLogin,
+        pageNum,
         maps
       }}
       {...props}

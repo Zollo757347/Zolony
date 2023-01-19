@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Info from "./Info"
 import { UseHook } from "../hook/usehook"
 import './css/Page.css'
@@ -13,7 +13,7 @@ import Adder from "../components/data/article/Adder";
 
 const Page = ({ setOpenModal }) => {
   // const h1Ref = useRef(<h1></h1>);
-  const { isLogIn, pageNum } = UseHook();
+  const { isLogin, pageNum } = UseHook();
 
   const pages = [<MainPage/>, <Signal/>, <Transmit/>, <Repeater/>, <Torch/>, <Notorand/>, <Adder/>];
 
@@ -21,7 +21,7 @@ const Page = ({ setOpenModal }) => {
     // h1Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [pageNum]);
   return <div style={{ paddingBottom: 100, width: "100%" }}>
-    {pageNum === 0 && isLogIn ? <Info setOpenModal={setOpenModal}/> : (pages[pageNum - 1])}
+    {pageNum === 0 && isLogin ? <Info setOpenModal={setOpenModal}/> : (pages[pageNum - 1])}
   </div>;
 }
 

@@ -5,7 +5,7 @@ import './css/Dropdown.css'
 import { UseHook } from '../hook/usehook';
 
 const Dropdown_Components = ({ setOpenModal }) => {
-    const { isLogIn , LogOut, avatar, setPageNum } = UseHook();
+    const { isLogin , LogOut, avatar, setPageNum } = UseHook();
     
     const onClick = ({ key }) => {
         switch(key) {
@@ -31,23 +31,23 @@ const Dropdown_Components = ({ setOpenModal }) => {
         {
             key: '1',
             label: 'Your Profile',
-            disabled: (!isLogIn)
+            disabled: (!isLogin)
         },
         {
             key: '2',
             label: 'Log in',
-            disabled: (isLogIn)
+            disabled: (isLogin)
         },
         {
             key: '3',
             label: 'Sign up',
-            disabled: (isLogIn)
+            disabled: (isLogin)
         },
         {
             key: '4',
             danger: true,
             label: 'Log out',
-            disabled: (!isLogIn)
+            disabled: (!isLogin)
         }
     ];
 
@@ -62,7 +62,7 @@ const Dropdown_Components = ({ setOpenModal }) => {
         >
             <span onClick={(e) => e.preventDefault()}>
                 <Space>
-                    {isLogIn ? <Avatar src={avatar}/> :  <b>Account</b>}
+                    {isLogin ? <Avatar src={avatar}/> :  <b>Account</b>}
                     <DownOutlined />
                 </Space>
             </span>

@@ -6,7 +6,7 @@
 
 #### **query**
 
-- **logIn:** 輸入user的名字、密碼，得到使用者的一切資料，如果找不到該使用者或密碼打錯會回傳null。適用於user登入時。
+- **login:** 輸入user的名字、密碼，得到使用者的一切資料，如果找不到該使用者或密碼打錯會回傳null。適用於user登入時。
 
 - **getMap:** 輸入user的名字、地圖，得到某張地圖，如果找不到該地圖會回傳null。適用於前端獲取文章地圖時。
 
@@ -134,11 +134,11 @@
     }
 ```
 
-### **logIn:**
+### **login:**
 
 ``` graphql
     query {
-        logIn(data:{
+        login(data:{
             name: "yohe",
             password: "12"
         }) {
@@ -183,7 +183,7 @@
         }
     }
     query {
-        logIn(data:{
+        login(data:{
             name: "yohe",
             password: "123"
         }) {

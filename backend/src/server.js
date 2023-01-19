@@ -1,21 +1,21 @@
-import * as fs from 'fs'
-import { createSchema, createYoga } from 'graphql-yoga'
-import {UserModel, MapModel} from './models'
-import express from 'express'
-import path from 'path'
+import fs from 'fs';
+import { createSchema, createYoga } from 'graphql-yoga';
+import { MapModel, UserModel } from './models';
+import express from 'express';
+import path from 'path';
 
 import Query from './resolvers/Query';
 import Mutation from './resolvers/Mutation';
 
-const server = express()    
+const server = express();
 
 const yoga = createYoga({
   schema: createSchema({
-  typeDefs: fs.readFileSync('./src/schema.graphql', 'utf-8'),
-  resolvers: {
-    Query,
-    Mutation,   
-  },
+    typeDefs: fs.readFileSync('./src/schema.graphql', 'utf-8'),
+    resolvers: {
+      Query,
+      Mutation,   
+    },
   }),
   context: {
     MapModel,
@@ -25,7 +25,8 @@ const yoga = createYoga({
 });
 
 if (process.env.NODE_ENV === "production") {
-  console.log("enter to production field")
+  console.log("The app now runs in production mode.");
+
   const __dirname = path.resolve();
   server.use(express.static(path.join(__dirname, "../frontend", "build")));
   server.get("/*", function (req, res) {

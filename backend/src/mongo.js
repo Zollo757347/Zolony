@@ -1,20 +1,21 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv-defaults';
 
-
 export default { 
-    connect: () => {
+  connect: () => {
     dotenv.config();
     if (!process.env.MONGO_URL) {
-        console.error("Missing MONGO_URL!!!");
-        process.exit(1);
-    } 
-    mongoose.connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then((res) => console.log("mongo db connection created"));
-    mongoose.connection.on('error',
-        console.error.bind(console, 'connection error:'));
+      console.error("Missing MONGO_URL in .env");
+      process.exit(1);
     }
-};     
+
+    mongoose.connect(process.env.MONGO_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }).then(() => {
+      console.log("MongoDB Connection Created.")
+    });
+
+    mongoose.connection.on('error', console.error.bind(console, '[MongoDB Connection Error]'));
+  }
+};   
