@@ -1,7 +1,7 @@
 import { MapModel, UserModel } from "../models.js";
 
 const Query = {
-  login: async (parent, { username, password }) => {
+  login: async (_parent, { username, password }) => {
     const user = await UserModel.findOne({ username });
 
     if (!user) return { error: 'username', data: null };
@@ -21,19 +21,25 @@ const Query = {
     };
   },
 
-  getMap: async (parent, args) => {
-    let user = await UserModel.findOne({ name: args.data.name }).populate(`maps`);
-    if (!user) return null;
+  getMap: async (_parent, { username, mapName }) => {
+    const user = await UserModel.findOne({ username });
+    if (!user) return { error: 'username', data: null };
 
-    let sortMap = await MapModel.findOne({ mapName: args.data.mapName, belonging: user._id });
-    
-    if(sortMap){
-      console.log(`find map ${args.data.mapName} from user ${args.data.name}:`);
-      console.log(sortMap);
-      return sortMap;
-    }
-    console.log(`user ${args.data.name} doesn't own map ${args.data.mapName}.`);
-    return null;
+    const map = await MapModel.findOne({ mapName: mapName, belonging: user._id });
+    if (!map) return { error: 'mapName', data: null };
+
+    return {
+      error: null,
+      data: {
+        xLen: map.xLen, 
+        yLen: map.yLen, 
+        zLen: map.zLen, 
+        mapName: mapName, 
+        availableBlocks: map.availableBlocks, 
+        validation: map.validation, 
+        playground: map.playground
+      }
+    };
   }
 };
 export default Query;

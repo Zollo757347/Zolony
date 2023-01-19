@@ -16,38 +16,41 @@ export const LOG_IN = gql`
 `;
 
 export const GET_MAP =  gql`
-  query getMap(
-    $mapName: String!,
-    $username: String!
-  ) {
-    getMap(data:{
-      mapName: $mapName,
-      username: $username
-    } 
-    ){
-      xLen
-      yLen
-      zLen
-      mapName
-      playground {
-        type
-        breakable
-        states {
-          power 
-          source
+  query getMap($username: String!, $mapName: String!) {
+    getMap(username: $username, mapName: $mapName) {
+      error
+      data {
+        xLen
+        yLen
+        zLen
+        mapName
+        availableBlocks
+        validation {
+          levers
+          lamps
+          boolFuncs
+          timeout
+        }
+        playground {
+          type
+          breakable
+          states {
+            power 
+            source
 
-          delay
-          facing
-          face
-          locked
-          powered
+            delay
+            facing
+            face
+            locked
+            powered
 
-          lit
+            lit
 
-          east
-          south
-          west
-          north
+            east
+            south
+            west
+            north
+          }
         }
       }
     }

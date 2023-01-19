@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Form, Input, Avatar, Image, Select, Modal } from 'antd';
+import { Form, Input, Avatar, Image, Select, Modal, message as Message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import Canvas from '../components/Canvas';
 import './css/Info.css'
@@ -17,21 +17,42 @@ const Info = ({ setOpenModal }) => {
   const [xLen, setXLen] = useState(0);
   const [yLen, setYLen] = useState(0);
   const [zLen, setZLen] = useState(0);
+
   const [cvs, setCvs] = useState(null);
 
-  const { initialMyMap, deleteUserMap, username, password, bio, maps, avatar } = useHook();
+  const { getMap, initialMyMap, deleteUserMap, username, password, bio, maps, avatar } = useHook();
 
   useEffect(() => {
     setSelectItems(maps.map(name => ({ label: name, value: name })));
   }, [maps]);
 
+  const onSelect = async (mapName) => {
+    const { error, data } = await getMap(username, mapName);
+    switch (error) {
+      case 'loading': return;
 
-  const onSelect = async (value) => {
-    const data = JSON.parse(JSON.stringify(maps.filter(name => name === value)[0]));
+      case 'connection':
+        Message.error({ content: '資料庫連線失敗', duration: 1 });
+        return;
 
-    setMapName(value);
+      case 'error':
+        Message.error({ content: '地圖資料存取失敗', duration: 1 });
+        return;
+
+      case 'username':
+        Message.error({ content: '此帳號名稱不存在', duration: 1 });
+        return;
+
+      case 'mapName':
+        Message.error({ content: '你並沒有這張地圖', duration: 1 });
+        return;
+      
+      default: break;
+    }
+
+    Message.success({ content: `成功開啟 ${mapName}`, duration: 1 });
     setCvs(null);
-    await Utils.Sleep(0);
+    await Utils.Sleep(1);
     setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} storable={true} />);
   }
 
@@ -39,7 +60,7 @@ const Info = ({ setOpenModal }) => {
     const data = await initialMyMap(username, password, parseInt(xLen), parseInt(yLen), parseInt(zLen), mapName);
 
     setCvs(null);
-    await Utils.Sleep(0);
+    await Utils.Sleep(1);
     setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} storable={true} />);
     setOpenMapModal(false);
   }

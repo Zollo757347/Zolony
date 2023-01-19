@@ -1,6 +1,6 @@
 type Query {
-  login(username: String!, password: String!): LoginInfo
-  getMap(data: getMapInput!): MapData
+  login(username: String!, password: String!): LoginData
+  getMap(username: String!, mapName: String!): GetMapData
 }
 
 type Mutation {
@@ -12,12 +12,12 @@ type Mutation {
   deleteUserMap(data: deleteUserMapInput!): Boolean
 }
 
-type LoginInfo {
+type LoginData {
   error: String
-  data: UserLoginInfo
+  data: UserLoginData
 }
 
-type UserLoginInfo {
+type UserLoginData {
   username: String!
   avatar: String!
   bio: String!
@@ -25,9 +25,9 @@ type UserLoginInfo {
   maps: [String!]!
 }
 
-input getMapInput {
-  mapName: String!
-  name: String!
+type GetMapData {
+  error: String
+  data: MapData
 }
 
 input editProfileInput {
@@ -117,7 +117,6 @@ type MapData {
   zLen: Int!
   mapName: String!
   availableBlocks: [Int!]
-  belonging: UserInfo!
   validation: ValidationData
   playground: [[[BlockData]!]!]!
 }

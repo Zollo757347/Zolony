@@ -11,12 +11,11 @@ const savedUsername = localStorage.getItem(LSK_USERNAME) ?? localStorage.setItem
 const savedAvatar = localStorage.getItem(LSK_AVATAR) ?? localStorage.setItem(LSK_AVATAR, '') ?? '';
 const savedBio = localStorage.getItem(LSK_BIO) ?? localStorage.setItem(LSK_BIO, '') ?? '';
 const savedMaps = localStorage.getItem(LSK_MAPS) ?? localStorage.setItem(LSK_MAPS, '[]') ?? '[]';
-console.log(savedUsername, savedAvatar, savedBio, savedMaps);
 
 const HookContext = createContext({
   login: async () => {},
   logout: () => {},
-  GetMap: () => {},
+  getMap: async () => {},
   createAccount: async () => {},
   editProfile: async () => {},
   initialMyMap: () => {},
@@ -68,9 +67,9 @@ const HookProvider = (props) => {
     const { error, loading, data } = result;
     if (loading) return { error: 'loading', data: null };
     if (error) return { error: 'error', data: null };
-    if (!data.login.data) return { error: data.login.error, data: null };
 
     const user = data.login.data;
+    if (!user) return { error: data.login.error, data: null };
 
     localStorage.setItem(LSK_USERNAME, username);
     localStorage.setItem(LSK_AVATAR, user.avatar);
@@ -100,28 +99,19 @@ const HookProvider = (props) => {
     setMaps([]);
   }
 
-  const GetMap = async (name, mapName) => {
-    const {loading, data, error} = await getMapQuery({
-      variables: {
-        name: name,
-        mapName: mapName,
-      }
-    });
+  const getMap = async (username, mapName) => {
+    const result = await getMapQuery({
+      variables: { username, mapName }
+    }).catch(console.error);
+    if (!result) return { error: 'connection', data: null };
 
-    if (loading) return 'loading...';
-    if (error) {
-      console.log(`[getMap function error]: ${error.message}.`);
-      return 'error';
-    }
+    const { error, loading, data } = result;
+    if (loading) return { error: 'loading', data: null };
+    if (error) return { error: 'error', data: null };
 
-    if (!data.getMap) {
-      console.log(`user not found.`);
-      return 'user not found';
-    }
-    
-    console.log(`getmap succeed.`);
-    console.log(data.getMap);
-    return data.getMap;
+    const map = data.getMap.data;
+    if (!map) return { error: data.getMap.error, data: null };
+    return { error: null, data: map };
   }
 
   const createAccount = async (name, pwd) => {
@@ -295,7 +285,7 @@ const HookProvider = (props) => {
       value = {{
         login,
         logout,
-        GetMap,
+        getMap,
         createAccount,
         editProfile,
         initialMyMap,
