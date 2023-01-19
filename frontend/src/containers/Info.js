@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Form, Input, Avatar, Image, Button, Select, Modal } from 'antd';
+import { Form, Input, Avatar, Image, Select, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import Canvas from '../components/Canvas';
 import './css/Info.css'
