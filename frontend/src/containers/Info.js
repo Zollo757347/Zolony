@@ -10,8 +10,8 @@ import { ButtonTexture } from '../classes/ButtonTexture';
 
 const { TextArea } = Input;
 const Info = ({ setOpenModal }) => {
-    const [selectItems, setSelectItems] = useState([]);
-    const [openMapModal, setOpenMapModal] = useState(false);
+  const [selectItems, setSelectItems] = useState([]);
+  const [openMapModal, setOpenMapModal] = useState(false);
 
   const [mapName, setMapName] = useState('');
   const [xLen, setXLen] = useState(0);
@@ -22,12 +22,12 @@ const Info = ({ setOpenModal }) => {
   const { initialMyMap, deleteUserMap, username, password, bio, maps, avatar } = useHook();
 
   useEffect(() => {
-    setSelectItems(maps.map(a => ({ label: a.mapName, value: a.mapName })));
+    setSelectItems(maps.map(name => ({ label: name, value: name })));
   }, [maps]);
 
 
   const onSelect = async (value) => {
-    const data = JSON.parse(JSON.stringify(maps.filter(m => m.mapName === value)[0]));
+    const data = JSON.parse(JSON.stringify(maps.filter(name => name === value)[0]));
 
     setMapName(value);
     setCvs(null);

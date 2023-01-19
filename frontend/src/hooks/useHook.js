@@ -3,6 +3,16 @@ import CryptoJs from 'crypto-js'
 import { createContext, useContext, useState } from "react";
 import { LOG_IN, GET_MAP, CREATE_ACCOUNT, EDIT_PROFILE, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
 
+const LSK_USERNAME = 'username';
+const LSK_AVATAR = 'avatar';
+const LSK_BIO = 'bio';
+const LSK_MAPS = 'maps';
+const savedUsername = localStorage.getItem(LSK_USERNAME) ?? localStorage.setItem(LSK_USERNAME, '') ?? '';
+const savedAvatar = localStorage.getItem(LSK_AVATAR) ?? localStorage.setItem(LSK_AVATAR, '') ?? '';
+const savedBio = localStorage.getItem(LSK_BIO) ?? localStorage.setItem(LSK_BIO, '') ?? '';
+const savedMaps = localStorage.getItem(LSK_MAPS) ?? localStorage.setItem(LSK_MAPS, '[]') ?? '[]';
+console.log(savedUsername, savedAvatar, savedBio, savedMaps);
+
 const HookContext = createContext({
   login: async () => {},
   logout: () => {},
@@ -19,10 +29,10 @@ const HookContext = createContext({
   setAvatar: () => {},
   setPageNum: () => {},
   setMaps: () => {},
-  username: '',
-  password: '',
-  loggedIn: !!'',
-  avatar: '',
+  username: savedUsername,
+  password: savedBio,
+  loggedIn: !!savedUsername,
+  avatar: savedAvatar,
   bio: '',
   maps: [],
   pageNum: 1
@@ -30,12 +40,12 @@ const HookContext = createContext({
 
 
 const HookProvider = (props) => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(savedUsername);
   const [password, setPassword] = useState('');
-  const [loggedIn, setLoggedIn] = useState(!!'');
-  const [avatar, setAvatar] = useState('');
-  const [bio, setBio] = useState('');
-  const [maps, setMaps] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(!!savedUsername);
+  const [avatar, setAvatar] = useState(savedAvatar);
+  const [bio, setBio] = useState(savedBio);
+  const [maps, setMaps] = useState(JSON.parse(savedMaps));
   const [pageNum, setPageNum] = useState(1);
 
   const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
@@ -61,7 +71,14 @@ const HookProvider = (props) => {
     if (!data.login.data) return { error: data.login.error, data: null };
 
     const user = data.login.data;
+
+    localStorage.setItem(LSK_USERNAME, username);
+    localStorage.setItem(LSK_AVATAR, user.avatar);
+    localStorage.setItem(LSK_BIO, user.bio);
+    localStorage.setItem(LSK_MAPS, JSON.stringify(user.maps));
     
+    setUsername(username);
+    setPassword('');
     setLoggedIn(true);
     setAvatar(user.avatar);
     setBio(user.bio);
@@ -70,9 +87,14 @@ const HookProvider = (props) => {
   }
 
   const logout = () => {
-    setLoggedIn(false);
+    localStorage.setItem(LSK_USERNAME, '');
+    localStorage.setItem(LSK_AVATAR, '');
+    localStorage.setItem(LSK_BIO, '');
+    localStorage.setItem(LSK_MAPS, '[]');
+
     setUsername('');
     setPassword('');
+    setLoggedIn(false);
     setAvatar('');
     setBio('');
     setMaps([]);
