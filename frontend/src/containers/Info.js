@@ -5,6 +5,8 @@ import Canvas from '../components/Canvas';
 import './css/Info.css'
 import { UseHook } from '../hook/usehook';
 import Utils from '../classes/Utils';
+import Button from '../components/Button';
+import { ButtonTexture } from '../classes/ButtonTexture';
 
 const { TextArea } = Input;
 const Info = ({ setOpenModal }) => {
@@ -68,9 +70,9 @@ const Info = ({ setOpenModal }) => {
           <TextArea rows={4} defaultValue={bio ?? "在這裡放上自介"} disabled={true}/>
         </Form.Item>
       </div>
-      <div id='Info-btn' className='Info-left'>
+      <div id='Info-btn'>
         <Form.Item>
-          <Button onClick={() => setOpenModal(3)}>
+          <Button texture={ButtonTexture.Primary} onClick={() => setOpenModal(3)}>
             修改密碼/編輯個人資料
           </Button>
         </Form.Item>
@@ -97,7 +99,7 @@ const Info = ({ setOpenModal }) => {
       </div>
       <div id='Info-right-wrapper'>
         <div id='Info-right-header'>
-          <div id='Info-select'>
+          <div id='Info-select' width="100px">
             <Form><Form.Item><Select
               showSearch
               placeholder="Select a map"
@@ -113,16 +115,12 @@ const Info = ({ setOpenModal }) => {
               options={selectItems}
             /></Form.Item></Form>
           </div>
-          <div id='Info-del'>
-            <Button onClick={handleMapDelete} className="Info-del-btn" disabled={!cvs}>
-              刪減目前地圖
-            </Button>
-          </div>
-          <div id='Info-add'>
-            <Button onClick={() => setOpenMapModal(true)} className="Info-add-btn"> 
-              增加地圖
-            </Button>
-          </div>
+          <Button texture={ButtonTexture.Danger} onClick={handleMapDelete} disabled={!cvs}>
+            刪除地圖
+          </Button>
+          <Button texture={ButtonTexture.Success} onClick={() => setOpenMapModal(true)}> 
+            增加地圖
+          </Button>
         </div>
         <div id='Info-right-section'>
             {cvs ?? <></>}

@@ -1,7 +1,9 @@
-import { Button, message as Message } from "antd";
+import { message as Message } from "antd";
 import { useEffect, useRef, useState } from "react";
+import { ButtonTexture } from "../classes/ButtonTexture";
 import { Engine, Playground } from "../classes/Playground";
 import { UseHook } from "../hook/usehook";
+import Button from "./Button";
 import "./css/Canvas.css"
 
 function getPosition(canvas, event) {
@@ -128,8 +130,8 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
       {
         storable || (checkable && playgroundRef.current.engine.validation) ? 
           <div className="redstone-canvas-bottom">
-            {storable ? <Button onClick={handleSaveMap}>儲存地圖</Button> : <></>}
-            {checkable && playgroundRef.current.engine.validation ? <Button onClick={handleCheckMap}>檢查地圖</Button> : <></>}
+            {checkable && playgroundRef.current.engine.validation ? <Button texture={ButtonTexture.Primary} onClick={handleCheckMap}>檢查地圖</Button> : <></>}
+            {storable ? <Button texture={ButtonTexture.Success} onClick={handleSaveMap}>儲存地圖</Button> : <></>}
           </div> :
           <></>
       }

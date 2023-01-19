@@ -3,7 +3,7 @@ const MainPage = () => {
     <article>
       <div className="main-page" style={{ display: 'flex', marginTop: 30 }}>
         <div className="main-page-left" style={{ margin: 30 }}>
-          <img src={require("../img/header/wordmark.png")} width="100%" />
+          <img src={require("../img/header/wordmark.png")} alt="Logo" width="100%" />
         </div>
         <div className="main-page-right">
           <section style={{ margin: "5% 20% 5% 5%" }}>
@@ -13,7 +13,7 @@ const MainPage = () => {
 
           <section style={{ margin: "5% 12% 5% 35%" }}>
             <h1 style={{ color: 'rgb(150, 150, 100)', fontSize: 35 }}><b>什麼是紅石？</b></h1>
-            <p style={{ color: 'rgb(30, 50, 20)', margin: "0 100px 0 50px", fontSize: 20 }}><a href="https://minecraft.fandom.com/zh/wiki/紅石粉" target="_blank">紅石</a>是 Minecraft 中專門用來建造機械結構的基礎材料，所有的自動化設施或多或少都需要紅石的幫助才能完成。</p>
+            <p style={{ color: 'rgb(30, 50, 20)', margin: "0 100px 0 50px", fontSize: 20 }}><a href="https://minecraft.fandom.com/zh/wiki/紅石粉">紅石</a>是 Minecraft 中專門用來建造機械結構的基礎材料，所有的自動化設施或多或少都需要紅石的幫助才能完成。</p>
           </section>
 
           <section style={{ margin: "5% 20% 5% 5%" }}>

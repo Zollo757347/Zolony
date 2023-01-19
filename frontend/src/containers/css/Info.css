@@ -38,40 +38,14 @@
     align-items: center;
 }
 
-#Info-right-header {
-    padding: 5px 10px 0px 10px;
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-}
-
 #Info-right-section {
-    flex: 12;
     display: flex;
     justify-content: center;
     align-items: flex-start;
 }
 
 #Info-select {
-    flex: 9;
-}
-
-#Info-del {
-    flex: 2;
-    display: flex;
-    justify-content: center;
-}
-
-#Info-add {
-    flex: 2;
-}
-
-.Info-del-btn:hover {
-    background-color: rgb(234, 101, 101) !important;
-}
-
-.Info-add-btn:hover {
-    background-color: rgb(245, 213, 37) !important;
+    flex: 8;
 }
 
 #Map-modal-xyz-wrapper {
