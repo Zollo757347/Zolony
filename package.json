@@ -12,6 +12,10 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.3",
-    "graphql": "^16.6.0"
+    "graphql": "^16.6.0",
+    "styled-components": "^5.3.6"
+  }, 
+  "resolutions": {
+    "styled-components": "^5"
   }
 }
