@@ -4,11 +4,12 @@ const Query = {
   login: async (parent, { username, password }) => {
     const user = await UserModel.findOne({ username });
 
-    if (!user) return { error: 'User Not Found', data: null };
-    if (user.password !== password) return { error: 'Incorrect password.', data: null };
+    if (!user) return { error: 'username', data: null };
+    if (user.password !== password) return { error: 'password', data: null };
 
     await user.populate({ path: 'maps', select: 'mapName' });
-    const result = {
+
+    return {
       error: null, 
       data: {
         username: user.username, 
@@ -18,8 +19,6 @@ const Query = {
         maps: user.maps.map(m => m.mapName)
       }
     };
-    console.log(result);
-    return result;
   },
 
   getMap: async (parent, args) => {

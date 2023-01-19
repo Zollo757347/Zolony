@@ -58,15 +58,8 @@ const HookProvider = (props) => {
 
     const { error, loading, data } = result;
     if (loading) return { error: 'loading', data: null };
-    if (error) {
-      console.error(error);
-      return { error: 'error' };
-    }
-
-    if (!data.login) {
-      console.log(`user not found.`);
-      return 'invalid';
-    }
+    if (error) return { error: 'error', data: null };
+    if (!data.login.data) return { error: data.login.error, data: null };
 
     const user = data.login.data;
     

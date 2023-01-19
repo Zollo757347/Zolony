@@ -5,28 +5,52 @@ import './css/Modal.css'
 import { UseHook } from '../hook/usehook';
 
 const { TextArea } = Input;  
-const Modal_Components = ({open, setOpen}) => {
+const Modal_Components = ({ open, setOpen }) => {
   const [newPassword, setNewPassword] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
   
   const { login, createAccount, editProfile, setUser, setPassword, setBio, setAvatar, user, password, bio, avatar } = UseHook();
 
   const handleOk = async () => {
-    if (open === 1) { // signin
-      const { error } = await login(user, password);
+    // 登入
+    if (open === 1) {
+      if (!user) {
+        Message.error({ content: '請輸入帳號名稱', duration: 1 });
+        return;
+      }
+      if (!password) {
+        Message.error({ content: '請輸入密碼', duration: 1 });
+        return;
+      }
 
-      if (error === 'error') {
-        Message.error({ content: '發生了一些錯誤！', duration: 1 });
-      }
-      else if (error === 'invalid') {
-        Message.error({ content: '你輸入了無效的帳號或密碼！', duration: 1 });
-      }
-      else {
-        Message.success({ content: '登入成功！', duration: 1 });
-        setOpen(0);
+      const { error } = await login(user, password);
+      switch (error) {
+        case 'loading': return;
+
+        case 'connection':
+          Message.error({ content: '資料庫連線失敗', duration: 1 });
+          return;
+
+        case 'error':
+          Message.error({ content: '使用者資料存取失敗', duration: 1 });
+          return;
+
+        case 'username':
+          Message.error({ content: '此帳號名稱不存在', duration: 1 });
+          return;
+
+        case 'password':
+          Message.error({ content: '密碼輸入錯誤', duration: 1 });
+          return;
+        
+        default: 
+          Message.success({ content: '登入成功！', duration: 1 });
+          setOpen(0);
       }
     }
-    else if (open === 2) { // signup
+
+    // 註冊
+    else if (open === 2) {
       if (password !== checkPassword) {
         Message.error({ content: '兩組密碼不相同！', duration: 1 });
       }
@@ -77,7 +101,7 @@ const Modal_Components = ({open, setOpen}) => {
   }
 
   const signInModal = <>
-    <Input placeholder="輸入你的帳號" prefix={<UserOutlined />} onChange={e => setUser(e.target.value)}/>
+    <Input required placeholder="輸入你的帳號" prefix={<UserOutlined />} onChange={e => setUser(e.target.value)}/>
     <br/>
     <br/>
     <Input.Password placeholder="輸入你的密碼" onChange={e => {setPassword(e.target.value)}}/>
