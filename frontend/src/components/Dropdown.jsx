@@ -1,7 +1,6 @@
-import React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, Space } from 'antd';
-import './css/Dropdown.css'
+import './css/Dropdown.css';
 import { useHook } from '../hooks/useHook';
 
 const Dropdown_Components = ({ setOpenModal }) => {

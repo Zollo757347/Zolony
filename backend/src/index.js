@@ -1,5 +1,5 @@
-import server from './server';
 import mongo from './mongo'; 
+import server from './server';
 
 mongo.connect();
 

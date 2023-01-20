@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import { AppstoreOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
-import './css/Sidebar.css'
+import { useEffect, useState } from 'react';
+import './css/Sidebar.css';
 import { useHook } from '../hooks/useHook';
 
 const Sidebar = ({ collapsed }) => {

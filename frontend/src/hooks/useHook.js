@@ -1,5 +1,5 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
-import CryptoJs from 'crypto-js'
+import CryptoJs from 'crypto-js';
 import { createContext, useContext, useState } from "react";
 import { LOG_IN, GET_MAP, CREATE_USER, EDIT_USER, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
 

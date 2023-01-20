@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import Header from './components/Header'
-import Sidebar from './components/Sidebar'
-import Page from './containers/Page'
-import Modal from './components/Modal'
+import { useState } from 'react';
+import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import Page from './containers/Page';
+import Modal from './components/Modal';
 import './components/css/App.css';
 
 const App = () => {

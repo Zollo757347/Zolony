@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Form, Input, Avatar, Image, Select, Modal, message as Message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import Canvas from '../components/Canvas';
-import './css/Info.css'
+import './css/Info.css';
 import { useHook } from '../hooks/useHook';
+import { ButtonTexture } from '../classes/ButtonTexture';
 import Utils from '../classes/Utils';
 import Button from '../components/Button';
-import { ButtonTexture } from '../classes/ButtonTexture';
+import Canvas from '../components/Canvas';
 
 const Info = ({ setOpenModal }) => {
   const [selectItems, setSelectItems] = useState([]);

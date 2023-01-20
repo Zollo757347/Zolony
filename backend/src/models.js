@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-const Schema = mongoose.Schema
 
-const MapSchema = new Schema({
+const MapSchema = new mongoose.Schema({
   mapName: {type: String, required: [true, 'map name is required.']},
   xLen: {type: Number, required: [true, 'x is required.']},
   yLen: {type: Number, required: [true, 'y is required.']},
@@ -35,19 +34,18 @@ const MapSchema = new Schema({
       north: { type: Number },
     }
   }]]],
-})
+});
 
-const MapModel = mongoose.model('Map', MapSchema); 
-
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
   username: { type: String, required: [true, 'Name field is required.'] },
   password: { type: String, required: [true, 'password is required.']},
   avatar: { type: String, required: [true, 'picture url is required.']},
   level: [{type: Boolean}],
   bio: { type: String, required: [true, 'bio field is required.'] },
   maps: [{ type: mongoose.Types.ObjectId, ref: 'Map'}]
-})
+});
 
+const MapModel = mongoose.model('Map', MapSchema);
 const UserModel = mongoose.model('User', UserSchema);
 
-export  {MapModel, UserModel}
+export { MapModel, UserModel };

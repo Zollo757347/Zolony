@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import { Input, Modal, message as Message } from 'antd';
-import './css/Modal.css'
+import { useState } from 'react';
+import './css/Modal.css';
 import { useHook } from '../hooks/useHook';
 
 const { TextArea } = Input;  
