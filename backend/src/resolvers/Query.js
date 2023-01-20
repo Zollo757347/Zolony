@@ -4,7 +4,7 @@ const Query = {
   login: async (_parent, { username, password }) => {
     const user = await UserModel.findOne({ username });
 
-    if (!user) return { error: 'username', data: null };
+    if (!user) return { error: 'user', data: null };
     if (user.password !== password) return { error: 'password', data: null };
 
     await user.populate({ path: 'maps', select: 'mapName' });
@@ -23,10 +23,10 @@ const Query = {
 
   getMap: async (_parent, { username, mapName }) => {
     const user = await UserModel.findOne({ username });
-    if (!user) return { error: 'username', data: null };
+    if (!user) return { error: 'user', data: null };
 
     const map = await MapModel.findOne({ mapName: mapName, belonging: user._id });
-    if (!map) return { error: 'mapName', data: null };
+    if (!map) return { error: 'map', data: null };
 
     return {
       error: null,

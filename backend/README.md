@@ -16,7 +16,7 @@
 
 - **editUser:** 輸入user的名字、密碼、新密碼、新自介、新通關數與新大頭貼網址時，得到user的一切資料。適用於user更改個人資料時。
 
-- **initialMyMap:** 輸入user的名字、密碼、地圖名稱與三軸限制，得到空的地圖。適用於user創建地圖時。
+- **createMap:** 輸入user的名字、密碼、地圖名稱與三軸限制，得到空的地圖。適用於user創建地圖時。
 
 - **editMyMap:** 輸入user的名字、密碼、地圖名稱與一張地圖，得到更改後的地圖。適用於user儲存地圖時。
 
@@ -87,11 +87,11 @@ mutation {
 }
 ```
 
-### **initialMyMap:**
+### **createMap:**
 
 ```graphql
 mutation {
-  initialMyMap(data:{
+  createMap(data:{
     name: "yohe",
     password: "12",
     mapName: "yoheMap",

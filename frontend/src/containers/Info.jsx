@@ -13,17 +13,25 @@ const Info = ({ setOpenModal }) => {
   const [openMapModal, setOpenMapModal] = useState(false);
 
   const [mapName, setMapName] = useState('');
-  const [xLen, setXLen] = useState(0);
-  const [yLen, setYLen] = useState(0);
-  const [zLen, setZLen] = useState(0);
+  const [xLen, setXLen] = useState('');
+  const [yLen, setYLen] = useState('');
+  const [zLen, setZLen] = useState('');
 
   const [cvs, setCvs] = useState(null);
 
-  const { getMap, initialMyMap, deleteUserMap, username, bio, maps, avatar } = useHook();
+  const { getMap, createMap, deleteUserMap, username, bio, maps, avatar } = useHook();
 
   useEffect(() => {
     setSelectItems(maps.map(name => ({ label: name, value: name })));
   }, [maps]);
+
+  const closeModal = () => {
+    setMapName('');
+    setXLen('');
+    setYLen('');
+    setZLen('');
+    setOpenMapModal(false);
+  }
 
   const onSelect = async (mapName) => {
     const { error, data } = await getMap(username, mapName);
@@ -38,11 +46,11 @@ const Info = ({ setOpenModal }) => {
         Message.error({ content: '地圖資料存取失敗', duration: 1 });
         return;
 
-      case 'username':
+      case 'user':
         Message.error({ content: '此帳號名稱不存在', duration: 1 });
         return;
 
-      case 'mapName':
+      case 'map':
         Message.error({ content: '你並沒有這張地圖', duration: 1 });
         return;
       
@@ -56,12 +64,40 @@ const Info = ({ setOpenModal }) => {
   }
 
   const handleModalOk = async () => {
-    const data = await initialMyMap(username, parseInt(xLen), parseInt(yLen), parseInt(zLen), mapName);
+    const { error, data } = await createMap(username, {
+      xLen: parseInt(xLen), 
+      yLen: parseInt(yLen), 
+      zLen: parseInt(zLen), 
+      mapName
+    });
+    switch (error) {
+      case 'loading': return;
+
+      case 'connection':
+        Message.error({ content: '資料庫連線失敗', duration: 1 });
+        return;
+
+      case 'error':
+        Message.error({ content: '地圖資料存取失敗', duration: 1 });
+        return;
+
+      case 'user':
+        Message.error({ content: '此帳號不存在', duration: 1 });
+        return;
+
+      case 'map':
+        Message.error({ content: '你已經有一張相同名稱的地圖了', duration: 1 });
+        return;
+      
+      default: 
+        Message.success({ content: `成功建立地圖 ${data.mapName}`, duration: 1 });
+    }
 
     setCvs(null);
     await Utils.Sleep(1);
     setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} storable={true} />);
-    setOpenMapModal(false);
+
+    closeModal();
   }
 
   const handleMapDelete = async () => {
@@ -101,21 +137,21 @@ const Info = ({ setOpenModal }) => {
         </Form.Item>
       </div>
     </Form>
-  </>
+  </>;
 
   const MapModal = <>
-    <Input placeholder="輸入你的地圖名稱" prefix={<RightOutlined />} onChange={e => setMapName(e.target.value)}/>
+    <Input placeholder="輸入你的地圖名稱" value={mapName} prefix={<RightOutlined />} onChange={e => setMapName(e.target.value)}/>
     <br/>
     <br/>
-    <span> 輸入長寬高↓ </span>
+    <span>輸入三軸的長度</span>
     <div id='Map-Modal-xyz-wrapper'>
-      <Input placeholder="xlen" className='Map-Modal-xyz' onChange={e => setXLen(e.target.value)}/>
-      <Input placeholder="ylen" className='Map-Modal-xyz' onChange={e => setYLen(e.target.value)}/>
-      <Input placeholder="zlen" className='Map-Modal-xyz' onChange={e => setZLen(e.target.value)}/>
+      <Input placeholder="X 軸長" value={xLen} className='Map-Modal-xyz' onChange={e => setXLen(e.target.value)}/>
+      <Input placeholder="Y 軸長" value={yLen} className='Map-Modal-xyz' onChange={e => setYLen(e.target.value)}/>
+      <Input placeholder="Z 軸長" value={zLen} className='Map-Modal-xyz' onChange={e => setZLen(e.target.value)}/>
     </div>
-  </>
+  </>;
 
-  return(
+  return (
     <div id='Info-wrapper'>
       <div id='Info-left-wrapper'>
         {profileForm}
@@ -142,20 +178,20 @@ const Info = ({ setOpenModal }) => {
             刪除地圖
           </Button>
           <Button texture={ButtonTexture.Success} onClick={() => setOpenMapModal(true)}> 
-            增加地圖
+            建立地圖
           </Button>
         </div>
         <div id='Info-right-section'>
-            {cvs ?? <></>}
+          {cvs ?? <></>}
         </div>
       </div>
 
       <Modal
-        title="新增地圖"
+        title="建立地圖"
         centered
         open={openMapModal}
         onOk={() => handleModalOk()}
-        onCancel={() => setOpenMapModal(false)}
+        onCancel={() => closeModal()}
       >
         {MapModal}
       </Modal>

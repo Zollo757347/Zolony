@@ -45,46 +45,22 @@ export const DELETE_USER = gql`
   }
 `;
 
-export const INITIAL_MY_MAP = gql`
-  mutation initialMyMap(
-    $name: String!,
-    $password: String!,
-    $mapName: String!,
-    $xLen: Int!,
-    $yLen: Int!,
-    $zLen: Int!,
-  ) {
-    initialMyMap(data:{
-      name: $name,
-      password: $password,
-      mapName: $mapName,
-      xLen: $xLen,
-      yLen: $yLen,
-      zLen: $zLen,
-    }) {
-      xLen
-      yLen
-      zLen
-      mapName
-      playground {
-        type
-        breakable
-        states {
-          power 
-          source
-
-          delay
-          facing
-          face
-          locked
-          powered
-
-          lit
-
-          east
-          south
-          west
-          north
+export const CREATE_MAP = gql`
+  mutation createMap($username: String!, $data: CreateMapInput!) {
+    createMap(username: $username, data: $data) {
+      error
+      data {
+        xLen
+        yLen
+        zLen
+        mapName
+        playground {
+          type
+          breakable
+          states {
+            power 
+            source
+          }
         }
       }
     }

@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
 import CryptoJs from 'crypto-js';
 import { createContext, useContext, useState } from "react";
-import { LOG_IN, GET_MAP, CREATE_USER, EDIT_USER, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
+import { LOG_IN, GET_MAP, CREATE_USER, EDIT_USER, CREATE_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
 
 const LSK_USERNAME = 'username';
 const LSK_AVATAR = 'avatar';
@@ -15,16 +15,14 @@ const savedMaps = localStorage.getItem(LSK_MAPS) ?? localStorage.setItem(LSK_MAP
 const HookContext = createContext({
   login: async () => {},
   logout: () => {},
-
-  getMap: async () => {},
-
   createUser: async () => {},
   editUser: async () => {},
   deleteUser: async () => {},
 
-  initialMyMap: () => {},
-  editMyMap: () => {},
-  deleteUserMap: () => {},
+  getMap: async () => {},
+  createMap: async () => {},
+  editMyMap: async () => {},
+  deleteUserMap: async () => {},
 
   setUsername: () => {}, 
   setBio: () => {}, 
@@ -54,7 +52,7 @@ const HookProvider = (props) => {
   const [createUserMutation] = useMutation(CREATE_USER);
   const [editUserMutation] = useMutation(EDIT_USER);
   const [deleteUserMutation] = useMutation(DELETE_USER);
-  const [initialMyMapMutation] = useMutation(INITIAL_MY_MAP);
+  const [createMapMutation] = useMutation(CREATE_MAP);
   const [editMyMapMutation] = useMutation(EDIT_MY_MAP);
   const [deleteUserMapMutation] = useMutation(DELETE_USER_MAP);
 
@@ -95,7 +93,7 @@ const HookProvider = (props) => {
 
     const result = await loginQuery({
       variables: { username, password }
-    }).catch(console.error);
+    }).catch(error => console.error(JSON.parse(JSON.stringify(error, null, 2))));
     if (!result) return { error: 'connection', data: null };
 
     const { error, loading, data } = result;
@@ -130,7 +128,7 @@ const HookProvider = (props) => {
   const getMap = async (username, mapName) => {
     const result = await getMapQuery({
       variables: { username, mapName }
-    }).catch(console.error);
+    }).catch(error => console.error(JSON.parse(JSON.stringify(error, null, 2))));
     if (!result) return { error: 'connection', data: null };
 
     const { error, loading, data } = result;
@@ -147,7 +145,7 @@ const HookProvider = (props) => {
 
     const result = await createUserMutation({
       variables: { username, password }
-    }).catch(console.error);
+    }).catch(error => console.error(JSON.parse(JSON.stringify(error, null, 2))));
     if (!result) return { error: 'connection', data: null };
 
     const { error, loading, data } = result;
@@ -190,7 +188,7 @@ const HookProvider = (props) => {
       bio: user.bio, 
       maps: user.maps
     });
-    return user;
+    return { error: null, data: user };
   }
 
   const deleteUser = async (username, password) => {
@@ -198,7 +196,7 @@ const HookProvider = (props) => {
     
     const result = await deleteUserMutation({
       variables: { username, password }
-    }).catch(console.error);
+    }).catch(error => console.error(JSON.parse(JSON.stringify(error, null, 2))));
     if (!result) return { error: 'connection', data: null };
 
     const { error, loading, data } = result;
@@ -212,35 +210,22 @@ const HookProvider = (props) => {
     return { error: null, data: user };
   }
 
-  const initialMyMap = async (name, pwd, xLen, yLen, zLen, mapName) => {
-    const cryptopwd = CryptoJs.MD5(pwd).toString();
-    
-    const {loading, data, error} = await initialMyMapMutation({
-      variables: {
-        name: name,
-        password: cryptopwd,
-        mapName: mapName,
-        xLen: xLen,
-        yLen: yLen,
-        zLen: zLen,
-      }
-    });
+  const createMap = async (username, mapData) => {
+    const result = await createMapMutation({
+      variables: { username, data: mapData }
+    }).catch(error => console.error(JSON.parse(JSON.stringify(error, null, 2))));
+    if (!result) return { error: 'connection', data: null };
 
-    if (loading) return 'loading...';
-    if (error) {
-      console.log(`[initialMyMap function error]: ${error.message}.`);
-      return 'error';
-    }
-    else {
-      if (!data.initialMyMap) {
-        console.log(`map already exist.`);
-        return 'map already exist';
-      } 
-      console.log(`initialmap succeed`);
-      console.log(data.initialMyMap);
-      setMaps([...maps, data.initialMyMap]);
-      return data.initialMyMap;
-    }
+    const { error, loading, data } = result;
+    if (loading) return { error: 'loading', data: null };
+    if (error) return { error: 'error', data: null };
+
+    const map = data.createMap.data;
+    if (!map) return { error: data.createMap.error, data: null };
+
+    setMaps([...maps, map.mapName]);
+
+    return { error: null, data: map };
   }
 
   const editMyMap = async (name, pwd, map) => {
@@ -308,7 +293,7 @@ const HookProvider = (props) => {
         getMap,
         createUser,
         editUser,
-        initialMyMap,
+        createMap,
         editMyMap,
         deleteUser,
         deleteUserMap,

@@ -49,7 +49,7 @@ const Modal_Components = ({ open, setOpen }) => {
           Message.error({ content: '使用者資料存取失敗', duration: 1 });
           return;
 
-        case 'username':
+        case 'user':
           Message.error({ content: '此帳號不存在', duration: 1 });
           return;
 

@@ -68,27 +68,22 @@ const Mutation = {
     };
   },
 
-  initialMyMap: async (parent, args) => {
-    let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
-    if(!user){
-      console.log(`user ${args.data.name} not found.`);
-      return null;
-    }
-    let sortMap = await MapModel.findOne({ mapName: args.data.mapName, belonging: user._id})
-    if(sortMap){
-      console.log(`map ${args.data.mapName} already existed.`);
-      return null;
-    }
-    let newMap = initMap(args.data.xLen, args.data.yLen, args.data.zLen, args.data.mapName, user);
-    let modelMap = MapModel(newMap);
-    user.maps.push(modelMap._id);
-    await modelMap.save();
+  createMap: async (_parent, { username, data }) => {
+    const user = await UserModel.findOne({ username });
+    if (!user) return { error: 'user', data: null };
+
+    const map = await MapModel.findOne({ mapName: data.mapName, belonging: user._id });
+    if (map) return { error: 'map', data: null };
+
+    const newMap = getMap(data, user._id.toString());
+    const mapModel = MapModel(newMap);
+
+    user.maps.push(mapModel._id);
+    await mapModel.save();
     await user.save();
-    console.log(`map ${args.data.mapName} initialize succeed.`)
-    console.log(user);
-    console.log(modelMap);
     
-    return newMap;
+    delete newMap.belonging;
+    return { error: null, data: newMap };
   },
 
   editMyMap: async (parent, args) => {
@@ -121,7 +116,7 @@ const Mutation = {
       console.log(`user ${args.data.name} not found.`);
       return false;
     }
-    const count = await MapModel.deleteOne({mapName:args.data.mapName ,belonging: user._id });
+    const count = await MapModel.deleteOne({mapName:args.data.mapName, belonging: user._id });
     if(count === 0){
       console.log(`user ${args.data.name}'s map ${args.data.mapName} already daleted.`);
       return false;
@@ -131,51 +126,35 @@ const Mutation = {
   },
 };
 
-function initBlock(type) {
-  let block = {};
-  if(type === 0){
-    block = null;
-  }
-  else if(type === 1){
-    block = {
-      type: 1,
-      breakable: false,
-      states: {
-        power: 0,
-        source: false,
-      }
+function getConcrete() {
+  return {
+    type: 1,
+    breakable: false,
+    states: {
+      power: 0,
+      source: false
     }
   }
-  return block;
 }
 
-function initMap(x, y, z, mapName, user) {
-  let newPlayground = [];
+function getMap(data, userId) {
+  const playground = Array.from({ length: data.xLen }, () => 
+    Array.from({ length: data.yLen }, (_, y) => 
+      Array.from({ length: data.zLen }, () => y === 0 ? getConcrete() : null)
+    )
+  );
 
-  for (let i = 0; i < x; i++) {
-    newPlayground.push([]);
-    for (let j = 0; j < y; j++) {
-      newPlayground[i].push([]);
-      for (let k = 0; k < z; k++) {
-        newPlayground[i][j].push(j === 0 ? initBlock(1) : initBlock(0));
-      }
-    }
-  }
-
-  const newMap = {
-    xLen: x,
-    yLen: y,
-    zLen: z,
-    mapName: mapName,
-    belonging: user._id,
-    validation: null,
-    playground: newPlayground,
-  }
-  console.log("NEW", newMap)
-  return newMap;
+  return {
+    xLen: data.xLen,
+    yLen: data.yLen,
+    zLen: data.zLen,
+    mapName: data.mapName,
+    belonging: userId,
+    playground: playground,
+  };
 }
 
-export { Mutation as default };
+export default Mutation;
 
 
 

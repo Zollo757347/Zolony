@@ -8,7 +8,7 @@ type Mutation {
   editUser(data: EditUserInput!): FullUserData
   deleteUser(username: String!, password: String!): FullUserData
 
-  initialMyMap(data: initialMyMapInput!): MapData
+  createMap(username: String! data: CreateMapInput!): FullMapData
   editMyMap(data: editMyMapInput!): MapData
   deleteUserMap(data: deleteUserMapInput!): Boolean
 }
@@ -40,9 +40,7 @@ input EditUserInput {
   newLevel: Int
 }
 
-input initialMyMapInput {
-  name: String!
-  password: String!
+input CreateMapInput {
   mapName: String!
   xLen: Int!
   yLen: Int!
@@ -108,9 +106,9 @@ type MapData {
   yLen: Int!
   zLen: Int!
   mapName: String!
+  playground: [[[BlockData]!]!]!
   availableBlocks: [Int!]
   validation: ValidationData
-  playground: [[[BlockData]!]!]!
 }
 
 type ValidationData {
