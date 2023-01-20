@@ -27,14 +27,12 @@ const HookContext = createContext({
   deleteUserMap: () => {},
 
   setUsername: () => {}, 
-  setPassword: () => {},
   setBio: () => {}, 
   setAvatar: () => {},
   setPageNum: () => {},
   setMaps: () => {},
 
   username: savedUsername,
-  password: '',
   loggedIn: !!savedUsername,
   avatar: savedAvatar,
   bio: savedBio,
@@ -45,7 +43,6 @@ const HookContext = createContext({
 
 const HookProvider = (props) => {
   const [username, setUsername] = useState(savedUsername);
-  const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(!!savedUsername);
   const [avatar, setAvatar] = useState(savedAvatar);
   const [bio, setBio] = useState(savedBio);
@@ -65,7 +62,6 @@ const HookProvider = (props) => {
     if (!data) {
       data = {
         username: '', 
-        password: '', 
         avatar: '', 
         bio: '', 
         maps: [], 
@@ -89,9 +85,6 @@ const HookProvider = (props) => {
       setMaps(data.maps);
       localStorage.setItem(LSK_MAPS, JSON.stringify(data.maps));
     }
-    if (data.password != null) {
-      setPassword(data.password);
-    }
     if (data.loggedIn != null) {
       setLoggedIn(data.loggedIn);
     }
@@ -114,7 +107,6 @@ const HookProvider = (props) => {
 
     setUser({
       username, 
-      password: '', 
       loggedIn: true, 
       avatar: user.avatar, 
       bio: user.bio, 
@@ -127,7 +119,6 @@ const HookProvider = (props) => {
   const logout = () => {
     setUser({
       username: '', 
-      password: '', 
       loggedIn: false, 
       avatar: '', 
       bio: '', 
@@ -168,7 +159,6 @@ const HookProvider = (props) => {
 
     setUser({
       username, 
-      password: '', 
       loggedIn: true, 
       avatar: user.avatar, 
       bio: user.bio, 
@@ -195,7 +185,6 @@ const HookProvider = (props) => {
 
     setUser({
       username: user.username, 
-      password: '', 
       loggedIn: true, 
       avatar: user.avatar, 
       bio: user.bio, 
@@ -324,13 +313,11 @@ const HookProvider = (props) => {
         deleteUser,
         deleteUserMap,
         setUsername,
-        setPassword,
         setBio, 
         setAvatar, 
         setPageNum, 
         setMaps, 
         username,
-        password,
         loggedIn,
         avatar, 
         bio, 

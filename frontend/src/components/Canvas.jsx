@@ -24,7 +24,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData }));
 
   const [shiftDown, setShiftDown] = useState(false);
-  const { editMyMap, username, password } = useHook();
+  const { editMyMap, username } = useHook();
 
   useEffect(() => {
     playgroundRef.current.setCanvas(canvasRef.current);
@@ -88,7 +88,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
 
   function handleSaveMap() {
     const map = Engine.extract(playgroundRef.current.engine);
-    editMyMap(username, password, map);
+    editMyMap(username, map);
   }
 
   async function handleCheckMap() {

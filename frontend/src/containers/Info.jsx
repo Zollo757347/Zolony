@@ -19,7 +19,7 @@ const Info = ({ setOpenModal }) => {
 
   const [cvs, setCvs] = useState(null);
 
-  const { getMap, initialMyMap, deleteUserMap, username, password, bio, maps, avatar } = useHook();
+  const { getMap, initialMyMap, deleteUserMap, username, bio, maps, avatar } = useHook();
 
   useEffect(() => {
     setSelectItems(maps.map(name => ({ label: name, value: name })));
@@ -56,7 +56,7 @@ const Info = ({ setOpenModal }) => {
   }
 
   const handleModalOk = async () => {
-    const data = await initialMyMap(username, password, parseInt(xLen), parseInt(yLen), parseInt(zLen), mapName);
+    const data = await initialMyMap(username, parseInt(xLen), parseInt(yLen), parseInt(zLen), mapName);
 
     setCvs(null);
     await Utils.Sleep(1);
@@ -65,7 +65,7 @@ const Info = ({ setOpenModal }) => {
   }
 
   const handleMapDelete = async () => {
-    await deleteUserMap(username, password, mapName);
+    await deleteUserMap(username, mapName);
     setCvs(null);
   }
 
