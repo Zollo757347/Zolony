@@ -48,6 +48,26 @@ const Mutation = {
     };
   },
 
+  deleteUser: async (_parent, { username, password }) => {
+    const user = await UserModel.findOne({ username });
+    if (!user) return { error: 'user', data: null };
+    if (password !== user.password) return { error: 'password', data: null };
+
+    await MapModel.deleteMany({ belonging: user._id });
+    await user.deleteOne();
+
+    return {
+      error: null, 
+      data: { 
+        username: user.username,
+        avatar: user.avatar,
+        bio: user.bio,
+        level: user.level,
+        maps: user.maps
+      }
+    };
+  },
+
   initialMyMap: async (parent, args) => {
     let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
     if(!user){
@@ -93,18 +113,6 @@ const Mutation = {
     console.log(`user ${args.data.name} save map ${args.data.mapName} succeed`);
     console.log(sortMap);
     return sortMap;
-  },
-
-  deleteUser: async (parent, args) => {
-    let user = await UserModel.findOne({name: args.data.name, password: args.data.password});
-    if(!user){
-      console.log(`user ${args.data.name} already deleted.`);
-      return false;
-    }
-    await MapModel.deleteMany({belonging: user._id});
-    await user.deleteOne();
-    console.log(`user ${args.data.name} delete succeed.`);
-    return true;
   },
 
   deleteUserMap: async (parent, args) => {

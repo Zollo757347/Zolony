@@ -133,6 +133,7 @@ const HookProvider = (props) => {
       bio: '', 
       maps: []
     });
+    setPageNum(1);
   }
 
   const getMap = async (username, mapName) => {
@@ -203,6 +204,25 @@ const HookProvider = (props) => {
     return user;
   }
 
+  const deleteUser = async (username, password) => {
+    password = CryptoJs.MD5(password).toString();
+    
+    const result = await deleteUserMutation({
+      variables: { username, password }
+    }).catch(console.error);
+    if (!result) return { error: 'connection', data: null };
+
+    const { error, loading, data } = result;
+    if (loading) return { error: 'loading', data: null };
+    if (error) return { error: 'error', data: null };
+
+    const user = data.deleteUser.data;
+    if (!user) return { error: data.deleteUser.error, data: null };
+
+    logout();
+    return { error: null, data: user };
+  }
+
   const initialMyMap = async (name, pwd, xLen, yLen, zLen, mapName) => {
     const cryptopwd = CryptoJs.MD5(pwd).toString();
     
@@ -268,24 +288,6 @@ const HookProvider = (props) => {
 
       return data.editMyMap;
     }
-  }
-
-  const deleteUser = async (name, pwd) => {
-    const cryptopwd = CryptoJs.MD5(pwd).toString();
-    
-    const {loading, data, error} = await deleteUserMutation({
-      variables: {
-        name: name,
-        password: cryptopwd
-      }
-    })
-    if(loading) return 'loading...';
-    if(error){
-      console.log(`[deleteUser function error]: ${error.message}.`);
-      return false;
-    }
-    logout();
-    return data.deleteUser;
   }
 
   const deleteUserMap = async (name, pwd, mapName) => {

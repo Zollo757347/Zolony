@@ -91,7 +91,12 @@ const Info = ({ setOpenModal }) => {
       <div id='Info-btn'>
         <Form.Item>
           <Button texture={ButtonTexture.Primary} onClick={() => setOpenModal(3)}>
-            修改密碼/編輯個人資料
+            編輯個人資料
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <Button texture={ButtonTexture.Danger} onClick={() => setOpenModal(4)}>
+            刪除帳號
           </Button>
         </Form.Item>
       </div>

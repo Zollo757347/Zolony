@@ -30,6 +30,21 @@ export const EDIT_USER = gql`
   }
 `;
 
+export const DELETE_USER = gql`
+  mutation deleteUser($username: String!, $password: String!) {
+    deleteUser(username: $username, password: $password) {
+      error
+      data {
+        username
+        avatar
+        bio
+        level
+        maps
+      }
+    }
+  }
+`;
+
 export const INITIAL_MY_MAP = gql`
   mutation initialMyMap(
     $name: String!,
@@ -122,18 +137,6 @@ export const EDIT_MY_MAP = gql`
         }
       }
     }
-  }
-`;
-
-export const DELETE_USER = gql`
-  mutation deleteUser(
-    $name: String!,
-    $password: String!,
-  ){
-    deleteUser(data:{
-      name: $name,
-      password: $password,
-    }) 
   }
 `;
 
