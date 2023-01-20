@@ -36,7 +36,7 @@ const Modal_Components = ({ open, setOpen }) => {
           return;
 
         case 'username':
-          Message.error({ content: '此帳號名稱不存在', duration: 1 });
+          Message.error({ content: '此帳號不存在', duration: 1 });
           return;
 
         case 'password':
@@ -76,7 +76,7 @@ const Modal_Components = ({ open, setOpen }) => {
             setOpen(0);
         }
       }
-      
+
       setCheckPassword('');
     }
     else {
@@ -84,26 +84,38 @@ const Modal_Components = ({ open, setOpen }) => {
         Message.error({ content: '兩組新密碼不相同！', duration: 1 });
       }
       else {
-        const data = await editUser(username, password, {
+        const { error } = await editUser({
+          username, 
+          password, 
           newPassword, 
-          newBio: bio, 
-          newAvatar: avatar
+          newAvatar: avatar, 
+          newBio: bio
         });
-
-        if (data === 'error') {
-          Message.error({ content: '發生了一些錯誤！', duration: 1 });
-        }
-        else if (data === 'invalid') {
-          Message.error({ content: '你輸入了錯誤的密碼！', duration: 1 });
-        }
-        else if (data === 'password') {
-          Message.error({ content: '新密碼不能與舊密碼相同！', duration: 1 });
-        }
-        else {
-          Message.success({ content: '自介更新成功！', duration: 1 });
-          setOpen(0);
+        switch (error) {
+          case 'loading': return;
+  
+          case 'connection':
+            Message.error({ content: '資料庫連線失敗', duration: 1 });
+            return;
+  
+          case 'error':
+            Message.error({ content: '使用者資料存取失敗', duration: 1 });
+            return;
+  
+          case 'user':
+            Message.error({ content: '此帳號不存在', duration: 1 });
+            return;
+  
+          case 'password':
+            Message.error({ content: '密碼輸入錯誤', duration: 1 });
+            return;
+          
+          default: 
+            Message.success({ content: '自介更新成功！', duration: 1 });
+            setOpen(0);
         }
       }
+
       setCheckPassword('');
       setNewPassword('');
     }

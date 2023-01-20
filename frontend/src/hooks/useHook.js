@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
 import CryptoJs from 'crypto-js'
 import { createContext, useContext, useState } from "react";
-import { LOG_IN, GET_MAP, CREATE_USER, EDIT_PROFILE, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
+import { LOG_IN, GET_MAP, CREATE_USER, EDIT_USER, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
 
 const LSK_USERNAME = 'username';
 const LSK_AVATAR = 'avatar';
@@ -55,7 +55,7 @@ const HookProvider = (props) => {
   const [loginQuery] = useLazyQuery(LOG_IN);
   const [getMapQuery] = useLazyQuery(GET_MAP);
   const [createUserMutation] = useMutation(CREATE_USER);
-  const [editUserMutation] = useMutation(EDIT_PROFILE);
+  const [editUserMutation] = useMutation(EDIT_USER);
   const [deleteUserMutation] = useMutation(DELETE_USER);
   const [initialMyMapMutation] = useMutation(INITIAL_MY_MAP);
   const [editMyMapMutation] = useMutation(EDIT_MY_MAP);
@@ -152,6 +152,7 @@ const HookProvider = (props) => {
 
   const createUser = async (username, password) => {
     password = CryptoJs.MD5(password).toString();
+
     const result = await createUserMutation({
       variables: { username, password }
     }).catch(console.error);
@@ -175,36 +176,31 @@ const HookProvider = (props) => {
     return data.createUser;
   }
 
-  const editUser = async (name, pwd, input) => {
-    const cryptopwd = CryptoJs.MD5(pwd).toString();
+  const editUser = async (editData) => {
+    editData.password = editData.password ? CryptoJs.MD5(editData.password).toString() : undefined;
+    editData.newPassword = editData.newPassword ? CryptoJs.MD5(editData.newPassword).toString() : undefined;
 
-    const {loading, data, error} = await editUserMutation({
-      variables: {
-        name: name,
-        password: cryptopwd,
-        newPassword: input.newPassword ? CryptoJs.MD5(input.newPassword).toString() : undefined,
-        newAvatar: input.newAvatar,
-        newBio: input.newBio,
-        newLevel: input.newLevel,
-      }
+    const result = await editUserMutation({
+      variables: { data: editData }
+    }).catch(error => console.error(JSON.parse(JSON.stringify(error, null, 2))));
+    if (!result) return { error: 'connection', data: null };
+
+    const { error, loading, data } = result;
+    if (loading) return { error: 'loading', data: null };
+    if (error) return { error: 'error', data: null };
+
+    const user = data.editUser.data;
+    if (!user) return { error: data.editUser.error, data: null };
+
+    setUser({
+      username: user.username, 
+      password: '', 
+      loggedIn: true, 
+      avatar: user.avatar, 
+      bio: user.bio, 
+      maps: user.maps
     });
-
-    if (loading) return 'loading...';
-    if (error) {
-      return 'error';
-    }
-    else {
-      if (!data.editUser) {
-        return 'invalid';
-      }
-      if (pwd === input.newPassword) {
-        return 'password';
-      }
-
-      setAvatar(data.editUser.avatar);
-      setBio(data.editUser.bio);
-      return data.editUser;
-    }
+    return user;
   }
 
   const initialMyMap = async (name, pwd, xLen, yLen, zLen, mapName) => {

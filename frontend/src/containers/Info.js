@@ -8,7 +8,6 @@ import Utils from '../classes/Utils';
 import Button from '../components/Button';
 import { ButtonTexture } from '../classes/ButtonTexture';
 
-const { TextArea } = Input;
 const Info = ({ setOpenModal }) => {
   const [selectItems, setSelectItems] = useState([]);
   const [openMapModal, setOpenMapModal] = useState(false);
@@ -87,9 +86,7 @@ const Info = ({ setOpenModal }) => {
         />
       </div>
       <div id='Info-bio' className='Info-left'>
-        <Form.Item label="Bio">
-          <TextArea rows={4} defaultValue={bio ?? "在這裡放上自介"} disabled={true}/>
-        </Form.Item>
+        <Form.Item label="Bio">{bio}</Form.Item>
       </div>
       <div id='Info-btn'>
         <Form.Item>

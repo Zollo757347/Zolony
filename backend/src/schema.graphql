@@ -1,12 +1,12 @@
 type Query {
-  login(username: String!, password: String!): LoginData
-  getMap(username: String!, mapName: String!): GetMapData
+  login(username: String!, password: String!): FullUserData
+  getMap(username: String!, mapName: String!): FullMapData
 }
 
 type Mutation {
-  createUser(username: String!, password: String!): CreateUserData
-  editUser(data: EditUserInput!): UserData
-  deleteUser(username: String!, password: String!): Boolean
+  createUser(username: String!, password: String!): FullUserData
+  editUser(data: EditUserInput!): FullUserData
+  deleteUser(username: String!, password: String!): FullUserData
 
   initialMyMap(data: initialMyMapInput!): MapData
   editMyMap(data: editMyMapInput!): MapData
@@ -21,24 +21,19 @@ type UserData {
   maps: [String!]!
 }
 
-type LoginData {
+type FullUserData {
   error: String
   data: UserData
 }
 
-type GetMapData {
+type FullMapData {
   error: String
   data: MapData
 }
 
-type CreateUserData {
-  error: String
-  data: UserData
-}
-
 input EditUserInput {
-  name: String!
-  password: String!
+  username: String!
+  password: String
   newPassword: String
   newAvatar: String
   newBio: String

@@ -15,28 +15,17 @@ export const CREATE_USER = gql`
   }
 `;
 
-export const EDIT_PROFILE = gql`
-  mutation editUser(
-    $name: String!,
-    $password: String!,
-    $newPassword: String,
-    $newAvatar: String,
-    $newBio: String,
-    $newLevel: Int
-  ) {
-    editUser(data:{
-      name: $name,
-      password: $password,
-      newPassword: $newPassword,
-      newAvatar: $newAvatar,
-      newBio: $newBio,
-      newLevel: $newLevel,
-    }) {
-      name
-      password
-      avatar
-      bio
-      level
+export const EDIT_USER = gql`
+  mutation editUser($data: EditUserInput!) {
+    editUser(data: $data) {
+      error
+      data {
+        username
+        avatar
+        bio
+        level
+        maps
+      }
     }
   }
 `;
