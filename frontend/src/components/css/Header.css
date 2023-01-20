@@ -1,32 +1,32 @@
 header {
-    background-color: rgb(245, 213, 37);
-    width: 100%;
-    z-index: 10000;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+  background-color: rgb(245, 213, 37);
+  width: 100%;
+  z-index: 10000;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 #header-left {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
 #wordmark {
-    height: 70px;
-    margin-left: 15px;
+  height: 70px;
+  margin-left: 15px;
 }
   
 #wordmark img {
-    height: 70px;
+  height: 70px;
 }
 
 #header-right {
-    margin-right: 20px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+  margin-right: 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }

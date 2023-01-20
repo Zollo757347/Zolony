@@ -1,64 +1,64 @@
 .sidebar {
-    background-color: rgb(255, 246, 168);
-    z-index: 9999;
-    height: 100%;
-    position: relative;
+  background-color: rgb(255, 246, 168);
+  z-index: 9999;
+  height: 100%;
+  position: relative;
 }
 
 #sidebar-button {
-    background-color: rgb(245, 213, 37);
-    height: 70px;
-    border: 0;
-    margin-left: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background-color: rgb(245, 213, 37);
+  height: 70px;
+  border: 0;
+  margin-left: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ant-btn {
-    color: white;
+  color: white;
 }
 
 .ant-btn:hover {
-    color: brown !important;
+  color: brown !important;
 }
 
 .ant-menu {
-    background-color: rgb(255, 246, 168);
+  background-color: rgb(255, 246, 168);
 }
 
 .ant-menu-item {
-    background-color: rgb(255, 253, 230);
+  background-color: rgb(255, 253, 230);
 }
 
 .ant-menu-item-selected {
-    background-color: rgb(245, 213, 37) !important;
+  background-color: rgb(245, 213, 37) !important;
 }
 
 .ant-menu-item-selected .ant-menu-item-icon {
-    color: brown !important;
+  color: brown !important;
 }
 
 .ant-menu-item-selected .ant-menu-inline-collapsed-noicon {
-    color: brown !important;
+  color: brown !important;
 }
 
 .ant-menu-item-selected .ant-menu-title-content {
-    color: brown !important;
+  color: brown !important;
 }
 
 .ant-menu-submenu-selected {
-    background-color: rgb(248, 229, 118) !important;
+  background-color: rgb(248, 229, 118) !important;
 }
 
 .ant-menu-submenu-selected .ant-menu-item-icon{
-    color: brown !important;
+  color: brown !important;
 }
 
 .ant-menu-submenu-selected .ant-menu-title-content{
-    color: brown !important;
+  color: brown !important;
 }
 
 .ant-menu-submenu-selected .ant-menu-submenu-arrow{
-    color: brown !important;
+  color: brown !important;
 }

@@ -11,7 +11,7 @@
 - **getMap:** 輸入user的名字、地圖，得到某張地圖，如果找不到該地圖會回傳null。適用於前端獲取文章地圖時。
 
 #### **mutation**
-    
+
 - **createUser:** 輸入user的名字、密碼，得到user的一切資料，如果已有相同的使用者會回傳null。適用於user創建一個帳號時。
 
 - **editUser:** 輸入user的名字、密碼、新密碼、新自介、新通關數與新大頭貼網址時，得到user的一切資料。適用於user更改個人資料時。
@@ -28,408 +28,407 @@
 
 ### **createUser:**
 
-``` graphql
-    mutation {
-        createUser(data:{
-            name: "yohe",
-            password: "123"
-        }) {
-            name
-            password
-            avatar
-            bio
-            level
-        }
-    }
-    mutation {
-        createUser(data:{
-            name: "zollo",
-            password: "456"
-        }) {
-            name
-            password
-            avatar
-            bio
-            level
-        }
-    }
-    mutation {
-        createUser(data:{
-            name: "renwei",
-            password: "789"
-        }) {
-            name
-            password
-            avatar
-            bio
-            level
-        }
-    }
+```graphql
+mutation {
+  createUser(data:{
+    name: "yohe",
+    password: "123"
+  }) {
+    name
+    password
+    avatar
+    bio
+    level
+  }
+}
+mutation {
+  createUser(data:{
+    name: "zollo",
+    password: "456"
+  }) {
+    name
+    password
+    avatar
+    bio
+    level
+  }
+}
+mutation {
+  createUser(data:{
+    name: "renwei",
+    password: "789"
+  }) {
+    name
+    password
+    avatar
+    bio
+    level
+  }
+}
 ```
 
 ### **editUser:**
 
-``` graphql
-    mutation {
-        editUser(data:{
-            name: "yohe",
-            password: "123",
-            newPassword: "12"
-            newBio: "modify",
-            newLevel: 3,
-        }) {
-            name
-            password
-            avatar
-            bio
-            level
-        }
-    }
+```graphql
+mutation {
+  editUser(data:{
+    name: "yohe",
+    password: "123",
+    newPassword: "12"
+    newBio: "modify",
+    newLevel: 3,
+  }) {
+    name
+    password
+    avatar
+    bio
+    level
+  }
+}
 ```
 
 ### **initialMyMap:**
 
-``` graphql
-    mutation {
-        initialMyMap(data:{
-            name: "yohe",
-            password: "12",
-            mapName: "yoheMap",
-            xLen: 3,
-            yLen: 3,
-            zLen: 3,
-        }) {
-            xLen
-            yLen
-            zLen
-            mapName
-            validation {
-                levers
-                lamps
-                boolFuncs
-                timeout
-            }
-            playground {
-                type
-                breakable
-                states {
-                    power 
-                    source
-
-                    delay
-                    facing
-                    face
-                    locked
-                    powered
-
-                    lit
-
-                    east
-                    south
-                    west
-                    north
-                }
-            }
-        }
+```graphql
+mutation {
+  initialMyMap(data:{
+    name: "yohe",
+    password: "12",
+    mapName: "yoheMap",
+    xLen: 3,
+    yLen: 3,
+    zLen: 3,
+  }) {
+    xLen
+    yLen
+    zLen
+    mapName
+    validation {
+      levers
+      lamps
+      boolFuncs
+      timeout
     }
+    playground {
+      type
+      breakable
+      states {
+        power 
+        source
+
+        delay
+        facing
+        face
+        locked
+        powered
+
+        lit
+
+        east
+        south
+        west
+        north
+      }
+    }
+  }
+}
 ```
 
 ### **login:**
 
-``` graphql
-    query {
-        login(data:{
-            name: "yohe",
-            password: "12"
-        }) {
-            name
-            password
-            avatar
-            bio
-            level
-            maps {
-                xLen
-                yLen
-                zLen
-                mapName
-                validation {
-                    levers
-                    lamps
-                    boolFuncs
-                    timeout
-                }
-                playground {
-                    type
-                    breakable
-                    states {
-                        power 
-                        source
+```graphql
+query {
+  login(data:{
+    name: "yohe",
+    password: "12"
+  }) {
+    name
+    password
+    avatar
+    bio
+    level
+    maps {
+      xLen
+      yLen
+      zLen
+      mapName
+      validation {
+        levers
+        lamps
+        boolFuncs
+        timeout
+      }
+      playground {
+        type
+        breakable
+        states {
+          power 
+          source
 
-                        delay
-                        facing
-                        face
-                        locked
-                        powered
+          delay
+          facing
+          face
+          locked
+          powered
 
-                        lit
+          lit
 
-                        east
-                        south
-                        west
-                        north
-                    }
-                }
-            }
+          east
+          south
+          west
+          north
         }
+      }
     }
-    query {
-        login(data:{
-            name: "yohe",
-            password: "123"
-        }) {
-            name
-            password
-            avatar
-            bio
-            level
-            maps {
-                xLen
-                yLen
-                zLen
-                mapName
-                validation {
-                    levers
-                    lamps
-                    boolFuncs
-                    timeout
-                }
-                playground {
-                    type
-                    breakable
-                    states {
-                        power 
-                        source
+  }
+}
+query {
+  login(data:{
+    name: "yohe",
+    password: "123"
+  }) {
+    name
+    password
+    avatar
+    bio
+    level
+    maps {
+      xLen
+      yLen
+      zLen
+      mapName
+      validation {
+        levers
+        lamps
+        boolFuncs
+        timeout
+      }
+      playground {
+        type
+        breakable
+        states {
+          power 
+          source
 
-                        delay
-                        facing
-                        face
-                        locked
-                        powered
+          delay
+          facing
+          face
+          locked
+          powered
 
-                        lit
+          lit
 
-                        east
-                        south
-                        west
-                        north
-                    }
-                }
-            }
+          east
+          south
+          west
+          north
         }
+      }
     }
+  }
+}
 ```
 
 ### **getMap:**
 
-``` graphql
-    query {
-        getMap(data:{
-            name: "yohe",
-            mapName: "yoheMap"
-        }) {
-            xLen
-            yLen
-            zLen
-            mapName
-            validation {
-                levers
-                lamps
-                boolFuncs
-                timeout
-            }
-            playground {
-                type
-                breakable
-                states {
-                    power 
-                    source
-
-                    delay
-                    facing
-                    face
-                    locked
-                    powered
-
-                    lit
-
-                    east
-                    south
-                    west
-                    north
-                }
-            }
-        }
+```graphql
+query {
+  getMap(data:{
+    name: "yohe",
+    mapName: "yoheMap"
+  }) {
+    xLen
+    yLen
+    zLen
+    mapName
+    validation {
+      levers
+      lamps
+      boolFuncs
+      timeout
     }
+    playground {
+      type
+      breakable
+      states {
+        power 
+        source
+
+        delay
+        facing
+        face
+        locked
+        powered
+
+        lit
+
+        east
+        south
+        west
+        north
+      }
+    }
+  }
+}
 ```
 
 ### **deleteUser:**
 
-``` graphql
-    mutation {
-        deleteUser(data:{
-            name: "yohe",
-            password: "12",
-        }) 
-    }
+```graphql
+mutation {
+  deleteUser(data:{
+    name: "yohe",
+    password: "12",
+  }) 
+}
 ```
 
 ### **deleteUserMap:**
 
-``` graphql
-    mutation {
-        deleteUserMap(data:{
-            name: "yohe",
-            password: "12",
-            mapName: "yoheMap"
-        })
-    }
+```graphql
+mutation {
+  deleteUserMap(data:{
+    name: "yohe",
+    password: "12",
+    mapName: "yoheMap"
+  })
+}
 ```
 
 ### **editMyMap:**
 
-``` graphql
-    mutation {
-        editMyMap(data:{
-            name: "yohe",
-            password: "12",
-            mapName: "yoheMap",
-            map: {
-                xLen: 1,
-                yLen: 1,
-                zLen: 2,
-                mapName: "yoheMap10",
-                playground: [[[
-                    {
-                        type: 1,
-                        breakable: false,
-                        states: {
-                            power: 0,
-                            source: false,
-                        }
-                    },
-                    {
-                        type: 1,
-                        breakable: false
-                        states: {
-                            power: 0,
-                            source: false,
-                        }
-                    }
-                ]]]
-            }
-        }) {
-            xLen
-            yLen
-            zLen
-            mapName
-            validation {
-                levers
-                lamps
-                boolFuncs
-                timeout
-            }
-            playground {
-                type
-                breakable
-                states {
-                    power 
-                    source
-
-                    delay
-                    facing
-                    face
-                    locked
-                    powered
-
-                    lit
-
-                    east
-                    south
-                    west
-                    north
-                }
-            }
+```graphql
+mutation {
+  editMyMap(data:{
+    name: "yohe",
+    password: "12",
+    mapName: "yoheMap",
+    map: {
+      xLen: 1,
+      yLen: 1,
+      zLen: 2,
+      mapName: "yoheMap10",
+      playground: [[[
+        {
+          type: 1,
+          breakable: false,
+          states: {
+            power: 0,
+            source: false,
+          }
+        },
+        {
+          type: 1,
+          breakable: false
+          states: {
+            power: 0,
+            source: false,
+          }
         }
+      ]]]
     }
+  }) {
+    xLen
+    yLen
+    zLen
+    mapName
+    validation {
+      levers
+      lamps
+      boolFuncs
+      timeout
+    }
+    playground {
+      type
+      breakable
+      states {
+        power 
+        source
 
-    mutation {
-        editMyMap(data:{
-            name: "admin",
-            password: "123",
-            mapName: "Map1",
-            map: {
-                xLen: 1,
-                yLen: 1,
-                zLen: 2,
-                mapName: "yoheMap10",
-                validation: {
-                    levers: [[0, 0, 0]],
-                    lamps: [[1, 1, 1], [2, 2, 2]],
-                    boolFuncs: [[[1]], [[1]]],
-                    timeout: 500
-                }
-                playground: [[[
-                    {
-                        type: 1,
-                        breakable: false,
-                        states: {
-                            power: 0,
-                            source: false,
-                        }
-                    },
-                    {
-                        type: 1,
-                        breakable: false
-                        states: {
-                            power: 0,
-                            source: false,
-                        }
-                    }
-                ]]]
-            }
-        }) {
-            xLen
-            yLen
-            zLen
-            mapName
-            validation {
-                levers
-                lamps
-                boolFuncs
-                timeout
-            }
-            playground {
-                type
-                breakable
-                states {
-                    power 
-                    source
+        delay
+        facing
+        face
+        locked
+        powered
 
-                    delay
-                    facing
-                    face
-                    locked
-                    powered
+        lit
 
-                    lit
+        east
+        south
+        west
+        north
+      }
+    }
+  }
+}
 
-                    east
-                    south
-                    west
-                    north
-                }
-            }
+mutation {
+  editMyMap(data:{
+    name: "admin",
+    password: "123",
+    mapName: "Map1",
+    map: {
+      xLen: 1,
+      yLen: 1,
+      zLen: 2,
+      mapName: "yoheMap10",
+      validation: {
+        levers: [[0, 0, 0]],
+        lamps: [[1, 1, 1], [2, 2, 2]],
+        boolFuncs: [[[1]], [[1]]],
+        timeout: 500
+      }
+      playground: [[[
+        {
+          type: 1,
+          breakable: false,
+          states: {
+            power: 0,
+            source: false,
+          }
+        },
+        {
+          type: 1,
+          breakable: false
+          states: {
+            power: 0,
+            source: false,
+          }
         }
+      ]]]
     }
+  }) {
+    xLen
+    yLen
+    zLen
+    mapName
+    validation {
+      levers
+      lamps
+      boolFuncs
+      timeout
+    }
+    playground {
+      type
+      breakable
+      states {
+        power 
+        source
+
+        delay
+        facing
+        face
+        locked
+        powered
+
+        lit
+
+        east
+        south
+        west
+        north
+      }
+    }
+  }
+}
 ```
-

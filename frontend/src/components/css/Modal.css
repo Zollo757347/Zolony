@@ -1,43 +1,43 @@
 .ant-modal-content {
-    background-color: rgb(255, 246, 168) !important;
+  background-color: rgb(255, 246, 168) !important;
 }
 
 .ant-modal-header {
-    background-color: rgb(255, 246, 168) !important;
+  background-color: rgb(255, 246, 168) !important;
 }
 
 .ant-input-affix-wrapper:hover{
-    border-color: rgb(245, 213, 37) !important;
+  border-color: rgb(245, 213, 37) !important;
 }
 
 .ant-input-affix-wrapper-focused {
-    border-color: rgb(245, 213, 37) !important;
+  border-color: rgb(245, 213, 37) !important;
 }
 
 .ant-modal .ant-btn-primary {
-    background-color: rgb(245, 213, 37) !important;
+  background-color: rgb(245, 213, 37) !important;
 }
 
 .ant-modal .ant-btn-default {
-    background-color: rgb(255, 253, 230) !important;
+  background-color: rgb(255, 253, 230) !important;
 }
 
 .ant-btn-primary span {
-    color: brown !important;
+  color: brown !important;
 }
 
 .ant-btn span{
-    color:black !important;
+  color:black !important;
 }
 
 .ant-btn-default:hover{
-    border-color:brown  !important;
+  border-color:brown  !important;
 }
 
 .ant-btn:hover span{
-    color:brown !important;
+  color:brown !important;
 }
 
 textarea:focus {
-    border-color: rgb(245, 213, 37) !important;
+  border-color: rgb(245, 213, 37) !important;
 }
