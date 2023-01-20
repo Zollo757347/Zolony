@@ -9,7 +9,7 @@ const Modal_Components = ({ open, setOpen }) => {
   const [newPassword, setNewPassword] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
   
-  const { login, createAccount, editProfile, setUsername, setPassword, setBio, setAvatar, username, password, bio, avatar } = useHook();
+  const { login, createUser, editUser, setUsername, setPassword, setBio, setAvatar, username, password, bio, avatar } = useHook();
 
   const handleOk = async () => {
     // 登入
@@ -55,19 +55,28 @@ const Modal_Components = ({ open, setOpen }) => {
         Message.error({ content: '兩組密碼不相同！', duration: 1 });
       }
       else {
-        const data = await createAccount(username, password);
-
-        if (data === 'error') {
-          Message.error({ content: '發生了一些錯誤！', duration: 1 });
-        }
-        else if (data === 'exist') {
-          Message.error({ content: '該帳號已經存在！', duration: 1 });
-        }
-        else {
-          Message.success({ content: '成功建立帳號！', duration: 1 });
-          setOpen(0);
+        const { error } = await createUser(username, password);
+        switch (error) {
+          case 'loading': return;
+  
+          case 'connection':
+            Message.error({ content: '資料庫連線失敗', duration: 1 });
+            return;
+  
+          case 'error':
+            Message.error({ content: '使用者資料存取失敗', duration: 1 });
+            return;
+  
+          case 'user':
+            Message.error({ content: '該帳號已經存在', duration: 1 });
+            return;
+          
+          default: 
+            Message.success({ content: '成功建立帳號！', duration: 1 });
+            setOpen(0);
         }
       }
+      
       setCheckPassword('');
     }
     else {
@@ -75,7 +84,7 @@ const Modal_Components = ({ open, setOpen }) => {
         Message.error({ content: '兩組新密碼不相同！', duration: 1 });
       }
       else {
-        const data = await editProfile(username, password, {
+        const data = await editUser(username, password, {
           newPassword, 
           newBio: bio, 
           newAvatar: avatar

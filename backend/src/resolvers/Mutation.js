@@ -1,74 +1,28 @@
 import { MapModel, UserModel } from "../models.js";
 
-const DEFAULT_AVATAR = 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'
-const DEFAULT_BIO = "newer"
-
-const initBlock = (type) => { //0 means air, 1 means concrete
-  let block = {};
-  if(type === 0){
-    block = null;
-  }
-  else if(type === 1){
-    block = {
-      type: 1,
-      breakable: false,
-      states: {
-        power: 0,
-        source: false,
-      }
-    }
-  }
-  return block;
-}
-
-const initMap = (x, y, z, mapName, user) => {
-  let newPlayground = [];
-
-  for (let i = 0; i < x; i++) {
-    newPlayground.push([]);
-    for (let j = 0; j < y; j++) {
-      newPlayground[i].push([]);
-      for (let k = 0; k < z; k++) {
-        newPlayground[i][j].push(j === 0 ? initBlock(1) : initBlock(0));
-      }
-    }
-  }
-
-  const newMap = {
-    xLen: x,
-    yLen: y,
-    zLen: z,
-    mapName: mapName,
-    belonging: user._id,
-    validation: null,
-    playground: newPlayground,
-  }
-  console.log("NEW", newMap)
-  return newMap;
-}
+const DEFAULT_AVATAR = 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45';
+const DEFAULT_BIO = '向其他人介紹你自己吧';
 
 const Mutation = {
-  createAccount: async (parent, args) => {
-    let user = await UserModel.findOne({ name: args.data.name });
-    if(user){
-      console.log(`user ${args.data.name} already exist.`);
-      return null;
-    }
+  createUser: async (_parent, { username, password }) => {
+    const user = await UserModel.findOne({ username });
+    if (user) return { error: 'user', data: null };
+
     const newUser = { 
-      name: args.data.name,
-      password: args.data.password,
+      username,
+      password,
       avatar: DEFAULT_AVATAR,
       bio: DEFAULT_BIO,
       level: [],
       maps: [],
-    }
+    };
     await UserModel(newUser).save();
-    console.log(`user account ${args.data.name} created.`);
-    console.log( newUser );
-    return newUser;
+
+    delete newUser.password;
+    return { error: null, data: newUser };
   },
 
-  editProfile: async (parent, args) => { 
+  editUser: async (parent, args) => { 
     let user = await UserModel.findOne({ name: args.data.name, password: args.data.password});
     if(!user){
       console.log(`user ${args.data.name} not found.`);
@@ -158,7 +112,51 @@ const Mutation = {
     return true;
   },
 };
-  
+
+function initBlock(type) {
+  let block = {};
+  if(type === 0){
+    block = null;
+  }
+  else if(type === 1){
+    block = {
+      type: 1,
+      breakable: false,
+      states: {
+        power: 0,
+        source: false,
+      }
+    }
+  }
+  return block;
+}
+
+function initMap(x, y, z, mapName, user) {
+  let newPlayground = [];
+
+  for (let i = 0; i < x; i++) {
+    newPlayground.push([]);
+    for (let j = 0; j < y; j++) {
+      newPlayground[i].push([]);
+      for (let k = 0; k < z; k++) {
+        newPlayground[i][j].push(j === 0 ? initBlock(1) : initBlock(0));
+      }
+    }
+  }
+
+  const newMap = {
+    xLen: x,
+    yLen: y,
+    zLen: z,
+    mapName: mapName,
+    belonging: user._id,
+    validation: null,
+    playground: newPlayground,
+  }
+  console.log("NEW", newMap)
+  return newMap;
+}
+
 export { Mutation as default };
 
 

@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
 import CryptoJs from 'crypto-js'
 import { createContext, useContext, useState } from "react";
-import { LOG_IN, GET_MAP, CREATE_ACCOUNT, EDIT_PROFILE, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
+import { LOG_IN, GET_MAP, CREATE_USER, EDIT_PROFILE, INITIAL_MY_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
 
 const LSK_USERNAME = 'username';
 const LSK_AVATAR = 'avatar';
@@ -15,28 +15,33 @@ const savedMaps = localStorage.getItem(LSK_MAPS) ?? localStorage.setItem(LSK_MAP
 const HookContext = createContext({
   login: async () => {},
   logout: () => {},
+
   getMap: async () => {},
-  createAccount: async () => {},
-  editProfile: async () => {},
+
+  createUser: async () => {},
+  editUser: async () => {},
+  deleteUser: async () => {},
+
   initialMyMap: () => {},
   editMyMap: () => {},
-  DeleteUser: () => {},
   deleteUserMap: () => {},
+
   setUsername: () => {}, 
   setPassword: () => {},
   setBio: () => {}, 
   setAvatar: () => {},
   setPageNum: () => {},
   setMaps: () => {},
+
   username: savedUsername,
-  password: savedBio,
+  password: '',
   loggedIn: !!savedUsername,
   avatar: savedAvatar,
-  bio: '',
+  bio: savedBio,
   maps: [],
+
   pageNum: 1
 });
-
 
 const HookProvider = (props) => {
   const [username, setUsername] = useState(savedUsername);
@@ -47,14 +52,50 @@ const HookProvider = (props) => {
   const [maps, setMaps] = useState(JSON.parse(savedMaps));
   const [pageNum, setPageNum] = useState(1);
 
-  const [createAccountMutation] = useMutation(CREATE_ACCOUNT);
-  const [editProfileMutation] = useMutation(EDIT_PROFILE);
-  const [initialMyMapMutation] = useMutation(INITIAL_MY_MAP);
-  const [editMyMapMutation] = useMutation(EDIT_MY_MAP);
-  const [deleteUserMutation] = useMutation(DELETE_USER);
-  const [deleteUserMapMutation] = useMutation(DELETE_USER_MAP);
   const [loginQuery] = useLazyQuery(LOG_IN);
   const [getMapQuery] = useLazyQuery(GET_MAP);
+  const [createUserMutation] = useMutation(CREATE_USER);
+  const [editUserMutation] = useMutation(EDIT_PROFILE);
+  const [deleteUserMutation] = useMutation(DELETE_USER);
+  const [initialMyMapMutation] = useMutation(INITIAL_MY_MAP);
+  const [editMyMapMutation] = useMutation(EDIT_MY_MAP);
+  const [deleteUserMapMutation] = useMutation(DELETE_USER_MAP);
+
+  const setUser = (data) => {
+    if (!data) {
+      data = {
+        username: '', 
+        password: '', 
+        avatar: '', 
+        bio: '', 
+        maps: [], 
+        loggedIn: false
+      };
+    }
+
+    if (data.username != null) {
+      setUsername(data.username);
+      localStorage.setItem(LSK_USERNAME, data.username);
+    }
+    if (data.avatar != null) {
+      setAvatar(data.avatar);
+      localStorage.setItem(LSK_AVATAR, data.avatar);
+    }
+    if (data.bio != null) {
+      setBio(data.bio);
+      localStorage.setItem(LSK_BIO, data.bio);
+    }
+    if (data.maps != null) {
+      setMaps(data.maps);
+      localStorage.setItem(LSK_MAPS, JSON.stringify(data.maps));
+    }
+    if (data.password != null) {
+      setPassword(data.password);
+    }
+    if (data.loggedIn != null) {
+      setLoggedIn(data.loggedIn);
+    }
+  }
 
   const login = async (username, password) => {
     password = CryptoJs.MD5(password).toString();
@@ -71,32 +112,27 @@ const HookProvider = (props) => {
     const user = data.login.data;
     if (!user) return { error: data.login.error, data: null };
 
-    localStorage.setItem(LSK_USERNAME, username);
-    localStorage.setItem(LSK_AVATAR, user.avatar);
-    localStorage.setItem(LSK_BIO, user.bio);
-    localStorage.setItem(LSK_MAPS, JSON.stringify(user.maps));
-    
-    setUsername(username);
-    setPassword('');
-    setLoggedIn(true);
-    setAvatar(user.avatar);
-    setBio(user.bio);
-    setMaps(user.maps);
+    setUser({
+      username, 
+      password: '', 
+      loggedIn: true, 
+      avatar: user.avatar, 
+      bio: user.bio, 
+      maps: user.maps
+    });
+
     return { error: null, data: user };
   }
 
   const logout = () => {
-    localStorage.setItem(LSK_USERNAME, '');
-    localStorage.setItem(LSK_AVATAR, '');
-    localStorage.setItem(LSK_BIO, '');
-    localStorage.setItem(LSK_MAPS, '[]');
-
-    setUsername('');
-    setPassword('');
-    setLoggedIn(false);
-    setAvatar('');
-    setBio('');
-    setMaps([]);
+    setUser({
+      username: '', 
+      password: '', 
+      loggedIn: false, 
+      avatar: '', 
+      bio: '', 
+      maps: []
+    });
   }
 
   const getMap = async (username, mapName) => {
@@ -114,38 +150,35 @@ const HookProvider = (props) => {
     return { error: null, data: map };
   }
 
-  const createAccount = async (name, pwd) => {
-    const cryptopwd = CryptoJs.MD5(pwd).toString();
-    const { loading, data, error } = await createAccountMutation({
-      variables: {
-        name: name,
-        password: cryptopwd,
-      }
-    });
+  const createUser = async (username, password) => {
+    password = CryptoJs.MD5(password).toString();
+    const result = await createUserMutation({
+      variables: { username, password }
+    }).catch(console.error);
+    if (!result) return { error: 'connection', data: null };
 
-    if (loading) return 'loading...';
-    if (error) {
-      console.log(`[createAccount function error]: ${error.message}.`);
-      return 'error';
-    }
-    else {
-      if (!data.createAccount) {
-        console.log(`${name} already used.`);
-        return 'exist';
-      }
-      
-      setLoggedIn(true);
-      setAvatar(data.createAccount.avatar);
-      setBio(data.createAccount.bio);
-      setMaps([]);
-      return data.createAccount;
-    }
+    const { error, loading, data } = result;
+    if (loading) return { error: 'loading', data: null };
+    if (error) return { error: 'error', data: null };
+
+    const user = data.createUser.data;
+    if (!user) return { error: data.createUser.error, data: null };
+
+    setUser({
+      username, 
+      password: '', 
+      loggedIn: true, 
+      avatar: user.avatar, 
+      bio: user.bio, 
+      maps: user.maps
+    });
+    return data.createUser;
   }
 
-  const editProfile = async (name, pwd, input) => {
+  const editUser = async (name, pwd, input) => {
     const cryptopwd = CryptoJs.MD5(pwd).toString();
 
-    const {loading, data, error} = await editProfileMutation({
+    const {loading, data, error} = await editUserMutation({
       variables: {
         name: name,
         password: cryptopwd,
@@ -161,16 +194,16 @@ const HookProvider = (props) => {
       return 'error';
     }
     else {
-      if (!data.editProfile) {
+      if (!data.editUser) {
         return 'invalid';
       }
       if (pwd === input.newPassword) {
         return 'password';
       }
 
-      setAvatar(data.editProfile.avatar);
-      setBio(data.editProfile.bio);
-      return data.editProfile;
+      setAvatar(data.editUser.avatar);
+      setBio(data.editUser.bio);
+      return data.editUser;
     }
   }
 
@@ -241,7 +274,7 @@ const HookProvider = (props) => {
     }
   }
 
-  const DeleteUser = async (name, pwd) => {
+  const deleteUser = async (name, pwd) => {
     const cryptopwd = CryptoJs.MD5(pwd).toString();
     
     const {loading, data, error} = await deleteUserMutation({
@@ -286,11 +319,11 @@ const HookProvider = (props) => {
         login,
         logout,
         getMap,
-        createAccount,
-        editProfile,
+        createUser,
+        editUser,
         initialMyMap,
         editMyMap,
-        DeleteUser,
+        deleteUser,
         deleteUserMap,
         setUsername,
         setPassword,

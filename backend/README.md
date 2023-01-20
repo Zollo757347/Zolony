@@ -12,9 +12,9 @@
 
 #### **mutation**
     
-- **createAccount:** 輸入user的名字、密碼，得到user的一切資料，如果已有相同的使用者會回傳null。適用於user創建一個帳號時。
+- **createUser:** 輸入user的名字、密碼，得到user的一切資料，如果已有相同的使用者會回傳null。適用於user創建一個帳號時。
 
-- **editProfile:** 輸入user的名字、密碼、新密碼、新自介、新通關數與新大頭貼網址時，得到user的一切資料。適用於user更改個人資料時。
+- **editUser:** 輸入user的名字、密碼、新密碼、新自介、新通關數與新大頭貼網址時，得到user的一切資料。適用於user更改個人資料時。
 
 - **initialMyMap:** 輸入user的名字、密碼、地圖名稱與三軸限制，得到空的地圖。適用於user創建地圖時。
 
@@ -26,11 +26,11 @@
 
 ## **test data**
 
-### **createAccount:**
+### **createUser:**
 
 ``` graphql
     mutation {
-        createAccount(data:{
+        createUser(data:{
             name: "yohe",
             password: "123"
         }) {
@@ -42,7 +42,7 @@
         }
     }
     mutation {
-        createAccount(data:{
+        createUser(data:{
             name: "zollo",
             password: "456"
         }) {
@@ -54,7 +54,7 @@
         }
     }
     mutation {
-        createAccount(data:{
+        createUser(data:{
             name: "renwei",
             password: "789"
         }) {
@@ -67,11 +67,11 @@
     }
 ```
 
-### **editProfile:**
+### **editUser:**
 
 ``` graphql
     mutation {
-        editProfile(data:{
+        editUser(data:{
             name: "yohe",
             password: "123",
             newPassword: "12"

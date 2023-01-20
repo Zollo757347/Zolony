@@ -123,7 +123,7 @@ const Info = ({ setOpenModal }) => {
           <div id='Info-select' width="100px">
             <Form><Form.Item><Select
               showSearch
-              placeholder="Select a map"
+              placeholder="請選擇一張地圖"
               optionFilterProp="children"
               onSelect={onSelect}
               onChange={onSelect}
