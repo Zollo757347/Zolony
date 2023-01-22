@@ -223,7 +223,7 @@ const HookProvider = (props) => {
     const map = data.createMap.data;
     if (!map) return { error: data.createMap.error, data: null };
 
-    setMaps([...maps, map.mapName]);
+    setUser({ maps: [...maps, map.mapName] });
 
     return { error: null, data: map };
   }
@@ -255,7 +255,7 @@ const HookProvider = (props) => {
     if (error) return { error: 'error' };
     if (data.deleteMap.error) return { error: data.deleteMap.error };
 
-    setMaps(maps.filter(name => name !== mapName));
+    setUser({ maps: maps.filter(name => name !== mapName) });
 
     return { error: null };
   }
