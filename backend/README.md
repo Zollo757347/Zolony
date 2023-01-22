@@ -18,7 +18,7 @@
 
 - **createMap:** 輸入user的名字、密碼、地圖名稱與三軸限制，得到空的地圖。適用於user創建地圖時。
 
-- **editMyMap:** 輸入user的名字、密碼、地圖名稱與一張地圖，得到更改後的地圖。適用於user儲存地圖時。
+- **editMap:** 輸入user的名字、密碼、地圖名稱與一張地圖，得到更改後的地圖。適用於user儲存地圖時。
 
 - **deleteUser:** 輸入user的名字、密碼，得到布林值，若無此user會回傳null。此function應在user delete他的資料時呼叫。
 
@@ -295,11 +295,11 @@ mutation {
 }
 ```
 
-### **editMyMap:**
+### **editMap:**
 
 ```graphql
 mutation {
-  editMyMap(data:{
+  editMap(data:{
     name: "yohe",
     password: "12",
     mapName: "yoheMap",
@@ -363,7 +363,7 @@ mutation {
 }
 
 mutation {
-  editMyMap(data:{
+  editMap(data:{
     name: "admin",
     password: "123",
     mapName: "Map1",

@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
 import CryptoJs from 'crypto-js';
 import { createContext, useContext, useState } from "react";
-import { LOG_IN, GET_MAP, CREATE_USER, EDIT_USER, CREATE_MAP, EDIT_MY_MAP, DELETE_USER, DELETE_USER_MAP } from '../graphql';
+import { LOG_IN, GET_MAP, CREATE_USER, EDIT_USER, DELETE_USER, CREATE_MAP, EDIT_MAP, DELETE_USER_MAP } from '../graphql';
 
 const LSK_USERNAME = 'username';
 const LSK_AVATAR = 'avatar';
@@ -21,7 +21,7 @@ const HookContext = createContext({
 
   getMap: async () => {},
   createMap: async () => {},
-  editMyMap: async () => {},
+  editMap: async () => {},
   deleteUserMap: async () => {},
 
   setUsername: () => {}, 
@@ -48,12 +48,12 @@ const HookProvider = (props) => {
   const [pageNum, setPageNum] = useState(1);
 
   const [loginQuery] = useLazyQuery(LOG_IN);
-  const [getMapQuery] = useLazyQuery(GET_MAP);
+  const [getMapQuery] = useLazyQuery(GET_MAP, { fetchPolicy: 'network-only' });
   const [createUserMutation] = useMutation(CREATE_USER);
   const [editUserMutation] = useMutation(EDIT_USER);
   const [deleteUserMutation] = useMutation(DELETE_USER);
   const [createMapMutation] = useMutation(CREATE_MAP);
-  const [editMyMapMutation] = useMutation(EDIT_MY_MAP);
+  const [editMapMutation] = useMutation(EDIT_MAP);
   const [deleteUserMapMutation] = useMutation(DELETE_USER_MAP);
 
   const setUser = (data) => {
@@ -162,7 +162,7 @@ const HookProvider = (props) => {
       bio: user.bio, 
       maps: user.maps
     });
-    return data.createUser;
+    return { error: null, data: user };
   }
 
   const editUser = async (editData) => {
@@ -228,40 +228,20 @@ const HookProvider = (props) => {
     return { error: null, data: map };
   }
 
-  const editMyMap = async (name, pwd, map) => {
-    const cryptopwd = CryptoJs.MD5(pwd).toString();
-    
-    const {loading, data, error} = await editMyMapMutation({
-      variables: {
-        name: name,
-        password: cryptopwd,
-        mapName: map.mapName,
-        map: map
-      }
-    }).catch(e => console.log(JSON.stringify(e, null, 2)));
+  const editMap = async (username, mapData) => {
+    const result = await editMapMutation({
+      variables: { username, data: mapData }
+    }).catch(error => console.error(JSON.parse(JSON.stringify(error, null, 2))));
+    if (!result) return { error: 'connection', data: null };
 
-    if(loading) return 'loading...';
-    if(error){
-      console.log(`[editMyMap function error]: ${error.message}.`);
-      return 'error';
-    }
-    else {
-      if(!data.editMyMap){
-        console.log(`save map fail.`);
-        return 'map already exist';
-      } 
-      console.log(`edit map succeed.`)
-      console.log(data.editMyMap);
+    const { error, loading, data } = result;
+    if (loading) return { error: 'loading', data: null };
+    if (error) return { error: 'error', data: null };
 
-      const index = maps.findIndex(a => a.mapName === map.mapName);
-      console.log(index, maps.map(a => a.mapName), map.mapName);
-      if (index !== -1) {
-        maps[index] = data.editMyMap;
-        setMaps(maps);
-      }
+    const map = data.editMap.data;
+    if (!map) return { error: data.editMap.error, data: null };
 
-      return data.editMyMap;
-    }
+    return { error: null, data: map };
   }
 
   const deleteUserMap = async (name, pwd, mapName) => {
@@ -294,7 +274,7 @@ const HookProvider = (props) => {
         createUser,
         editUser,
         createMap,
-        editMyMap,
+        editMap,
         deleteUser,
         deleteUserMap,
         setUsername,

@@ -75,39 +75,34 @@ const Mutation = {
     const map = await MapModel.findOne({ mapName: data.mapName, belonging: user._id });
     if (map) return { error: 'map', data: null };
 
-    const newMap = getMap(data, user._id.toString());
-    const mapModel = MapModel(newMap);
+    const newMap = getNewMap(data, user._id.toString());
+    await MapModel(newMap).save();
 
-    user.maps.push(mapModel._id);
-    await mapModel.save();
+    user.maps.push(data.mapName);
     await user.save();
     
     delete newMap.belonging;
     return { error: null, data: newMap };
   },
 
-  editMyMap: async (parent, args) => {
-    console.log(args.data);
-    let user = await UserModel.findOne({ name: args.data.name, password: args.data.password });
-    if(!user){
-      console.log(`user ${args.data.name} not found.`);
-      return null;
-    }
-    let sortMap = await MapModel.findOne({ mapName: args.data.mapName, belonging: user._id})
-    if(!sortMap){
-      console.log(`user ${args.data.name} doesn't own map ${args.data.mapName}.`);
-      return null;
-    }
-    let addID = args.data.map;
-    addID.belonging = user._id;
-    if(user.name !== 'admin' && addID.validation !== null){
-      console.log(`you don't hava authority to modify validation.`);
-      addID.validation = undefined;  // avoid normal user modify map to validation map
-    } 
-    await sortMap.replaceOne(addID);
-    console.log(`user ${args.data.name} save map ${args.data.mapName} succeed`);
-    console.log(sortMap);
-    return sortMap;
+  editMap: async (_parent, { username, data }) => {
+    const user = await UserModel.findOne({ username });
+    if (!user) return { error: 'user', data: null };
+
+    const map = await MapModel.findOne({ mapName: data.mapName, belonging: user._id });
+    if (!map) return { error: 'map', data: null };
+
+    await map.update(data);
+    return {
+      error: null, 
+      data: {
+        mapName: map.mapName,
+        xLen: map.xLen,
+        yLen: map.yLen,
+        zLen: map.zLen,
+        playground: map.playground,
+      }
+    };
   },
 
   deleteUserMap: async (parent, args) => {
@@ -137,7 +132,7 @@ function getConcrete() {
   }
 }
 
-function getMap(data, userId) {
+function getNewMap(data, userId) {
   const playground = Array.from({ length: data.xLen }, () => 
     Array.from({ length: data.yLen }, (_, y) => 
       Array.from({ length: data.zLen }, () => y === 0 ? getConcrete() : null)

@@ -67,49 +67,42 @@ export const CREATE_MAP = gql`
   }
 `;
 
-export const EDIT_MY_MAP = gql`
-  mutation editMyMap(
-    $name: String!,
-    $password: String!,
-    $mapName: String!,
-    $map: MapDataInput!
-  ) {
-    editMyMap(data:{
-      name: $name,
-      password: $password,
-      mapName: $mapName,
-      map: $map
-    }) {
-      mapName
-      xLen
-      yLen
-      zLen
-      availableBlocks
-      validation {
-        levers
-        lamps
-        boolFuncs
-        timeout
-      }
-      playground {
-        type
-        breakable
-        states {
-          power 
-          source
+export const EDIT_MAP = gql`
+  mutation editMap($username: String!, $data: EditMapInput!) {
+    editMap(username: $username, data: $data) {
+      error
+      data {
+        xLen
+        yLen
+        zLen
+        mapName
+        playground {
+          type
+          breakable
+          states {
+            power 
+            source
 
-          delay
-          facing
-          face
-          locked
-          powered
+            delay
+            facing
+            face
+            locked
+            powered
 
-          lit
+            lit
 
-          east
-          south
-          west
-          north
+            east
+            south
+            west
+            north
+          }
+        }
+        availableBlocks
+        validation {
+          levers
+          lamps
+          boolFuncs
+          timeout
         }
       }
     }

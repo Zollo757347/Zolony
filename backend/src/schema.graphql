@@ -8,8 +8,8 @@ type Mutation {
   editUser(data: EditUserInput!): FullUserData
   deleteUser(username: String!, password: String!): FullUserData
 
-  createMap(username: String! data: CreateMapInput!): FullMapData
-  editMyMap(data: editMyMapInput!): MapData
+  createMap(username: String!, data: CreateMapInput!): FullMapData
+  editMap(username: String!, data: EditMapInput!): FullMapData
   deleteUserMap(data: deleteUserMapInput!): Boolean
 }
 
@@ -47,27 +47,20 @@ input CreateMapInput {
   zLen: Int!
 }
 
-input editMyMapInput {
-  name: String!
-  password: String!
+input EditMapInput {
   mapName: String!
-  map: MapDataInput!
+  xLen: Int!
+  yLen: Int!
+  zLen: Int!
+  playground: [[[BlockDataInput]!]!]!
+  availableBlocks: [Int!]
+  validation: ValidationDataInput
 }
 
 input deleteUserMapInput {
   name: String!
   password: String!
   mapName: String!
-}
-
-input MapDataInput {
-  xLen: Int!
-  yLen: Int!
-  zLen: Int!
-  mapName: String!
-  availableBlocks: [Int!]
-  validation: ValidationDataInput
-  playground: [[[BlockDataInput]!]!]!
 }
 
 input ValidationDataInput {

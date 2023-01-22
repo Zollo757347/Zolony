@@ -54,13 +54,15 @@ const Info = ({ setOpenModal }) => {
         Message.error({ content: '你並沒有這張地圖', duration: 1 });
         return;
       
-      default: break;
+      default: 
+        Message.success({ content: `成功開啟 ${mapName}`, duration: 1 });
     }
 
-    Message.success({ content: `成功開啟 ${mapName}`, duration: 1 });
     setCvs(null);
     await Utils.Sleep(1);
-    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} storable={true} />);
+
+    const preLoadData = JSON.parse(JSON.stringify(data));
+    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
   }
 
   const handleModalOk = async () => {
@@ -95,7 +97,9 @@ const Info = ({ setOpenModal }) => {
 
     setCvs(null);
     await Utils.Sleep(1);
-    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={data} storable={true} />);
+
+    const preLoadData = JSON.parse(JSON.stringify(data));
+    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
 
     closeModal();
   }

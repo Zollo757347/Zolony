@@ -24,7 +24,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
   const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData }));
 
   const [shiftDown, setShiftDown] = useState(false);
-  const { editMyMap, username } = useHook();
+  const { editMap, username } = useHook();
 
   useEffect(() => {
     playgroundRef.current.setCanvas(canvasRef.current);
@@ -86,9 +86,31 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
     playgroundRef.current.scrollHotbar(e.deltaY);
   }
 
-  function handleSaveMap() {
+  async function handleSaveMap() {
     const map = Engine.extract(playgroundRef.current.engine);
-    editMyMap(username, map);
+    const { error } = await editMap(username, map);
+    switch (error) {
+      case 'loading': return;
+
+      case 'connection':
+        Message.error({ content: '資料庫連線失敗', duration: 1 });
+        return;
+
+      case 'error':
+        Message.error({ content: '地圖資料存取失敗', duration: 1 });
+        return;
+
+      case 'user':
+        Message.error({ content: '此帳號不存在', duration: 1 });
+        return;
+
+      case 'map':
+        Message.error({ content: `你並沒有名稱為 ${map.mapName} 的地圖`, duration: 1 });
+        return;
+      
+      default: 
+        Message.success({ content: `成功儲存地圖 ${map.mapName}`, duration: 1 });
+    }
   }
 
   async function handleCheckMap() {
