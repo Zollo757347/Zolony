@@ -1,7 +1,7 @@
 import { useLazyQuery, useMutation } from "@apollo/client";
 import CryptoJs from 'crypto-js';
 import { createContext, useContext, useState } from "react";
-import { LOG_IN, GET_MAP, CREATE_USER, EDIT_USER, DELETE_USER, CREATE_MAP, EDIT_MAP, DELETE_USER_MAP } from '../graphql';
+import { LOG_IN, GET_MAP, CREATE_USER, EDIT_USER, DELETE_USER, CREATE_MAP, EDIT_MAP, DELETE_MAP } from '../graphql';
 
 const LSK_USERNAME = 'username';
 const LSK_AVATAR = 'avatar';
@@ -22,7 +22,7 @@ const HookContext = createContext({
   getMap: async () => {},
   createMap: async () => {},
   editMap: async () => {},
-  deleteUserMap: async () => {},
+  deleteMap: async () => {},
 
   setUsername: () => {}, 
   setBio: () => {}, 
@@ -54,7 +54,7 @@ const HookProvider = (props) => {
   const [deleteUserMutation] = useMutation(DELETE_USER);
   const [createMapMutation] = useMutation(CREATE_MAP);
   const [editMapMutation] = useMutation(EDIT_MAP);
-  const [deleteUserMapMutation] = useMutation(DELETE_USER_MAP);
+  const [deleteMapMutation] = useMutation(DELETE_MAP);
 
   const setUser = (data) => {
     if (!data) {
@@ -244,27 +244,22 @@ const HookProvider = (props) => {
     return { error: null, data: map };
   }
 
-  const deleteUserMap = async (name, pwd, mapName) => {
-    const cryptopwd = CryptoJs.MD5(pwd).toString();
+  const deleteMap = async (username, mapName) => {
+    const result = await deleteMapMutation({
+      variables: { username, mapName }
+    }).catch(error => console.error(JSON.parse(JSON.stringify(error, null, 2))));
+    if (!result) return { error: 'connection' };
 
-    console.log(name, pwd, mapName);
-    const {loading, data, error} = await deleteUserMapMutation({
-      variables: {
-        name: name,
-        password: cryptopwd,
-        mapName: mapName
-      }
-    })
-    if(loading) return 'loading...';
-    if(error){
-      console.log(`[deleteUserMap function error]: ${error.message}.`);
-      return false;
-    }
+    const { error, loading, data } = result;
+    if (loading) return { error: 'loading' };
+    if (error) return { error: 'error' };
+    if (data.deleteMap.error) return { error: data.deleteMap.error };
 
-    console.log(maps, mapName);
-    setMaps(maps.filter(m => m.mapName !== mapName));
-    return data.deleteUserMap;
+    setMaps(maps.filter(name => name !== mapName));
+
+    return { error: null };
   }
+
   return (
     <HookContext.Provider
       value = {{
@@ -276,7 +271,7 @@ const HookProvider = (props) => {
         createMap,
         editMap,
         deleteUser,
-        deleteUserMap,
+        deleteMap,
         setUsername,
         setBio, 
         setAvatar, 

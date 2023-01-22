@@ -22,7 +22,7 @@
 
 - **deleteUser:** 輸入user的名字、密碼，得到布林值，若無此user會回傳null。此function應在user delete他的資料時呼叫。
 
-- **deleteUserMap:** 輸入user的名字、密碼與地圖名字，得到布林值。若無此地圖會回傳null。適用於user刪掉自己的地圖時
+- **deleteMap:** 輸入user的名字、密碼與地圖名字，得到布林值。若無此地圖會回傳null。適用於user刪掉自己的地圖時
 
 ## **test data**
 
@@ -283,11 +283,11 @@ mutation {
 }
 ```
 
-### **deleteUserMap:**
+### **deleteMap:**
 
 ```graphql
 mutation {
-  deleteUserMap(data:{
+  deleteMap(data:{
     name: "yohe",
     password: "12",
     mapName: "yoheMap"

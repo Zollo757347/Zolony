@@ -12,21 +12,22 @@ const Info = ({ setOpenModal }) => {
   const [selectItems, setSelectItems] = useState([]);
   const [openMapModal, setOpenMapModal] = useState(false);
 
-  const [mapName, setMapName] = useState('');
+  const [currentMapName, setCurrentMapName] = useState('');
+  const [modalMapName, setModalMapName] = useState('');
   const [xLen, setXLen] = useState('');
   const [yLen, setYLen] = useState('');
   const [zLen, setZLen] = useState('');
 
-  const [cvs, setCvs] = useState(null);
+  const [displayCanvas, setDisplayCanvas] = useState(null);
 
-  const { getMap, createMap, deleteUserMap, username, bio, maps, avatar } = useHook();
+  const { getMap, createMap, deleteMap, username, bio, maps, avatar } = useHook();
 
   useEffect(() => {
     setSelectItems(maps.map(name => ({ label: name, value: name })));
   }, [maps]);
 
   const closeModal = () => {
-    setMapName('');
+    setModalMapName('');
     setXLen('');
     setYLen('');
     setZLen('');
@@ -58,11 +59,12 @@ const Info = ({ setOpenModal }) => {
         Message.success({ content: `成功開啟 ${mapName}`, duration: 1 });
     }
 
-    setCvs(null);
+    setDisplayCanvas(null);
     await Utils.Sleep(1);
 
     const preLoadData = JSON.parse(JSON.stringify(data));
-    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
+    setDisplayCanvas(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
+    setCurrentMapName(preLoadData.mapName);
   }
 
   const handleModalOk = async () => {
@@ -70,7 +72,7 @@ const Info = ({ setOpenModal }) => {
       xLen: parseInt(xLen), 
       yLen: parseInt(yLen), 
       zLen: parseInt(zLen), 
-      mapName
+      mapName: modalMapName
     });
     switch (error) {
       case 'loading': return;
@@ -95,18 +97,43 @@ const Info = ({ setOpenModal }) => {
         Message.success({ content: `成功建立地圖 ${data.mapName}`, duration: 1 });
     }
 
-    setCvs(null);
+    setDisplayCanvas(null);
     await Utils.Sleep(1);
 
     const preLoadData = JSON.parse(JSON.stringify(data));
-    setCvs(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
+    setDisplayCanvas(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
+    setCurrentMapName(preLoadData.mapName);
 
     closeModal();
   }
 
   const handleMapDelete = async () => {
-    await deleteUserMap(username, mapName);
-    setCvs(null);
+    const { error } = await deleteMap(username, currentMapName);
+    switch (error) {
+      case 'loading': return;
+
+      case 'connection':
+        Message.error({ content: '資料庫連線失敗', duration: 1 });
+        return;
+
+      case 'error':
+        Message.error({ content: '地圖資料存取失敗', duration: 1 });
+        return;
+
+      case 'user':
+        Message.error({ content: '此帳號不存在', duration: 1 });
+        return;
+
+      case 'map':
+        Message.error({ content: `你並沒有名稱為 ${currentMapName} 的地圖`, duration: 1 });
+        return;
+      
+      default: 
+        Message.success({ content: `成功刪除地圖 ${currentMapName}`, duration: 1 });
+    }
+
+    setDisplayCanvas(null);
+    setCurrentMapName('');
   }
 
   const profileForm = <>
@@ -144,7 +171,7 @@ const Info = ({ setOpenModal }) => {
   </>;
 
   const MapModal = <>
-    <Input placeholder="輸入你的地圖名稱" value={mapName} prefix={<RightOutlined />} onChange={e => setMapName(e.target.value)}/>
+    <Input placeholder="輸入你的地圖名稱" value={modalMapName} prefix={<RightOutlined />} onChange={e => setModalMapName(e.target.value)}/>
     <br/>
     <br/>
     <span>輸入三軸的長度</span>
@@ -178,7 +205,7 @@ const Info = ({ setOpenModal }) => {
               options={selectItems}
             /></Form.Item></Form>
           </div>
-          <Button texture={ButtonTexture.Danger} onClick={handleMapDelete} disabled={!cvs}>
+          <Button texture={ButtonTexture.Danger} onClick={handleMapDelete} disabled={!displayCanvas}>
             刪除地圖
           </Button>
           <Button texture={ButtonTexture.Success} onClick={() => setOpenMapModal(true)}> 
@@ -186,7 +213,7 @@ const Info = ({ setOpenModal }) => {
           </Button>
         </div>
         <div id='Info-right-section'>
-          {cvs ?? <></>}
+          {displayCanvas ?? <></>}
         </div>
       </div>
 

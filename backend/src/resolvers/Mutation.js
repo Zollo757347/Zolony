@@ -92,7 +92,7 @@ const Mutation = {
     const map = await MapModel.findOne({ mapName: data.mapName, belonging: user._id });
     if (!map) return { error: 'map', data: null };
 
-    await map.update(data);
+    await map.updateOne(data);
     return {
       error: null, 
       data: {
@@ -105,19 +105,18 @@ const Mutation = {
     };
   },
 
-  deleteUserMap: async (parent, args) => {
-    let user = await UserModel.findOne({name: args.data.name, password: args.data.password});
-    if(!user){
-      console.log(`user ${args.data.name} not found.`);
-      return false;
-    }
-    const count = await MapModel.deleteOne({mapName:args.data.mapName, belonging: user._id });
-    if(count === 0){
-      console.log(`user ${args.data.name}'s map ${args.data.mapName} already daleted.`);
-      return false;
-    }
-    console.log(`user ${args.data.name}'s map ${args.data.mapName} dalete succeed.`)
-    return true;
+  deleteMap: async (_parent, { username, mapName }) => {
+    const user = await UserModel.findOne({ username });
+    if (!user) return { error: 'user' };
+
+    const map = await MapModel.findOne({ mapName, belonging: user._id });
+    if (!map) return { error: 'map' };
+
+    user.maps = user.maps.filter(name => name !== mapName);
+    await user.save();
+
+    await map.deleteOne();
+    return { error: null };
   },
 };
 

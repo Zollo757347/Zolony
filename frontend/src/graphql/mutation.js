@@ -109,17 +109,11 @@ export const EDIT_MAP = gql`
   }
 `;
 
-export const DELETE_USER_MAP = gql`
-  mutation deleteUserMap(
-    $name: String!,
-    $password: String!,
-    $mapName: String!,
-  ) {
-    deleteUserMap(data:{
-      name: $name,
-      password: $password,
-      mapName: $mapName
-    })
+export const DELETE_MAP = gql`
+  mutation deleteMap($username: String!, $mapName: String!) {
+    deleteMap(username: $username, mapName: $mapName) {
+      error
+    }
   }
 `;
 
