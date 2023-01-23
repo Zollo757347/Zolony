@@ -1,5 +1,5 @@
 import { DownOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Space } from 'antd';
+import { Avatar, Dropdown } from 'antd';
 import './css/Dropdown.css';
 import { useHook } from '../hooks/useHook';
 
@@ -51,10 +51,8 @@ const Dropdown_Components = ({ setOpenModal }) => {
       id="dropdown"
     >
       <span onClick={e => e.preventDefault()}>
-        <Space>
-          {loggedIn ? <Avatar src={avatar}/> : <b>帳號</b>}
+          {loggedIn ? <Avatar src={avatar}/> : <b>帳號 </b>}
           <DownOutlined />
-        </Space>
       </span>
     </Dropdown>
   )

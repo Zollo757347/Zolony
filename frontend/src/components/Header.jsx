@@ -1,5 +1,5 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import Button from './Button';
 import Dropdown from './Dropdown';
 import './css/Header.css'
 import { useHook } from '../hooks/useHook';
