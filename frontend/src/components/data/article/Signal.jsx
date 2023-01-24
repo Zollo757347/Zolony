@@ -1,6 +1,6 @@
 import 'katex/dist/katex.min.css';
 import Latex from 'react-latex-next';
-import { Image } from 'antd';
+import Image from '../../Image';
 
 const Signal = () => {
   return (

@@ -1,4 +1,4 @@
-import { Image } from 'antd';
+import Image from '../../Image';
 
 const Adder = () => {
   return (

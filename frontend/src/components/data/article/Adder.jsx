@@ -1,5 +1,5 @@
-import { Image } from 'antd';
 import Canvas from '../../Canvas';
+import Image from '../../Image';
 import data from "../levels/Official Map 5.json"
 
 const Adder = () => {
