@@ -30,16 +30,16 @@ const StyledGhostDiv = styled.div`
 
 const StyledItem = styled.div`
   padding: 10px;
-  background-color: ${props => props.order & 1 ? "#FDF17A" : "#FDE65A"};
-  border: 2px ${props => props.order & 1 ? "#FDF17A" : "#FDE65A"} solid;
+  background-color: ${props => props.order & 1 ? "#FCDE71" : "#FFF78A"};
+  border: 2px ${props => props.order & 1 ? "#FCDE71" : "#FFF78A"} solid;
   display: flex;
   align-items: center;
   transition: all 0.3s;
 
   &:hover {
     cursor: pointer;
-    background-color: #EDE1B9;
-    border: 2px #D2D1A9 solid;
+    background-color: #FFFDA1;
+    border: 2px #EDEC97 solid;
   }
 `;
 
