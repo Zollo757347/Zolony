@@ -148,16 +148,24 @@ class Playground {
      */
     this.engine = preLoadData ? Engine.spawn(preLoadData) : new Engine({ xLen, yLen, zLen });
 
+    /**
+     * 此畫布是否仍在運作中
+     * @type {boolean}
+     * @private
+     */
+    this._alive = true;
+
     this.render = this.render.bind(this);
-    requestAnimationFrame(this.render);
   }
 
   /**
    * 設定畫布
    * @param {*} canvas 
    */
-  setCanvas(canvas) {
+  initialize(canvas) {
     this.canvas = canvas;
+    requestAnimationFrame(this.render);
+    this.engine.startTicking();
   }
 
   /**
@@ -237,10 +245,9 @@ class Playground {
 
   /**
    * 開始渲染畫面
-   * @private
    */
   render() {
-    if (this.canvas) {
+    if (typeof this.canvas?.getContext === 'function') {
       const context = this.canvas.getContext('2d', { alpha: false });
       context.fillStyle = 'rgb(255, 246, 168)';
       context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -285,7 +292,17 @@ class Playground {
       }
     }
 
-    requestAnimationFrame(this.render);
+    if (this._alive) {
+      requestAnimationFrame(this.render);
+    }
+  }
+
+  /**
+   * 不使用此畫布時必須呼叫此函式
+   */
+  destroy() {
+    this._alive = false;
+    this.engine.destroy();
   }
 
   /**

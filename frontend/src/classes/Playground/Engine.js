@@ -71,8 +71,6 @@ class Engine {
         Array.from({ length: zLen }, (_, z) => y === 0 ? new Concrete({ x, y, z, engine: this, breakable: false }) : new AirBlock({ x, y, z, engine: this }))
       )
     );
-
-    this._startTicking();
   }
 
   /**
@@ -217,6 +215,16 @@ class Engine {
     return this._pg[x][y][z];
   }
 
+  /**
+   * 不使用此引擎時必須呼叫此函式
+   */
+  destroy() {
+    if (this._interval) {
+      clearInterval(this._interval);
+      this._interval = null;
+    }
+  }
+
 
   /**
    * 區間計時器
@@ -227,11 +235,11 @@ class Engine {
 
   /**
    * 開始模擬遊戲
-   * @private
    */
-  _startTicking() {
+  startTicking() {
     if (this._interval) {
       clearInterval(this._interval);
+      this._interval = null;
     }
 
     this._interval = setInterval(() => {
@@ -274,7 +282,7 @@ class Engine {
       }
 
       this.taskQueue.push(...nextQueue);
-    }, 50);
+    }, 1000);
   }
 
   /**

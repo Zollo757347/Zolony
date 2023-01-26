@@ -19,16 +19,23 @@ function preventDefault(e) {
 }
 
 const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen, storable, checkable, preloaddata: preLoadData }) => {
-  const canvasRef = useRef(<canvas></canvas>);
-  const spanRef = useRef(<span></span>);
-  const playgroundRef = useRef(new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData }));
-
   const [shiftDown, setShiftDown] = useState(false);
+  const [playground, setPlayground] = useState();
+
+  const canvasRef = useRef();
+  const spanRef = useRef();
+
   const { editMap, username } = useHook();
 
   useEffect(() => {
-    playgroundRef.current.setCanvas(canvasRef.current);
-  }, []);
+    const pg = new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData });
+    pg.initialize(canvasRef.current);
+    setPlayground(pg);
+    
+    return () => {
+      pg.destroy();
+    }
+  }, [canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData]);
 
   function handleKeyDown(e) {
     setShiftDown(e.shiftKey);
@@ -40,7 +47,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
 
   function handleMouseMove(e) {
     const p = getPosition(canvasRef.current, e);
-    playgroundRef.current.setCursor(p.x, p.y);
+    playground?.setCursor(p.x, p.y);
   }
 
   function handleMouseEnter() {
@@ -55,21 +62,21 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
     // 拖曳結束前的最後一個事件的座標會是 (0, 0)，因為會嚴重影響到畫面，所以直接擋掉
     if (e.clientX === 0 && e.clientY === 0) return;
 
-    playgroundRef.current.adjustAngles(e.clientX, e.clientY);
+    playground?.adjustAngles(e.clientX, e.clientY);
   }
   
   function handleDragStart(e) {
     // 把拖曳的殘影改成看不見的元素
     e.dataTransfer.setDragImage(spanRef.current, 0, 0);
 
-    playgroundRef.current.adjustAngles(e.clientX, e.clientY, true);
+    playground?.adjustAngles(e.clientX, e.clientY, true);
   }
 
   function handleClick(e) {
     const canvas = canvasRef.current;
     const p = getPosition(canvas, e);
     
-    playgroundRef.current.leftClick(p.x, p.y);
+    playground?.leftClick(p.x, p.y);
   }
 
   function handleContextMenu(e) {
@@ -79,15 +86,17 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
     const canvas = canvasRef.current;
     const p = getPosition(canvas, e);
     
-    playgroundRef.current.rightClick(p.x, p.y, shiftDown);
+    playground?.rightClick(p.x, p.y, shiftDown);
   }
 
   function handleScroll(e) {
-    playgroundRef.current.scrollHotbar(e.deltaY);
+    playground?.scrollHotbar(e.deltaY);
   }
 
   async function handleSaveMap() {
-    const map = Engine.extract(playgroundRef.current.engine);
+    if (!playground) return;
+
+    const map = Engine.extract(playground.engine);
     const { error } = await editMap(username, map);
     switch (error) {
       case 'loading': return;
@@ -114,7 +123,9 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
   }
 
   async function handleCheckMap() {
-    if (await Engine.validate(playgroundRef.current.engine, playgroundRef.current.engine.validation)) {
+    if (!playground) return;
+
+    if (await Engine.validate(playground.engine, playground.engine.validation)) {
       Message.success({ content: '恭喜你通過檢查！', duration: 2 });
     }
     else {
@@ -150,15 +161,15 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
         <span ref={spanRef} style={{ display: 'none' }} />
       </div>
       {
-        storable || (checkable && playgroundRef.current.engine.validation) ? 
+        storable || (checkable && playground?.engine.validation) ? 
           <div className="redstone-canvas-bottom">
-            {checkable && playgroundRef.current.engine.validation ? <Button texture={ButtonTexture.Primary} onClick={handleCheckMap}>檢查地圖</Button> : <></>}
+            {checkable && playground?.engine.validation ? <Button texture={ButtonTexture.Primary} onClick={handleCheckMap}>檢查地圖</Button> : <></>}
             {storable ? <Button texture={ButtonTexture.Success} onClick={handleSaveMap}>儲存地圖</Button> : <></>}
           </div> :
           <></>
       }
     </div>
-  )
+  );
 }
 
 export default Canvas;
