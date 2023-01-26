@@ -6,7 +6,7 @@ import Modal from './components/Modal';
 import './components/css/App.css';
 
 const App = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [openModal, setOpenModal] = useState(0);
   
   const toggleCollapsed = () => {
@@ -21,10 +21,10 @@ const App = () => {
         toggleCollapsed={toggleCollapsed}
       />
       <div id='main-wrap'>
-        <Sidebar collapsed={collapsed}/>
-        <Page setOpenModal={setOpenModal}/>
+        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+        <Page setOpenModal={setOpenModal} />
       </div>
-      <Modal open={openModal} setOpen={setOpenModal}/>
+      <Modal open={openModal} setOpen={setOpenModal} />
     </div>
   );
 }
