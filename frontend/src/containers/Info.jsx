@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Form, Input, Avatar, Image, Select, Modal, message as Message } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import './css/Info.css';
@@ -9,30 +9,16 @@ import Button from '../components/Button';
 import Canvas from '../components/Canvas';
 
 const Info = ({ setOpenModal }) => {
-  const [selectItems, setSelectItems] = useState([]);
+  const mapNameRef = useRef();
+  const xLenRef = useRef();
+  const yLenRef = useRef();
+  const zLenRef = useRef();
+
   const [openMapModal, setOpenMapModal] = useState(false);
-
   const [currentMapName, setCurrentMapName] = useState('');
-  const [modalMapName, setModalMapName] = useState('');
-  const [xLen, setXLen] = useState('');
-  const [yLen, setYLen] = useState('');
-  const [zLen, setZLen] = useState('');
-
   const [displayCanvas, setDisplayCanvas] = useState(null);
 
   const { getMap, createMap, deleteMap, username, bio, maps, avatar } = useHook();
-
-  useEffect(() => {
-    setSelectItems(maps.map(name => ({ label: name, value: name })));
-  }, [maps]);
-
-  const closeModal = () => {
-    setModalMapName('');
-    setXLen('');
-    setYLen('');
-    setZLen('');
-    setOpenMapModal(false);
-  }
 
   const onSelect = async (mapName) => {
     const { error, data } = await getMap(username, mapName);
@@ -69,10 +55,10 @@ const Info = ({ setOpenModal }) => {
 
   const handleModalOk = async () => {
     const { error, data } = await createMap(username, {
-      xLen: parseInt(xLen), 
-      yLen: parseInt(yLen), 
-      zLen: parseInt(zLen), 
-      mapName: modalMapName
+      xLen: parseInt(xLenRef.current.input.value), 
+      yLen: parseInt(yLenRef.current.input.value), 
+      zLen: parseInt(zLenRef.current.input.value), 
+      mapName: mapNameRef.current.input.value
     });
     switch (error) {
       case 'loading': return;
@@ -104,7 +90,7 @@ const Info = ({ setOpenModal }) => {
     setDisplayCanvas(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
     setCurrentMapName(preLoadData.mapName);
 
-    closeModal();
+    setOpenMapModal(false);
   }
 
   const handleMapDelete = async () => {
@@ -171,14 +157,14 @@ const Info = ({ setOpenModal }) => {
   </>;
 
   const MapModal = <>
-    <Input placeholder="輸入你的地圖名稱" value={modalMapName} prefix={<RightOutlined />} onChange={e => setModalMapName(e.target.value)}/>
+    <Input ref={mapNameRef} placeholder="輸入你的地圖名稱" prefix={<RightOutlined />} />
     <br/>
     <br/>
     <span>輸入三軸的長度</span>
     <div id='Map-Modal-xyz-wrapper'>
-      <Input placeholder="X 軸長" value={xLen} className='Map-Modal-xyz' onChange={e => setXLen(e.target.value)}/>
-      <Input placeholder="Y 軸長" value={yLen} className='Map-Modal-xyz' onChange={e => setYLen(e.target.value)}/>
-      <Input placeholder="Z 軸長" value={zLen} className='Map-Modal-xyz' onChange={e => setZLen(e.target.value)}/>
+      <Input ref={xLenRef} placeholder="X 軸長" className='Map-Modal-xyz' />
+      <Input ref={yLenRef} placeholder="Y 軸長" className='Map-Modal-xyz' />
+      <Input ref={zLenRef} placeholder="Z 軸長" className='Map-Modal-xyz' />
     </div>
   </>;
 
@@ -202,7 +188,7 @@ const Info = ({ setOpenModal }) => {
               filterOption={(input, option) =>
                 (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
               }
-              options={selectItems}
+              options={maps.map(name => ({ label: name, value: name }))}
             /></Form.Item></Form>
           </div>
           <Button texture={ButtonTexture.Danger} onClick={handleMapDelete} disabled={!displayCanvas}>
@@ -222,7 +208,7 @@ const Info = ({ setOpenModal }) => {
         centered
         open={openMapModal}
         onOk={() => handleModalOk()}
-        onCancel={() => closeModal()}
+        onCancel={() => setOpenMapModal(false)}
       >
         {MapModal}
       </Modal>

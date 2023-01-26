@@ -24,14 +24,10 @@ const HookContext = createContext({
   editMap: async () => {},
   deleteMap: async () => {},
 
-  setUsername: () => {}, 
-  setBio: () => {}, 
-  setAvatar: () => {},
   setPageNum: () => {},
-  setMaps: () => {},
 
-  username: savedUsername,
   loggedIn: !!savedUsername,
+  username: savedUsername,
   avatar: savedAvatar,
   bio: savedBio,
   maps: [],
@@ -263,25 +259,25 @@ const HookProvider = (props) => {
   return (
     <HookContext.Provider
       value = {{
-        login,
-        logout,
-        getMap,
-        createUser,
-        editUser,
-        createMap,
-        editMap,
-        deleteUser,
-        deleteMap,
-        setUsername,
-        setBio, 
-        setAvatar, 
+        login, 
+        logout, 
+        createUser, 
+        editUser, 
+        deleteUser, 
+
+        getMap, 
+        createMap, 
+        editMap, 
+        deleteMap, 
+
         setPageNum, 
-        setMaps, 
-        username,
-        loggedIn,
+
+        loggedIn, 
+        username, 
         avatar, 
         bio, 
-        maps,
+        maps, 
+
         pageNum
       }}
       {...props}
