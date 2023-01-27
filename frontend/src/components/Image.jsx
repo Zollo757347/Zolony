@@ -7,14 +7,17 @@ const StyledImage = styled.img`
   }
 `;
 
-const BackgroundDiv = styled.div`
+const BackgroundDiv = styled.div.attrs(props => ({
+  style: {
+    width: props.width, 
+    height: props.height, 
+    display: props.show ? 'block' : 'none'
+  }
+}))`
   background-color: rgba(100, 100, 100, 0.7);
   position: fixed;
   left: 0;
   top: 0;
-  width: ${props => props.width}px;
-  height: ${props => props.height}px;
-  display: ${props => props.show ? 'block' : 'none'};
   z-index: 20109;
 `;
 
@@ -44,9 +47,7 @@ const Image = ({ onClick, ...props }) => {
   const [display, setDisplay] = useState(false);
   const [clientWidth, setClientWidth] = useState(document.documentElement.clientWidth);
   const [clientHeight, setClientHeight] = useState(document.documentElement.clientHeight);
-  const [width, setWidth] = useState(1);
-  const [height, setHeight] = useState(undefined);
-  const [style, setStyle] = useState({});
+  const [attributes, setAttributes] = useState({ style: { display: 'none' } });
 
   useLayoutEffect(() => {
     function setSize() {
@@ -56,31 +57,35 @@ const Image = ({ onClick, ...props }) => {
 
     const { naturalWidth, naturalHeight } = imgRef.current;
     let left = 0, top = 0;
+    let width = undefined, height = undefined;
 
     if (naturalWidth && naturalHeight) {
       window.addEventListener('resize', setSize);
 
       const direction = limitedDirection(clientWidth, clientHeight, naturalWidth, naturalHeight);
       if (direction === 'width') {
-        setWidth(clientWidth);
-        setHeight(undefined);
+        width = clientWidth;
+        height = undefined;
     
         const tempHeight = naturalHeight * clientWidth / naturalWidth;
         top = Math.trunc((clientHeight - tempHeight) / 2);
       }
       else {
-        setWidth(undefined);
-        setHeight(clientHeight);
+        width = undefined;
+        height = clientHeight;
     
         const tempWidth = naturalWidth * clientHeight / naturalHeight;
         left = Math.trunc((clientWidth - tempWidth) / 2);
       }
   
-      setStyle({
-        left, top, 
-        display: display ? 'block' : 'none', 
-        position: 'fixed', 
-        zIndex: 20110, 
+      setAttributes({
+        width, height, 
+        style: {
+          left, top, 
+          display: display ? 'block' : 'none', 
+          position: 'fixed', 
+          zIndex: 20110
+        }
       });
 
       return () => window.removeEventListener('resize', setSize);
@@ -101,13 +106,14 @@ const Image = ({ onClick, ...props }) => {
       <StyledImage onClick={handleImgClick} {...props} />
       <BackgroundDiv onClick={handleDivClick} width={clientWidth} height={clientHeight} show={display}></BackgroundDiv>
       <img
-        alt={props.alt}
         ref={imgRef}
+        alt={props.alt}
         src={props.src}
-        height={height}
-        width={width}
-        style={style}
         draggable={false}
+
+        width={attributes.width}
+        height={attributes.height}
+        style={attributes.style}
       />
       <ExitDiv onClick={handleDivClick} show={display}>X</ExitDiv>
     </>
