@@ -32,7 +32,7 @@ const HeaderWrapper = styled.div`
   height: 80px;
   position: sticky;
   top: 0;
-  z-index: 2011;
+  z-index: 20110;
 
   display: flex;
   justify-content: space-between;

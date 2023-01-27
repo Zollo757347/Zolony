@@ -15,7 +15,10 @@ const Image = ({ onClick, ...props }) => {
     }
 
     window.addEventListener('resize', setSize);
-    return () => window.removeEventListener('resize', setSize);
+    return () => {
+      window.removeEventListener('resize', setSize);
+      window.removeEventListener('wheel', preventDefault, false);
+    };
   }, []);
 
   let attributes = { style: { display: 'none' } };
@@ -32,14 +35,14 @@ const Image = ({ onClick, ...props }) => {
       height = undefined;
   
       const marginHeight = naturalHeight * clientWidth / naturalWidth;
-      top += (clientHeight - marginHeight) >> 1;
+      top += (clientHeight - marginHeight + 1) >> 1;
     }
     else {
       width = undefined;
       height = clientHeight;
   
       const marginWidth = naturalWidth * clientHeight / naturalHeight;
-      left += (clientWidth - marginWidth) >> 1;
+      left += (clientWidth - marginWidth + 1) >> 1;
     }
 
     attributes = {
@@ -48,28 +51,34 @@ const Image = ({ onClick, ...props }) => {
         left, top, 
         display: display ? 'block' : 'none', 
         position: 'fixed', 
-        zIndex: 20110
+        zIndex: 10000
       }
     };
   }
 
   function handleImgClick() {
+    window.addEventListener('wheel', preventDefault, { passive: false });
     setDisplay(!display);
     onClick?.();
   }
 
   function handleDivClick() {
     setDisplay(!display);
+    window.removeEventListener('wheel', preventDefault, false);
   }
 
   return (
     <>
       <StyledImage onClick={handleImgClick} {...props} />
-      <BackgroundDiv onClick={handleDivClick} width={clientWidth} height={clientHeight} show={display}></BackgroundDiv>
+      <BackgroundDiv onClick={handleDivClick} width={clientWidth + 3} height={clientHeight + 3} show={display}></BackgroundDiv>
       <img ref={imgRef} alt={props.alt} src={props.src} draggable={false} {...attributes} />
       <ExitDiv onClick={handleDivClick} show={display}>X</ExitDiv>
     </>
   );
+}
+
+function preventDefault(e) {
+  e.preventDefault();
 }
 
 function limitedDirection(clientWidth, clientHeight, naturalWidth, naturalHeight) {
@@ -92,8 +101,8 @@ const BackgroundDiv = styled.div.attrs(props => ({
   background-color: rgba(100, 100, 100, 0.7);
   position: fixed;
   left: 0;
-  top: 80px;
-  z-index: 20109;
+  bottom: 0;
+  z-index: 9999;
 `;
 
 const ExitDiv = styled.div`
@@ -105,7 +114,7 @@ const ExitDiv = styled.div`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  z-index: 20111;
+  z-index: 10001;
 
   display: ${props => props.show ? 'flex' : 'none'};
   justify-content: center;

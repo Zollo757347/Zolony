@@ -23,22 +23,22 @@ const Sidebar = ({ collapsed, setCollapsed, items }) => {
   }
 
   return (
-    <StyledSidebarWrapper collapsed={collapsed}>
+    <SidebarWrapper collapsed={collapsed}>
       <StyledSidebar>{
         items.map(item =>
           <StyledItem key={item[1]} order={item[1]} onClick={handleItemClick}>{item[0]}</StyledItem>
         )
       }</StyledSidebar>
       <StyledGhostDiv onClick={handleShadowClick}></StyledGhostDiv>
-    </StyledSidebarWrapper>
+    </SidebarWrapper>
   );
 }
 
-const StyledSidebarWrapper = styled.div`
+const SidebarWrapper = styled.div`
   width: 100%;
   height: 100%;
   position: fixed;
-  z-index: 2010;
+  z-index: 20100;
 
   display: flex;
   justify-content: space-between;

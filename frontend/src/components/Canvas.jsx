@@ -37,11 +37,11 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
   }
 
   function handleMouseEnter() {
-    document.addEventListener('wheel', preventDefault, { passive: false });
+    window.addEventListener('wheel', preventDefault, { passive: false });
   }
 
   function handleMouseLeave() {
-    document.removeEventListener('wheel', preventDefault, false);
+    window.removeEventListener('wheel', preventDefault, false);
   }
 
   function handleDrag(e) {
@@ -187,8 +187,6 @@ const LowerCanvasWrapper = styled.div`
 `;
 
 const StyledCanvas = styled.canvas`
-  border: 1px solid black;
-  
   &:focus {
     padding: 0;
     outline: 0;
