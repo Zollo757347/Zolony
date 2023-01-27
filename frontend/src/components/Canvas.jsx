@@ -23,6 +23,8 @@ const LowerCanvasWrapper = styled.div`
 `;
 
 const StyledCanvas = styled.canvas`
+  border: 1px solid black;
+  
   &:focus {
     padding: 0;
     outline: 0;

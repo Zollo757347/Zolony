@@ -15,7 +15,7 @@ const Page = ({ setOpenModal }) => {
 
   const pages = [<MainPage/>, <Signal/>, <Transmit/>, <Repeater/>, <Torch/>, <Notorand/>, <Adder/>];
 
-  return <div style={{ paddingBottom: 100, width: "100%" }}>
+  return <div style={{ padding: 15, width: 900, backgroundColor: '#FBFAB7' }}>
     {pageNum === 0 && loggedIn ? <Info setOpenModal={setOpenModal}/> : (pages[pageNum - 1])}
   </div>;
 }
