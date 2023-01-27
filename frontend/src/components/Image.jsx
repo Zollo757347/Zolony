@@ -42,12 +42,11 @@ const ExitDiv = styled.div`
 `;
 
 const Image = ({ onClick, ...props }) => {
-  const imgRef = useRef(<img alt={''} {...props} />);
+  const imgRef = useRef();
 
   const [display, setDisplay] = useState(false);
   const [clientWidth, setClientWidth] = useState(document.documentElement.clientWidth);
   const [clientHeight, setClientHeight] = useState(document.documentElement.clientHeight);
-  const [attributes, setAttributes] = useState({ style: { display: 'none' } });
 
   useLayoutEffect(() => {
     function setSize() {
@@ -55,42 +54,44 @@ const Image = ({ onClick, ...props }) => {
       setClientHeight(document.documentElement.clientHeight);
     }
 
-    const { naturalWidth, naturalHeight } = imgRef.current;
+    window.addEventListener('resize', setSize);
+    return () => window.removeEventListener('resize', setSize);
+  }, []);
+
+  let attributes = { style: { display: 'none' } };
+
+  if (imgRef.current) {
     let left = 0, top = 0;
     let width = undefined, height = undefined;
 
-    if (naturalWidth && naturalHeight) {
-      window.addEventListener('resize', setSize);
+    const { naturalWidth, naturalHeight } = imgRef.current;
+    const direction = limitedDirection(clientWidth, clientHeight, naturalWidth, naturalHeight);
 
-      const direction = limitedDirection(clientWidth, clientHeight, naturalWidth, naturalHeight);
-      if (direction === 'width') {
-        width = clientWidth;
-        height = undefined;
-    
-        const tempHeight = naturalHeight * clientWidth / naturalWidth;
-        top = Math.trunc((clientHeight - tempHeight) / 2);
-      }
-      else {
-        width = undefined;
-        height = clientHeight;
-    
-        const tempWidth = naturalWidth * clientHeight / naturalHeight;
-        left = Math.trunc((clientWidth - tempWidth) / 2);
-      }
+    if (direction === 'width') {
+      width = clientWidth;
+      height = undefined;
   
-      setAttributes({
-        width, height, 
-        style: {
-          left, top, 
-          display: display ? 'block' : 'none', 
-          position: 'fixed', 
-          zIndex: 20110
-        }
-      });
-
-      return () => window.removeEventListener('resize', setSize);
+      const marginHeight = naturalHeight * clientWidth / naturalWidth;
+      top = (clientHeight - marginHeight) >> 1;
     }
-  }, [clientWidth, clientHeight, display]);
+    else {
+      width = undefined;
+      height = clientHeight;
+  
+      const marginWidth = naturalWidth * clientHeight / naturalHeight;
+      left = (clientWidth - marginWidth) >> 1;
+    }
+
+    attributes = {
+      width, height, 
+      style: {
+        left, top, 
+        display: display ? 'block' : 'none', 
+        position: 'fixed', 
+        zIndex: 20110
+      }
+    };
+  }
 
   function handleImgClick() {
     setDisplay(!display);
@@ -105,16 +106,7 @@ const Image = ({ onClick, ...props }) => {
     <>
       <StyledImage onClick={handleImgClick} {...props} />
       <BackgroundDiv onClick={handleDivClick} width={clientWidth} height={clientHeight} show={display}></BackgroundDiv>
-      <img
-        ref={imgRef}
-        alt={props.alt}
-        src={props.src}
-        draggable={false}
-
-        width={attributes.width}
-        height={attributes.height}
-        style={attributes.style}
-      />
+      <img ref={imgRef} alt={props.alt} src={props.src} draggable={false} {...attributes} />
       <ExitDiv onClick={handleDivClick} show={display}>X</ExitDiv>
     </>
   );
