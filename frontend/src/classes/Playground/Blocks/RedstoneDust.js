@@ -79,6 +79,8 @@ class RedstoneDust extends Block {
   }
 
   sendPPUpdate() {
+    this.engine.needRender = true;
+    
     this.PPUpdate();
     [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach((dir, i) => {
       const norm = Axis.VECTOR[dir];

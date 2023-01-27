@@ -170,6 +170,8 @@ class Block {
    * 發送 Post Placement Update 到相鄰的方塊
    */
   sendPPUpdate() {
+    this.engine.needRender = true;
+    
     this.PPUpdate();
     [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach(dir => {
       const norm = Axis.VECTOR[dir];

@@ -149,6 +149,11 @@ class Playground {
     this.engine = preLoadData ? Engine.spawn(preLoadData) : new Engine({ xLen, yLen, zLen });
 
     /**
+     * 此畫布是否被更新過，需要重新渲染
+     */
+    this._updated = true;
+
+    /**
      * 此畫布是否仍在運作中
      * @type {boolean}
      * @private
@@ -176,6 +181,7 @@ class Playground {
   setCursor(x, y) {
     this.cursorX = x;
     this.cursorY = y;
+    this._updated = true;
   }
 
   _prevRefX = 0;
@@ -198,6 +204,7 @@ class Playground {
 
     this._prevRefX = cursorX;
     this._prevRefY = cursorY;
+    this._updated = true;
   }
 
   /**
@@ -206,9 +213,10 @@ class Playground {
    */
   scrollHotbar(deltaY) {
     this._prevRefWheel += deltaY;
-
     if (!this.hotbar.length) return;
+
     this.hotbarTarget = (Math.trunc(this._prevRefWheel / 100) % this.hotbar.length + this.hotbar.length) % this.hotbar.length;
+    this._updated = true;
   }
 
   /**
@@ -224,6 +232,7 @@ class Playground {
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
 
     this.engine.addTask('leftClick', [x, y, z]);
+    this._updated = true;
   }
 
   /**
@@ -233,13 +242,13 @@ class Playground {
    * @param {boolean} shiftDown 是否有按下 Shift 鍵
    */
   rightClick(canvasX, canvasY, shiftDown) {
-
     const target = this._getTarget(canvasX, canvasY);
     if (!target) return;
 
     let { cords: { x, y, z }, normDir, pointingDir } = target;
     
     this.engine.addTask('rightClick', [x, y, z, shiftDown, normDir, pointingDir, this.hotbar[this.hotbarTarget] ?? AirBlock]);
+    this._updated = true;
   }
 
 
@@ -247,7 +256,7 @@ class Playground {
    * 開始渲染畫面
    */
   render() {
-    if (typeof this.canvas?.getContext === 'function') {
+    if (typeof this.canvas?.getContext === 'function' && this._needRender) {
       const context = this.canvas.getContext('2d', { alpha: false });
       context.fillStyle = 'rgb(255, 246, 168)';
       context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -290,6 +299,9 @@ class Playground {
       if (this.hotbar.length) {
         context.fillText(this.hotbarName[this.hotbarTarget], 20, 50);
       }
+
+      this._updated = false;
+      this.engine.needRender = false;
     }
 
     if (this._alive) {
@@ -303,6 +315,13 @@ class Playground {
   destroy() {
     this._alive = false;
     this.engine.destroy();
+  }
+
+  /**
+   * 此畫布是否需要重新渲染
+   */
+  get _needRender() {
+    return this._updated || this.engine.needRender;
   }
 
   /**

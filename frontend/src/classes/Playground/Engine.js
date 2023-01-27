@@ -71,6 +71,12 @@ class Engine {
         Array.from({ length: zLen }, (_, z) => y === 0 ? new Concrete({ x, y, z, engine: this, breakable: false }) : new AirBlock({ x, y, z, engine: this }))
       )
     );
+
+    /**
+     * 此引擎是否被更新過，需要重新渲染至畫布上
+     * @type {boolean}
+     */
+    this.needRender = true;
   }
 
   /**
@@ -279,10 +285,12 @@ class Engine {
 
           default: break;
         }
+
+        this.needRender = true;
       }
 
       this.taskQueue.push(...nextQueue);
-    }, 1000);
+    }, 50);
   }
 
   /**
