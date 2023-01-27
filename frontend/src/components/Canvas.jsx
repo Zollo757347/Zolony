@@ -6,31 +6,6 @@ import { Engine, Playground } from "../classes/Playground";
 import { useHook } from "../hooks/useHook";
 import Button from "./Button";
 
-const CanvasWrapper = styled.div`
-  border: 3px #D2A46B solid;
-  border-radius: 0.3em;
-  width: max-content;
-`;
-
-const UpperCanvasWrapper = styled.div`
-  text-align: center;
-`;
-
-const LowerCanvasWrapper = styled.div`
-  padding-top: 5px;
-  padding-bottom: 10px;
-  text-align: center;
-`;
-
-const StyledCanvas = styled.canvas`
-  border: 1px solid black;
-  
-  &:focus {
-    padding: 0;
-    outline: 0;
-  }
-`;
-
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkable, preLoadData }) => {
   const [shiftDown, setShiftDown] = useState(false);
   const [playground, setPlayground] = useState();
@@ -194,5 +169,30 @@ function getPosition(canvas, event) {
 function preventDefault(e) {
   e.preventDefault();
 }
+
+const CanvasWrapper = styled.div`
+  border: 3px #D2A46B solid;
+  border-radius: 0.3em;
+  width: max-content;
+`;
+
+const UpperCanvasWrapper = styled.div`
+  text-align: center;
+`;
+
+const LowerCanvasWrapper = styled.div`
+  padding-top: 5px;
+  padding-bottom: 10px;
+  text-align: center;
+`;
+
+const StyledCanvas = styled.canvas`
+  border: 1px solid black;
+  
+  &:focus {
+    padding: 0;
+    outline: 0;
+  }
+`;
 
 export default Canvas;

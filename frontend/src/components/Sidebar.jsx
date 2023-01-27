@@ -1,6 +1,39 @@
 import styled from "styled-components";
 import { useHook } from '../hooks/useHook';
 
+const Sidebar = ({ collapsed, setCollapsed, items }) => {
+  const { setPageNum } = useHook();
+
+  items = [
+    ['一切的開端．訊號', 2],
+    ['明與暗的旅程．訊號傳遞', 3],
+    ['強棒接力．紅石中繼器', 4],
+    ['顛倒是非．紅石火把', 5],
+    ['邏輯閘．非或與', 6],
+    ['計算機的第一步．加法器', 7]
+  ];
+
+  function handleItemClick(e) {
+    const page = e.target.getAttribute('order');
+    setPageNum(page);
+  }
+
+  function handleShadowClick() {
+    setCollapsed(true);
+  }
+
+  return (
+    <StyledSidebarWrapper collapsed={collapsed}>
+      <StyledSidebar>{
+        items.map(item =>
+          <StyledItem key={item[1]} order={item[1]} onClick={handleItemClick}>{item[0]}</StyledItem>
+        )
+      }</StyledSidebar>
+      <StyledGhostDiv onClick={handleShadowClick}></StyledGhostDiv>
+    </StyledSidebarWrapper>
+  );
+}
+
 const StyledSidebarWrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -42,38 +75,5 @@ const StyledItem = styled.div`
     border: 2px #EDEC97 solid;
   }
 `;
-
-const Sidebar = ({ collapsed, setCollapsed, items }) => {
-  const { setPageNum } = useHook();
-
-  items = [
-    ['一切的開端．訊號', 2],
-    ['明與暗的旅程．訊號傳遞', 3],
-    ['強棒接力．紅石中繼器', 4],
-    ['顛倒是非．紅石火把', 5],
-    ['邏輯閘．非或與', 6],
-    ['計算機的第一步．加法器', 7]
-  ];
-
-  function handleItemClick(e) {
-    const page = e.target.getAttribute('order');
-    setPageNum(page);
-  }
-
-  function handleShadowClick() {
-    setCollapsed(true);
-  }
-
-  return (
-    <StyledSidebarWrapper collapsed={collapsed}>
-      <StyledSidebar>{
-        items.map(item =>
-          <StyledItem key={item[1]} order={item[1]} onClick={handleItemClick}>{item[0]}</StyledItem>
-        )
-      }</StyledSidebar>
-      <StyledGhostDiv onClick={handleShadowClick}></StyledGhostDiv>
-    </StyledSidebarWrapper>
-  );
-}
 
 export default Sidebar;

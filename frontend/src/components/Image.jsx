@@ -1,46 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-const StyledImage = styled.img`
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const BackgroundDiv = styled.div.attrs(props => ({
-  style: {
-    width: props.width, 
-    height: props.height, 
-    display: props.show ? 'block' : 'none'
-  }
-}))`
-  background-color: rgba(100, 100, 100, 0.7);
-  position: fixed;
-  left: 0;
-  top: 80px;
-  z-index: 20109;
-`;
-
-const ExitDiv = styled.div`
-  background-color: rgba(50, 50, 50, 0.7);
-  color: white;
-  position: fixed;
-  right: 10px;
-  top: 90px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  z-index: 20111;
-
-  display: ${props => props.show ? 'flex' : 'none'};
-  justify-content: center;
-  align-items: center;
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
 const Image = ({ onClick, ...props }) => {
   const imgRef = useRef();
 
@@ -115,5 +75,45 @@ const Image = ({ onClick, ...props }) => {
 function limitedDirection(clientWidth, clientHeight, naturalWidth, naturalHeight) {
   return clientWidth * naturalHeight > clientHeight * naturalWidth ? 'height' : 'width';
 }
+
+const StyledImage = styled.img`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const BackgroundDiv = styled.div.attrs(props => ({
+  style: {
+    width: props.width, 
+    height: props.height, 
+    display: props.show ? 'block' : 'none'
+  }
+}))`
+  background-color: rgba(100, 100, 100, 0.7);
+  position: fixed;
+  left: 0;
+  top: 80px;
+  z-index: 20109;
+`;
+
+const ExitDiv = styled.div`
+  background-color: rgba(50, 50, 50, 0.7);
+  color: white;
+  position: fixed;
+  right: 10px;
+  top: 90px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  z-index: 20111;
+
+  display: ${props => props.show ? 'flex' : 'none'};
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 export default Image;
