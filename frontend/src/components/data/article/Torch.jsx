@@ -45,7 +45,7 @@ const Torch = () => {
         <p>在下面的模擬 Minecraft 中，你會需要利用紅石火把與紅石粉把所有紅石燈串聯起來，讓角落的控制器啟動時，所有紅石燈都會被點亮。</p>
         <p>就像在玩 Minecraft 一樣，你可以使用滑鼠滾輪來切換方塊，左鍵來破壞方塊，右鍵來放置方塊，對控制器按下右鍵時可以啟動控制器，點亮相鄰的紅石粉。</p>
         <p>當你把所有紅石燈都接好時，可以按下下方的「檢查地圖」按鈕來檢查你的答案是否正確！</p>
-        <Canvas canvasheight={500} canvaswidth={500} checkable={true} preloaddata={data}></Canvas>
+        <Canvas canvasHeight={500} canvasWidth={500} checkable={true} preLoadData={data}></Canvas>
       </section>
     </article>
   );

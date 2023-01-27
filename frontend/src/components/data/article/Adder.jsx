@@ -180,7 +180,7 @@ const Adder = () => {
     <section>
       <h2>隨堂不小考</h2>
         <p>在下面的模擬 Minecraft 中是一個全加器，這次的文章沒有小考，祝大家跟全加器玩得愉快！</p>
-        <Canvas canvasheight={500} canvaswidth={500} preloaddata={data}></Canvas>
+        <Canvas canvasHeight={500} canvasWidth={500} preLoadData={data}></Canvas>
       </section>
   </article>
   );

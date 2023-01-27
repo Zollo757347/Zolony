@@ -18,7 +18,7 @@ function preventDefault(e) {
   e.preventDefault();
 }
 
-const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xLen, ylen: yLen, zlen: zLen, storable, checkable, preloaddata: preLoadData }) => {
+const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkable, preLoadData }) => {
   const [shiftDown, setShiftDown] = useState(false);
   const [playground, setPlayground] = useState();
 
@@ -32,9 +32,7 @@ const Canvas = ({ canvaswidth: canvasWidth, canvasheight: canvasHeight, xlen: xL
     pg.initialize(canvasRef.current);
     setPlayground(pg);
     
-    return () => {
-      pg.destroy();
-    }
+    return () => pg.destroy();
   }, [canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData]);
 
   function handleKeyDown(e) {

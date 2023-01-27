@@ -49,7 +49,7 @@ const Info = ({ setOpenModal }) => {
     await Utils.Sleep(1);
 
     const preLoadData = JSON.parse(JSON.stringify(data));
-    setDisplayCanvas(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
+    setDisplayCanvas(<Canvas canvasWidth={500} canvasHeight={500} xLen={data.xLen} yLen={data.yLen} zLen={data.zLen} preLoadData={preLoadData} storable={true} />);
     setCurrentMapName(preLoadData.mapName);
   }
 
@@ -87,7 +87,7 @@ const Info = ({ setOpenModal }) => {
     await Utils.Sleep(1);
 
     const preLoadData = JSON.parse(JSON.stringify(data));
-    setDisplayCanvas(<Canvas canvaswidth={500} canvasheight={500} xlen={data.xLen} yLen={data.yLen} zLen={data.zLen} preloaddata={preLoadData} storable={true} />);
+    setDisplayCanvas(<Canvas canvasWidth={500} canvasHeight={500} xLen={data.xLen} yLen={data.yLen} zLen={data.zLen} preLoadData={preLoadData} storable={true} />);
     setCurrentMapName(preLoadData.mapName);
 
     setOpenMapModal(false);
