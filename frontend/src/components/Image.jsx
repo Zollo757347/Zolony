@@ -17,7 +17,7 @@ const BackgroundDiv = styled.div.attrs(props => ({
   background-color: rgba(100, 100, 100, 0.7);
   position: fixed;
   left: 0;
-  top: 0;
+  top: 80px;
   z-index: 20109;
 `;
 
@@ -26,7 +26,7 @@ const ExitDiv = styled.div`
   color: white;
   position: fixed;
   right: 10px;
-  top: 10px;
+  top: 90px;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -46,12 +46,12 @@ const Image = ({ onClick, ...props }) => {
 
   const [display, setDisplay] = useState(false);
   const [clientWidth, setClientWidth] = useState(document.documentElement.clientWidth);
-  const [clientHeight, setClientHeight] = useState(document.documentElement.clientHeight);
+  const [clientHeight, setClientHeight] = useState(document.documentElement.clientHeight - 80);
 
   useLayoutEffect(() => {
     function setSize() {
       setClientWidth(document.documentElement.clientWidth);
-      setClientHeight(document.documentElement.clientHeight);
+      setClientHeight(document.documentElement.clientHeight - 80);
     }
 
     window.addEventListener('resize', setSize);
@@ -61,7 +61,7 @@ const Image = ({ onClick, ...props }) => {
   let attributes = { style: { display: 'none' } };
 
   if (imgRef.current) {
-    let left = 0, top = 0;
+    let left = 0, top = 80;
     let width = undefined, height = undefined;
 
     const { naturalWidth, naturalHeight } = imgRef.current;
@@ -72,14 +72,14 @@ const Image = ({ onClick, ...props }) => {
       height = undefined;
   
       const marginHeight = naturalHeight * clientWidth / naturalWidth;
-      top = (clientHeight - marginHeight) >> 1;
+      top += (clientHeight - marginHeight) >> 1;
     }
     else {
       width = undefined;
       height = clientHeight;
   
       const marginWidth = naturalWidth * clientHeight / naturalHeight;
-      left = (clientWidth - marginWidth) >> 1;
+      left += (clientWidth - marginWidth) >> 1;
     }
 
     attributes = {
