@@ -1,22 +1,33 @@
 import { message as Message } from "antd";
+import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import { ButtonTexture } from "../classes/ButtonTexture";
 import { Engine, Playground } from "../classes/Playground";
 import { useHook } from "../hooks/useHook";
 import Button from "./Button";
-import "./css/Canvas.css"
 
-function getPosition(canvas, event) {
-  const p = canvas.getBoundingClientRect();
-  return {
-    x: event.clientX - p.left, 
-    y: event.clientY - p.top
-  };
-}
+const CanvasWrapper = styled.div`
+  border: 3px #D2A46B solid;
+  border-radius: 0.3em;
+  width: max-content;
+`;
 
-function preventDefault(e) {
-  e.preventDefault();
-}
+const UpperCanvasWrapper = styled.div`
+  text-align: center;
+`;
+
+const LowerCanvasWrapper = styled.div`
+  padding-top: 5px;
+  padding-bottom: 10px;
+  text-align: center;
+`;
+
+const StyledCanvas = styled.canvas`
+  &:focus {
+    padding: 0;
+    outline: 0;
+  }
+`;
 
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkable, preLoadData }) => {
   const [shiftDown, setShiftDown] = useState(false);
@@ -132,9 +143,9 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
   }
   
   return (
-    <div className="redstone-canvas">
-      <div className="redstone-canvas-top">
-        <canvas
+    <CanvasWrapper>
+      <UpperCanvasWrapper>
+        <StyledCanvas
           ref={canvasRef}
           width={canvasWidth}
           height={canvasHeight}
@@ -157,17 +168,29 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
           onWheelCapture={handleScroll}
         />
         <span ref={spanRef} style={{ display: 'none' }} />
-      </div>
+      </UpperCanvasWrapper>
       {
         storable || (checkable && playground?.engine.validation) ? 
-          <div className="redstone-canvas-bottom">
+          <LowerCanvasWrapper>
             {checkable && playground?.engine.validation ? <Button texture={ButtonTexture.Primary} onClick={handleCheckMap}>檢查地圖</Button> : <></>}
             {storable ? <Button texture={ButtonTexture.Success} onClick={handleSaveMap}>儲存地圖</Button> : <></>}
-          </div> :
+          </LowerCanvasWrapper> :
           <></>
       }
-    </div>
+    </CanvasWrapper>
   );
+}
+
+function getPosition(canvas, event) {
+  const p = canvas.getBoundingClientRect();
+  return {
+    x: event.clientX - p.left, 
+    y: event.clientY - p.top
+  };
+}
+
+function preventDefault(e) {
+  e.preventDefault();
 }
 
 export default Canvas;
