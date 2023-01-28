@@ -3,7 +3,7 @@ const MainPage = () => {
     <article>
       <div className="main-page" style={{ display: 'flex', marginTop: 30 }}>
         <div className="main-page-left" style={{ margin: 30 }}>
-          <img src={require("../img/header/wordmark.png")} alt="Logo" width="100%" />
+          <img src={require("../../../assets/header/wordmark.png")} alt="Logo" width="100%" />
         </div>
         <div className="main-page-right">
           <section style={{ margin: "5% 20% 5% 5%" }}>

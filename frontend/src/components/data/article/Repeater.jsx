@@ -15,7 +15,7 @@ const Repeater = () => {
       <section>
         <h2>紅石中繼器</h2>
         <p><b>紅石中繼器</b>（Redstone Repeater）顧名思義，是用來中繼訊號的，當中繼器接收到後方的訊號時，會把訊號強度提高到 15 後再往下傳遞，從下圖紅石粉的顏色就可以發現，中繼器把左方微小的訊號放大，繼續向右傳遞：</p>
-        <Image src={require("../img/repeater/repeat.png")} alt="紅石中繼器接續訊號" width="50%"/>
+        <Image src={require("../../../assets/repeater/repeat.png")} alt="紅石中繼器接續訊號" width="50%"/>
 
         <p>對紅石中繼器有了基本的認識以後，就可以來詳細討論它的特性了。紅石中繼器一共有三個不同的特性，分別是訊號傳遞、訊號延遲與訊號鎖定。</p>
       </section>
@@ -23,7 +23,7 @@ const Repeater = () => {
       <section>
         <h3>訊號傳遞</h3>
         <p>因為紅石中繼器是傳輸元件，最重要的特性當然是用來傳遞訊號了。但與紅石粉不同的是，中繼器只能單向傳遞訊號，如果仔細看中繼器的材質，會發現中繼器的中央有一個三角形的箭頭，那代表著中繼器的指向，暗示中繼器只能從後方接收訊號，且只能將訊號向前方傳遞，如下圖所示，反向連接的中繼器（右方）無法傳遞訊號。</p>
-        <Image src={require("../img/repeater/diode.png")} alt="紅石中繼器只能單向傳輸訊號" width="50%"/>
+        <Image src={require("../../../assets/repeater/diode.png")} alt="紅石中繼器只能單向傳輸訊號" width="50%"/>
 
         <p>以下符合條件的方塊如果位於中繼器後方，則中繼器會被啟動，向前傳送訊號：</p>
         <ul>
@@ -41,14 +41,14 @@ const Repeater = () => {
       <section>
         <h3>訊號延遲</h3>
         <p>單個中繼器在傳遞訊號時會有 1 到 4 紅石刻的延遲，延遲的時長可以透過對中繼器點擊右鍵來調整，也可以直接從外觀判別，如下圖所示，從左到右的延遲分別為 1、2、3、4 紅石刻。</p>
-        <Image src={require("../img/repeater/delay.png")} alt="不同延遲的外觀" width="50%"/>
+        <Image src={require("../../../assets/repeater/delay.png")} alt="不同延遲的外觀" width="50%"/>
         <p>當中繼器接收到紅石訊號時，需要等待相對應的延遲時間才能將訊號延續下去。如果中繼器接收到短於自身延遲的正脈衝，中繼器會將此脈衝延長到與自身的延遲時間相同；而如果中繼器接收到短於自身延遲的負脈衝，中繼器會直接忽略此脈衝。</p>
       </section>
 
       <section>
         <h3>訊號鎖定</h3>
         <p>當一個中繼器被另一個啟動的中繼器從左右任一側輸入訊號時，它的狀態會被鎖定，被鎖定的中繼器無法透過後方的輸入來調整其狀態，直到側邊的訊號解除。下左圖的中繼器被鎖定在啟動狀態，因此就算後方輸入被關閉，中繼器還是啟動著；下右圖則是另一個相反的情形。</p>
-        <Image src={require("../img/repeater/lock.png")} alt="被鎖定的紅石中繼器" width="50%"/>
+        <Image src={require("../../../assets/repeater/lock.png")} alt="被鎖定的紅石中繼器" width="50%"/>
       </section>
 
       <section>

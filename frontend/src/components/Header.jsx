@@ -11,9 +11,9 @@ const Header = ({ setOpenModal }) => {
     <>
       <HeaderWrapper>
         <LeftHeaderWrapper>
-          <SidbarImg collapsed={collapsed} onClick={() => setCollapsed(!collapsed)} src={require("./data/img/header/sidebar.png")} alt="sidbar" />
+          <SidbarImg collapsed={collapsed} onClick={() => setCollapsed(!collapsed)} src={require("../assets/header/sidebar.png")} alt="sidbar" />
           <Link to='/'>
-            <StyledWordmark src={require("./data/img/header/wordmark.png")} alt="Wordmark" />
+            <StyledWordmark src={require("../assets/header/wordmark.png")} alt="Wordmark" />
           </Link>
         </LeftHeaderWrapper>
         <RightHeaderWrapper>
