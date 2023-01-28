@@ -1,5 +1,7 @@
 node_modules
 
+*.mdp
+
 .DS_Store
 .env
 

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import Button from './Button';
 import Dropdown from './Dropdown';
 import Sidebar from './Sidebar';
 import { Link } from 'react-router-dom';
@@ -12,9 +11,7 @@ const Header = ({ setOpenModal }) => {
     <>
       <HeaderWrapper>
         <LeftHeaderWrapper>
-          <Button onClick={() => setCollapsed(!collapsed)} id="sidebar-button">
-            {collapsed ? '^' : 'v'}
-          </Button>
+          <SidbarImg collapsed={collapsed} onClick={() => setCollapsed(!collapsed)} src={require("./data/img/header/sidebar.png")} alt="sidbar" />
           <Link to='/'>
             <StyledWordmark src={require("./data/img/header/wordmark.png")} alt="Wordmark" />
           </Link>
@@ -41,9 +38,11 @@ const HeaderWrapper = styled.div`
 `;
 
 const LeftHeaderWrapper = styled.div`
+  margin-left: 10px;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  align-items: center;
 `;
 
 const RightHeaderWrapper = styled.div`
@@ -58,6 +57,18 @@ const RightHeaderWrapper = styled.div`
 const StyledWordmark = styled.img`
   height: 70px;
   margin-left: 15px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const SidbarImg = styled.img`
+  width: 35px;
+  height: 35px;
+
+  ${props => !props.collapsed ? "transform: rotate(180deg);" : ""};
+  transition: transform 0.3s;
 
   &:hover {
     cursor: pointer;
