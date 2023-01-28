@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from '@apollo/client';
 import { HookProvider } from './hooks/useHook';
+import { BrowserRouter } from 'react-router-dom';
 
 const LINK = process.env.NODE_ENV === "production" ? "/" : "http://localhost:4000/";
 const httpLink = new HttpLink({ uri: LINK });
@@ -12,9 +13,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <HookProvider>
-        <App />
-      </HookProvider>
+      <BrowserRouter>
+        <HookProvider>
+          <App />
+        </HookProvider>
+      </BrowserRouter>
     </ApolloProvider>
   </React.StrictMode>
 );

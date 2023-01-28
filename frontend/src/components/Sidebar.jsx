@@ -1,35 +1,24 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { useHook } from '../hooks/useHook';
 
 const Sidebar = ({ collapsed, setCollapsed, items }) => {
-  const { setPageNum } = useHook();
-
   items = [
-    ['一切的開端．訊號', 2],
-    ['明與暗的旅程．訊號傳遞', 3],
-    ['強棒接力．紅石中繼器', 4],
-    ['顛倒是非．紅石火把', 5],
-    ['邏輯閘．非或與', 6],
-    ['計算機的第一步．加法器', 7]
+    ['一切的開端．訊號', '/signal'],
+    ['明與暗的旅程．訊號傳遞', '/transmit'],
+    ['強棒接力．紅石中繼器', '/repeater'],
+    ['顛倒是非．紅石火把', '/torch'],
+    ['邏輯閘．非或與', 'notorand'],
+    ['計算機的第一步．加法器', 'adder']
   ];
-
-  function handleItemClick(e) {
-    const page = e.target.getAttribute('order');
-    setPageNum(page);
-  }
-
-  function handleShadowClick() {
-    setCollapsed(true);
-  }
 
   return (
     <SidebarWrapper collapsed={collapsed}>
       <StyledSidebar>{
-        items.map(item =>
-          <StyledItem key={item[1]} order={item[1]} onClick={handleItemClick}>{item[0]}</StyledItem>
+        items.map((item, i) =>
+          <StyledLink key={i} to={item[1]}><StyledItem order={i}>{item[0]}</StyledItem></StyledLink>
         )
       }</StyledSidebar>
-      <StyledGhostDiv onClick={handleShadowClick}></StyledGhostDiv>
+      <StyledGhostDiv onClick={() => setCollapsed(true)}></StyledGhostDiv>
     </SidebarWrapper>
   );
 }
@@ -74,6 +63,11 @@ const StyledItem = styled.div`
     background-color: #FFFDA1;
     border: 2px #EDEC97 solid;
   }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: #241F04;
 `;
 
 export default Sidebar;

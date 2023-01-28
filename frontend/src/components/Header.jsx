@@ -3,11 +3,10 @@ import styled from 'styled-components';
 import Button from './Button';
 import Dropdown from './Dropdown';
 import Sidebar from './Sidebar';
-import { useHook } from '../hooks/useHook';
+import { Link } from 'react-router-dom';
 
 const Header = ({ setOpenModal }) => {
   const [collapsed, setCollapsed] = useState(true);
-  const { setPageNum } = useHook();
 
   return (
     <>
@@ -16,10 +15,12 @@ const Header = ({ setOpenModal }) => {
           <Button onClick={() => setCollapsed(!collapsed)} id="sidebar-button">
             {collapsed ? '^' : 'v'}
           </Button>
-          <StyledWordmark src={require("./data/img/header/wordmark.png")} alt="Wordmark" onClick={() => setPageNum(1)} />
+          <Link to='/'>
+            <StyledWordmark src={require("./data/img/header/wordmark.png")} alt="Wordmark" />
+          </Link>
         </LeftHeaderWrapper>
         <RightHeaderWrapper>
-          <Dropdown setPageToInfo={() => setPageNum(0)} setOpenModal={setOpenModal} />
+          <Dropdown setOpenModal={setOpenModal} />
         </RightHeaderWrapper>
       </HeaderWrapper>
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
