@@ -1,26 +1,62 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Dropdown from './Dropdown';
 import Sidebar from './Sidebar';
-import { Link } from 'react-router-dom';
+import { useHook } from '../hooks/useHook';
 
 const Header = ({ setOpenModal }) => {
-  const [collapsed, setCollapsed] = useState(true);
+  const [sidebarCollapsed, _setSidebarCollapsed] = useState(true);
+  const [dropdownCollapsed, _setDropdownCollapsed] = useState(true);
+
+  const { loggedIn, logout, avatar } = useHook();
+
+  function setSidebarCollapsed(value) {
+    _setSidebarCollapsed(value);
+    _setDropdownCollapsed(true);
+  }
+
+  function setDropdownCollapsed(value) {
+    _setSidebarCollapsed(true);
+    _setDropdownCollapsed(value);
+  }
+
+  const sidebarItems = [
+    { name: '一切的開端．訊號', path: '/signal' },
+    { name: '明與暗的旅程．訊號傳遞', path: '/transmit' },
+    { name: '強棒接力．紅石中繼器', path: '/repeater' },
+    { name: '顛倒是非．紅石火把', path: '/torch' },
+    { name: '邏輯閘．非或與', path: 'notorand' },
+    { name: '計算機的第一步．加法器', path: 'adder' }
+  ];
+
+  const dropdownItems = loggedIn ? [
+    { name: '個人資料', todo: () => {} }, 
+    { name: '登出', todo: () => logout() }
+  ] : [
+    { name: '註冊帳號', todo: () => setOpenModal(2) }, 
+    { name: '登入', todo: () => setOpenModal(1) }
+  ];
 
   return (
     <>
       <HeaderWrapper>
         <LeftHeaderWrapper>
-          <SidbarImg collapsed={collapsed} onClick={() => setCollapsed(!collapsed)} src={require("../assets/header/sidebar.png")} alt="sidbar" />
+          <SidbarImg collapsed={sidebarCollapsed} onClick={() => setSidebarCollapsed(!sidebarCollapsed)} src={require("../assets/header/sidebar.png")} />
           <Link to='/'>
-            <StyledWordmark src={require("../assets/header/wordmark.png")} alt="Wordmark" />
+            <StyledWordmark src={require("../assets/header/wordmark.png")} />
           </Link>
         </LeftHeaderWrapper>
         <RightHeaderWrapper>
-          <Dropdown setOpenModal={setOpenModal} />
+          <AvatarWrapper collapsed={dropdownCollapsed}>
+            <AvatarMask>
+              <Avatar src={loggedIn ? avatar : 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'} onClick={() => setDropdownCollapsed(!dropdownCollapsed)} />
+            </AvatarMask>
+          </AvatarWrapper>
         </RightHeaderWrapper>
       </HeaderWrapper>
-      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+      <Sidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} items={sidebarItems} />
+      <Dropdown collapsed={dropdownCollapsed} setCollapsed={setDropdownCollapsed} items={dropdownItems} />
     </>
   );
 }
@@ -41,22 +77,30 @@ const LeftHeaderWrapper = styled.div`
   margin-left: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   align-items: center;
+
+  & > * {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
 `;
 
 const RightHeaderWrapper = styled.div`
-  margin-right: 20px;
+  margin-right: 10px;
   cursor: pointer;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+
+  & > * {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
 `;
 
 const StyledWordmark = styled.img`
   height: 70px;
-  margin-left: 15px;
 
   &:hover {
     cursor: pointer;
@@ -73,6 +117,43 @@ const SidbarImg = styled.img`
   &:hover {
     cursor: pointer;
   }
+`;
+
+const AvatarWrapper = styled.div`
+  background-color: #E7CA22;
+  width: 45px;
+  height: 45px;
+
+  border: 1px #F3C824 solid;
+  border-radius: 50%;
+
+  positoin: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ${props => !props.collapsed ? "transform: rotate(-360deg);" : ""};
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: #F6DC2B;
+  }
+`;
+
+const AvatarMask = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const Avatar = styled.img`
+  width: 40px;
+  height: 40px;
 `;
 
 export default Header;

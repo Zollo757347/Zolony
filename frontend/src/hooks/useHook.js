@@ -24,15 +24,11 @@ const HookContext = createContext({
   editMap: async () => {},
   deleteMap: async () => {},
 
-  setPageNum: () => {},
-
   loggedIn: !!savedUsername,
   username: savedUsername,
   avatar: savedAvatar,
   bio: savedBio,
-  maps: [],
-
-  pageNum: 1
+  maps: []
 });
 
 const HookProvider = (props) => {
@@ -41,7 +37,6 @@ const HookProvider = (props) => {
   const [avatar, setAvatar] = useState(savedAvatar);
   const [bio, setBio] = useState(savedBio);
   const [maps, setMaps] = useState(JSON.parse(savedMaps));
-  const [pageNum, setPageNum] = useState(1);
 
   const [loginQuery] = useLazyQuery(LOG_IN);
   const [getMapQuery] = useLazyQuery(GET_MAP, { fetchPolicy: 'network-only' });
@@ -118,7 +113,6 @@ const HookProvider = (props) => {
       bio: '', 
       maps: []
     });
-    setPageNum(1);
   }
 
   const getMap = async (username, mapName) => {
@@ -270,15 +264,11 @@ const HookProvider = (props) => {
         editMap, 
         deleteMap, 
 
-        setPageNum, 
-
         loggedIn, 
         username, 
         avatar, 
         bio, 
-        maps, 
-
-        pageNum
+        maps
       }}
       {...props}
     />

@@ -1,61 +1,63 @@
-import { DownOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown } from 'antd';
-import './css/Dropdown.css';
-import { useHook } from '../hooks/useHook';
+import styled from 'styled-components';
 
-const Dropdown_Components = ({ setOpenModal }) => {
-  const { loggedIn, logout, avatar, setPageNum } = useHook();
-  
-  const onClick = ({ key }) => {
-    switch(key) {
-      case '1': 
-        setPageNum(0);
-        break;
-      case '2': 
-        setOpenModal(1);
-        break;
-      case '3': 
-        setOpenModal(2);
-        break;
-      case '4': 
-        logout();
-        break;
-      default:
-        break;
-    }
-  };
-  
-  const items = [{
-    key: '1',
-    label: '個人資料',
-    disabled: (!loggedIn)
-  }, {
-    key: '2',
-    label: '登入',
-    disabled: (loggedIn)
-  }, {
-    key: '3',
-    label: '註冊',
-    disabled: (loggedIn)
-  }, {
-    key: '4',
-    danger: true,
-    label: '登出',
-    disabled: (!loggedIn)
-  }];
-
-  return(
-    <Dropdown
-      menu={{ items, onClick }}
-      trigger={['click']}
-      id="dropdown"
-    >
-      <span onClick={e => e.preventDefault()}>
-          {loggedIn ? <Avatar src={avatar}/> : <b>帳號 </b>}
-          <DownOutlined />
-      </span>
-    </Dropdown>
-  )
+const Dropdown = ({ collapsed, setCollapsed, items }) => {
+  return (
+    <DropdownWrapper collapsed={collapsed}>
+      <StyledGhostDiv onClick={() => setCollapsed(true)}></StyledGhostDiv>
+      <StyledDropdown>{
+        items.map((item, i) =>
+          <MenuItem key={i} order={i} onClick={item.todo}>{item.name}</MenuItem>
+        )
+      }</StyledDropdown>
+    </DropdownWrapper>
+  );
 }
 
-export default Dropdown_Components;
+const DropdownWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 20100;
+
+  display: flex;
+  justify-content: space-between;
+
+  opacity: ${props => props.collapsed ? 0 : 1};
+  ${props => props.collapsed ? "transform: translateY(-100%);" : ""};
+  transition: transform 0.3s, opacity 0.3s ease-in;
+`;
+
+const StyledDropdown = styled.div`
+  background-color: #FFF6A8;
+  box-shadow: 0 0 5px rgba(130, 130, 130, 0.5);
+  border-radius: 0 0 5px 5px;
+  overflow: hidden;
+
+  position: absolute;
+  right: 0;
+`;
+
+const MenuItem = styled.div`
+  padding: 10px;
+  background-color: ${props => props.order & 1 ? "#FCDE71" : "#FFF78A"};
+  border: 2px ${props => props.order & 1 ? "#FCDE71" : "#FFF78A"} solid;
+  text-align: center;
+  transition: all 0.3s;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #FFFDA1;
+    border: 2px #EDEC97 solid;
+  }
+`;
+
+const StyledGhostDiv = styled.div`
+  background-color: #888888;
+  opacity: 0.1;
+  height: 100%;
+  width: 100%;
+
+  position: fixed;
+`;
+
+export default Dropdown;

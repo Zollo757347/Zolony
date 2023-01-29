@@ -2,23 +2,14 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Sidebar = ({ collapsed, setCollapsed, items }) => {
-  items = [
-    ['一切的開端．訊號', '/signal'],
-    ['明與暗的旅程．訊號傳遞', '/transmit'],
-    ['強棒接力．紅石中繼器', '/repeater'],
-    ['顛倒是非．紅石火把', '/torch'],
-    ['邏輯閘．非或與', 'notorand'],
-    ['計算機的第一步．加法器', 'adder']
-  ];
-
   return (
     <SidebarWrapper collapsed={collapsed}>
+      <StyledGhostDiv onClick={() => setCollapsed(true)}></StyledGhostDiv>
       <StyledSidebar>{
         items.map((item, i) =>
-          <StyledLink key={i} to={item[1]}><StyledItem order={i}>{item[0]}</StyledItem></StyledLink>
+          <StyledLink key={i} to={item.path}><StyledItem order={i}>{item.name}</StyledItem></StyledLink>
         )
       }</StyledSidebar>
-      <StyledGhostDiv onClick={() => setCollapsed(true)}></StyledGhostDiv>
     </SidebarWrapper>
   );
 }
@@ -41,13 +32,19 @@ const StyledSidebar = styled.div`
   background-color: #FFF6A8;
   height: 100%;
   width: 20%;
+  box-shadow: 5px 0 10px rgba(130, 130, 130, 0.3);
+
+  position: absolute;
+  left: 0;
 `;
 
 const StyledGhostDiv = styled.div`
   background-color: #888888;
   opacity: 0.1;
   height: 100%;
-  width: 90%;
+  width: 100%;
+
+  position: fixed;
 `;
 
 const StyledItem = styled.div`
