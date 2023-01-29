@@ -31,7 +31,6 @@ const SidebarWrapper = styled.div`
 const StyledSidebar = styled.div`
   background-color: #FFF6A8;
   height: 100%;
-  width: 20%;
   box-shadow: 5px 0 10px rgba(130, 130, 130, 0.3);
 
   position: absolute;
