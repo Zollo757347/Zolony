@@ -1,8 +1,9 @@
 import { UserOutlined } from '@ant-design/icons';
-import { Input, Modal, message as Message } from 'antd';
+import { Input, Modal } from 'antd';
 import { useRef } from 'react';
 import './css/Modal.css';
 import { useHook } from '../hooks/useHook';
+import Message from './Message';
 
 const Modal_Components = ({ open, setOpen }) => {
   const usernameRef = useRef();
@@ -21,11 +22,11 @@ const Modal_Components = ({ open, setOpen }) => {
       const modalPassword = passwordRef.current.input.value;
 
       if (!modalUsername) {
-        Message.error({ content: '請輸入你的帳號名稱', duration: 1 });
+        Message.send({ content: '請輸入你的帳號名稱', duration: 2000, type: 'error' });
         return;
       }
       if (!modalPassword) {
-        Message.error({ content: '請輸入你的密碼', duration: 1 });
+        Message.send({ content: '請輸入你的密碼', duration: 2000, type: 'error' });
         return;
       }
 
@@ -34,23 +35,23 @@ const Modal_Components = ({ open, setOpen }) => {
         case 'loading': return;
 
         case 'connection':
-          Message.error({ content: '資料庫連線失敗', duration: 1 });
+          Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
           return;
 
         case 'error':
-          Message.error({ content: '使用者資料存取失敗', duration: 1 });
+          Message.send({ content: '使用者資料存取失敗', duration: 2000, type: 'error' });
           return;
 
         case 'user':
-          Message.error({ content: '此帳號不存在', duration: 1 });
+          Message.send({ content: '此帳號不存在', duration: 2000, type: 'error' });
           return;
 
         case 'password':
-          Message.error({ content: '密碼輸入錯誤', duration: 1 });
+          Message.send({ content: '密碼輸入錯誤', duration: 2000, type: 'error' });
           return;
         
         default: 
-          Message.success({ content: '登入成功！', duration: 1 });
+          Message.send({ content: '登入成功！', duration: 2000, type: 'success' });
           setOpen(0);
       }
     }
@@ -62,7 +63,7 @@ const Modal_Components = ({ open, setOpen }) => {
       const modalCheckPassword = checkPasswordRef.current.input.value;
 
       if (modalPassword !== modalCheckPassword) {
-        Message.error({ content: '兩組密碼不相同！', duration: 1 });
+        Message.send({ content: '兩組密碼不相同！', duration: 2000, type: 'error' });
       }
       else {
         const { error } = await createUser(modalUsername, modalPassword);
@@ -70,19 +71,19 @@ const Modal_Components = ({ open, setOpen }) => {
           case 'loading': return;
   
           case 'connection':
-            Message.error({ content: '資料庫連線失敗', duration: 1 });
+            Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
             return;
   
           case 'error':
-            Message.error({ content: '使用者資料存取失敗', duration: 1 });
+            Message.send({ content: '使用者資料存取失敗', duration: 2000, type: 'error' });
             return;
   
           case 'user':
-            Message.error({ content: '該帳號已經存在', duration: 1 });
+            Message.send({ content: '該帳號已經存在', duration: 2000, type: 'error' });
             return;
           
           default: 
-            Message.success({ content: '成功建立帳號！', duration: 1 });
+            Message.send({ content: '成功建立帳號！', duration: 2000, type: 'success' });
             setOpen(0);
         }
       }
@@ -97,7 +98,7 @@ const Modal_Components = ({ open, setOpen }) => {
       const modalBio = bioRef.current.input.value;
 
       if (modalNewPassword !== modalCheckPassword) {
-        Message.error({ content: '兩組密碼不相同！', duration: 1 });
+        Message.send({ content: '兩組密碼不相同！', duration: 2000, type: 'error' });
       }
 
       const { error } = await editUser({
@@ -111,23 +112,23 @@ const Modal_Components = ({ open, setOpen }) => {
         case 'loading': return;
 
         case 'connection':
-          Message.error({ content: '資料庫連線失敗', duration: 1 });
+          Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
           return;
 
         case 'error':
-          Message.error({ content: '使用者資料存取失敗', duration: 1 });
+          Message.send({ content: '使用者資料存取失敗', duration: 2000, type: 'error' });
           return;
 
         case 'user':
-          Message.error({ content: '此帳號不存在', duration: 1 });
+          Message.send({ content: '此帳號不存在', duration: 2000, type: 'error' });
           return;
 
         case 'password':
-          Message.error({ content: '密碼輸入錯誤', duration: 1 });
+          Message.send({ content: '密碼輸入錯誤', duration: 2000, type: 'error' });
           return;
         
         default: 
-          Message.success({ content: '自介更新成功！', duration: 1 });
+          Message.send({ content: '自介更新成功！', duration: 2000, type: 'success' });
           setOpen(0);
       }
     }
@@ -137,7 +138,7 @@ const Modal_Components = ({ open, setOpen }) => {
       const modalPassword = passwordRef.current.input.value;
       
       if (!modalPassword) {
-        Message.error({ content: '請輸入你的密碼', duration: 1 });
+        Message.send({ content: '請輸入你的密碼', duration: 2000, type: 'error' });
         return;
       }
 
@@ -146,23 +147,23 @@ const Modal_Components = ({ open, setOpen }) => {
         case 'loading': return;
 
         case 'connection':
-          Message.error({ content: '資料庫連線失敗', duration: 1 });
+          Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
           return;
 
         case 'error':
-          Message.error({ content: '使用者資料存取失敗', duration: 1 });
+          Message.send({ content: '使用者資料存取失敗', duration: 2000, type: 'error' });
           return;
 
         case 'user':
-          Message.error({ content: '此帳號不存在', duration: 1 });
+          Message.send({ content: '此帳號不存在', duration: 2000, type: 'error' });
           return;
 
         case 'password':
-          Message.error({ content: '密碼輸入錯誤', duration: 1 });
+          Message.send({ content: '密碼輸入錯誤', duration: 2000, type: 'error' });
           return;
         
         default: 
-          Message.success({ content: '帳號已成功刪除', duration: 1 });
+          Message.send({ content: '帳號已成功刪除', duration: 2000, type: 'success' });
           setOpen(0);
       }
     }

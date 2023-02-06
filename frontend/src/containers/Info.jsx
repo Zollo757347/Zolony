@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Form, Input, Avatar, Image, Select, Modal, message as Message } from 'antd';
+import { Form, Input, Avatar, Image, Select, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import './css/Info.css';
 import { useHook } from '../hooks/useHook';
@@ -7,6 +7,7 @@ import { ButtonTexture } from '../classes/ButtonTexture';
 import Utils from '../classes/Utils';
 import Button from '../components/Button';
 import Canvas from '../components/Canvas';
+import Message from "./components/Message"
 
 const Info = ({ setOpenModal }) => {
   const mapNameRef = useRef();
@@ -26,23 +27,23 @@ const Info = ({ setOpenModal }) => {
       case 'loading': return;
 
       case 'connection':
-        Message.error({ content: '資料庫連線失敗', duration: 1 });
+        Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
         return;
 
       case 'error':
-        Message.error({ content: '地圖資料存取失敗', duration: 1 });
+        Message.send({ content: '地圖資料存取失敗', duration: 2000, type: 'error' });
         return;
 
       case 'user':
-        Message.error({ content: '此帳號名稱不存在', duration: 1 });
+        Message.send({ content: '此帳號名稱不存在', duration: 2000, type: 'error' });
         return;
 
       case 'map':
-        Message.error({ content: '你並沒有這張地圖', duration: 1 });
+        Message.send({ content: '你並沒有這張地圖', duration: 2000, type: 'error' });
         return;
       
       default: 
-        Message.success({ content: `成功開啟 ${mapName}`, duration: 1 });
+        Message.send({ content: `成功開啟 ${mapName}`, duration: 2000, type: 'success' });
     }
 
     setDisplayCanvas(null);
@@ -64,23 +65,23 @@ const Info = ({ setOpenModal }) => {
       case 'loading': return;
 
       case 'connection':
-        Message.error({ content: '資料庫連線失敗', duration: 1 });
+        Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
         return;
 
       case 'error':
-        Message.error({ content: '地圖資料存取失敗', duration: 1 });
+        Message.send({ content: '地圖資料存取失敗', duration: 2000, type: 'error' });
         return;
 
       case 'user':
-        Message.error({ content: '此帳號不存在', duration: 1 });
+        Message.send({ content: '此帳號不存在', duration: 2000, type: 'error' });
         return;
 
       case 'map':
-        Message.error({ content: '你已經有一張相同名稱的地圖了', duration: 1 });
+        Message.send({ content: '你已經有一張相同名稱的地圖了', duration: 2000, type: 'error' });
         return;
       
       default: 
-        Message.success({ content: `成功建立地圖 ${data.mapName}`, duration: 1 });
+        Message.send({ content: `成功建立地圖 ${data.mapName}`, duration: 2000, type: 'success' });
     }
 
     setDisplayCanvas(null);
@@ -99,23 +100,23 @@ const Info = ({ setOpenModal }) => {
       case 'loading': return;
 
       case 'connection':
-        Message.error({ content: '資料庫連線失敗', duration: 1 });
+        Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
         return;
 
       case 'error':
-        Message.error({ content: '地圖資料存取失敗', duration: 1 });
+        Message.send({ content: '地圖資料存取失敗', duration: 2000, type: 'error' });
         return;
 
       case 'user':
-        Message.error({ content: '此帳號不存在', duration: 1 });
+        Message.send({ content: '此帳號不存在', duration: 2000, type: 'error' });
         return;
 
       case 'map':
-        Message.error({ content: `你並沒有名稱為 ${currentMapName} 的地圖`, duration: 1 });
+        Message.send({ content: `你並沒有名稱為 ${currentMapName} 的地圖`, duration: 2000, type: 'error' });
         return;
       
       default: 
-        Message.success({ content: `成功刪除地圖 ${currentMapName}`, duration: 1 });
+        Message.send({ content: `成功刪除地圖 ${currentMapName}`, duration: 2000, type: 'success' });
     }
 
     setDisplayCanvas(null);

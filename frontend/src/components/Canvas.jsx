@@ -1,10 +1,10 @@
-import { message as Message } from "antd";
 import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import { ButtonTexture } from "../classes/ButtonTexture";
 import { Engine, Playground } from "../classes/Playground";
 import { useHook } from "../hooks/useHook";
 import Button from "./Button";
+import Message from "./Message"
 
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkable, preLoadData }) => {
   const [shiftDown, setShiftDown] = useState(false);
@@ -88,23 +88,23 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
       case 'loading': return;
 
       case 'connection':
-        Message.error({ content: '資料庫連線失敗', duration: 1 });
+        Message.send({ content: '資料庫連線失敗', type: 'error' });
         return;
 
       case 'error':
-        Message.error({ content: '地圖資料存取失敗', duration: 1 });
+        Message.send({ content: '地圖資料存取失敗', type: 'error' });
         return;
 
       case 'user':
-        Message.error({ content: '此帳號不存在', duration: 1 });
+        Message.send({ content: '此帳號不存在', type: 'error' });
         return;
 
       case 'map':
-        Message.error({ content: `你並沒有名稱為 ${map.mapName} 的地圖`, duration: 1 });
+        Message.send({ content: `你並沒有名稱為 ${map.mapName} 的地圖`, type: 'error' });
         return;
       
       default: 
-        Message.success({ content: `成功儲存地圖 ${map.mapName}`, duration: 1 });
+        Message.send({ content: `成功儲存地圖 ${map.mapName}`, type: 'success' });
     }
   }
 
@@ -112,10 +112,10 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
     if (!playground) return;
 
     if (await Engine.validate(playground.engine, playground.engine.validation)) {
-      Message.success({ content: '恭喜你通過檢查！', duration: 2 });
+      Message.send({ content: '恭喜你通過檢查！', type: 'success' });
     }
     else {
-      Message.error({ content: '很抱歉，但你沒有通過檢查 :(', duration: 2 });
+      Message.send({ content: '很抱歉，但你沒有通過檢查 :(', type: 'error' });
     }
   }
   
