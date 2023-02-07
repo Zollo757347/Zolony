@@ -80,35 +80,11 @@ class RedstoneTorch extends Block {
   }
 
   /**
- ` * 取得此方塊指定平面的顏色
-    * @param {symbol} dir 指定平面的法向量方向
-  ` * @returns {string}
+ ` * 取得此方塊的顏色
+  ` * @returns {[number, number, number]}
   ` */
-  surfaceColor(dir) {
-    if (!this.states.lit) return 'black';
-
-    switch (dir) {
-      case Axis.PX:
-        return 'rgb(200, 100, 100)';
-
-      case Axis.PY:
-        return 'rgb(240, 120, 120)';
-
-      case Axis.PZ:
-        return 'rgb(160, 80, 80)';
-
-      case Axis.NX:
-        return 'rgb(180, 90, 90)';
-
-      case Axis.NY:
-        return 'rgb(140, 70, 70)';
-
-      case Axis.NZ:
-        return 'rgb(220, 110, 110)';
-
-      default:
-        throw new Error();
-    }
+  surfaceColor() {
+    return this.states.lit ? [200, 100, 100] : [100, 50, 50];
   }
 
   _interactionBoxVertices = [

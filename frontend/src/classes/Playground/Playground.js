@@ -430,6 +430,13 @@ class Playground {
         }
         checked = true;
 
+        if (Array.isArray(surface.color)) {
+          const shade = (newAxes[surface.dir].dot(new Vector3(0, 0.7, 0.7)) + 1) / 2;
+          surface.color = surface.color[3] ? 
+            `rgba(${surface.color[0] * shade}, ${surface.color[1] * shade}, ${surface.color[2] * shade}, ${surface.color[3]})` :
+            `rgb(${surface.color[0] * shade}, ${surface.color[1] * shade}, ${surface.color[2] * shade})`;
+        }
+
         surface.points[i] = newPoint
           .projectZ(this.cameraZ, this.distance)
           .mirrorY()

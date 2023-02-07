@@ -1,4 +1,3 @@
-import Axis from "../../Axis";
 import { BlockType } from "../BlockType";
 import { FullBlock } from "./FullBlock";
 
@@ -11,33 +10,11 @@ class Concrete extends FullBlock {
   }
 
   /**
-   * 取得此方塊指定平面的顏色
-   * @param {symbol} dir 指定平面的法向量方向
-   * @returns {string}
+   * 取得此方塊的顏色
+   * @returns {[number, number, number]}
    */
-  surfaceColor(dir) {
-    switch (dir) {
-      case Axis.PX:
-        return 'rgb(200, 200, 200)';
-
-      case Axis.PY:
-        return 'rgb(240, 240, 240)';
-
-      case Axis.PZ:
-        return 'rgb(160, 160, 160)';
-
-      case Axis.NX:
-        return 'rgb(180, 180, 180)';
-
-      case Axis.NY:
-        return 'rgb(140, 140, 140)';
-
-      case Axis.NZ:
-        return 'rgb(220, 220, 220)';
-
-      default:
-        throw new Error();
-    }
+  surfaceColor() {
+    return [200, 200, 200];
   }
 }
 

@@ -88,33 +88,11 @@ class Lever extends Block {
   }
 
   /**
-   * 取得此方塊指定平面的顏色
-   * @param {symbol} dir 指定平面的法向量方向
-   * @returns {string}
+   * 取得此方塊的顏色
+   * @returns {[number, number, number]}
    */
-  surfaceColor(dir) {
-    switch (dir) {
-      case Axis.PX:
-        return this.states.powered ? 'rgb(200, 100, 100)' : 'rgb(150, 150, 150)';
-
-      case Axis.PY:
-        return this.states.powered ? 'rgb(240, 120, 120)' : 'rgb(180, 180, 180)';
-
-      case Axis.PZ:
-        return this.states.powered ? 'rgb(160, 80, 80)' : 'rgb(120, 120, 120)';
-
-      case Axis.NX:
-        return this.states.powered ? 'rgb(180, 90, 90)' : 'rgb(135, 135, 135)';
-
-      case Axis.NY:
-        return this.states.powered ? 'rgb(140, 70, 70)' : 'rgb(105, 105, 105)';
-
-      case Axis.NZ:
-        return this.states.powered ? 'rgb(220, 110, 110)' : 'rgb(165, 165, 165)';
-
-      default:
-        throw new Error();
-    }
+  surfaceColor() {
+    return this.states.powered ? [240, 120, 120] : [150, 150, 150];
   }
 
   PPUpdate() {

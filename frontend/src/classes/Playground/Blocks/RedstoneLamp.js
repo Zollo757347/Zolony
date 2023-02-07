@@ -25,33 +25,11 @@ class RedstoneLamp extends FullBlock {
   }
 
   /**
-   * 取得此方塊指定平面的顏色
-   * @param {symbol} dir 指定平面的法向量方向
+   * 取得此方塊的顏色
    * @returns {string}
    */
-  surfaceColor(dir) {
-    switch (dir) {
-      case Axis.PX:
-        return this.states.lit ? 'rgb(200, 200, 100)' : 'rgb(150, 150, 75)';
-
-      case Axis.PY:
-        return this.states.lit ? 'rgb(240, 240, 120)' : 'rgb(180, 180, 90)';
-
-      case Axis.PZ:
-        return this.states.lit ? 'rgb(160, 160, 80)' : 'rgb(120, 120, 60)';
-
-      case Axis.NX:
-        return this.states.lit ? 'rgb(180, 180, 90)' : 'rgb(135, 135, 68)';
-
-      case Axis.NY:
-        return this.states.lit ? 'rgb(140, 140, 70)' : 'rgb(105, 105, 53)';
-
-      case Axis.NZ:
-        return this.states.lit ? 'rgb(220, 220, 110)' : 'rgb(165, 165, 83)';
-
-      default:
-        throw new Error();
-    }
+  surfaceColor() {
+    return [200, 200, 100];
   }
 
   PPUpdate() {

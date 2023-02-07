@@ -61,7 +61,7 @@ class RedstoneDust extends Block {
    */
   surfaceColor() {
     const brightness = this.power * 8 + 100;
-    return `rgb(${brightness}, ${brightness >> 1}, ${brightness >> 1})`;
+    return [brightness, brightness >> 1, brightness >> 1];
   }
 
   interactionSurfaces() {

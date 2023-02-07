@@ -69,13 +69,13 @@ class RedstoneRepeater extends Block {
    */
   surfaces() {
     const result = [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].map(dir => {
-      return { points: this._surfaceOf(dir), color: 'rgb(210, 210, 210)', dir, cords: new Vector3(this.x, this.y, this.z) };
+      return { points: this._surfaceOf(dir), color: [210, 210, 210], dir, cords: new Vector3(this.x, this.y, this.z) };
     });
 
     const basis = this._textureSurfaces[this.states.facing];
     basis.forEach(([dx, dz], i) => {
       const [x, y, z] = [this.x + dx * 0.125, this.y + 0.125 + d, this.z + dz * 0.125];
-      const color = this.states.locked && i === this.states.delay ? 'rgb(50, 50, 50)' : this.surfaceColor(i === 0 || i === this.states.delay);
+      const color = this.states.locked && i === this.states.delay ? [50, 50, 50] : this.surfaceColor(i === 0 || i === this.states.delay);
       const extend = this.states.locked && i === this.states.delay ? this._lockExtend[this.states.facing].map(a => a.map(b => b * 0.125)) : [[0, 0], [0, 0]];
 
       const points = [
@@ -96,7 +96,7 @@ class RedstoneRepeater extends Block {
    */
   surfaceColor(indicator) {
     const brightness = (this.states.powered ? 150 : 100) + indicator * 100;
-    return `rgb(${brightness}, ${brightness >> 1}, ${brightness >> 1})`;
+    return [brightness, brightness >> 1, brightness >> 1];
   }
 
   interactionSurfaces() {
