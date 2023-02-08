@@ -1,6 +1,6 @@
 import 'katex/dist/katex.min.css';
 import Latex from 'react-latex-next';
-import Image from '../../Image';
+import Image from '../components/Image';
 
 const Signal = () => {
   return (
@@ -14,7 +14,7 @@ const Signal = () => {
       <section>
         <h2>電源</h2>
         <p><b>電源</b>（Power Source）是一種可以產生紅石訊號的方塊，大部分的電源都需要滿足特定條件才能產生紅石訊號。根據不同的使用情況，會選擇不同的電源來提供紅石訊號，一般而言，最常見的電源是控制桿（提供穩定的「開／關」訊號）與按鈕（提供短暫的「關→開→關」訊號）。我們先以控制桿來當作電源舉例：</p>
-        <Image src={require("../../../assets/signal/lever.png")} alt="控制桿的開與關" width="50%"/>
+        <Image src={require("../assets/pictures/signal/lever.png")} alt="控制桿的開與關" width="50%"/>
         <p>上圖中控制桿的狀態是左關右開的，你可以很明顯地看出，因為右邊控制桿被拉下，它附著的紅石燈就被點亮了。</p>
         <div className="rs-prop"><b>電源</b>：可以產生紅石訊號的特殊方塊</div>
         <p>但為什麼控制桿被拉下，紅石燈就會點亮呢？這時候就要提到「強充能」的概念了。</p>
@@ -24,7 +24,7 @@ const Signal = () => {
         <h2>充能</h2>
         <p><b>充能</b>（Powering）可以直接從字面上理解意思——「填充能量」，雖然它的意思簡單，但這卻是紅石電路中最重要的機制。當一個電源的啟動條件達成後，最多會有兩個方塊被強充能，一個是電源本身（偵測器除外），另一個是電源指向的方塊（必須是可充能方塊）。就上面控制桿的例子來說，控制桿的啟動條件是被玩家拉下，在這時候控制桿本身會被強充能，而它指向的實體方塊（控制桿指向的方塊就是它的附著方塊）也會被強充能。</p>
         <p>但就算一個方塊被充能，我們也很難看出差別，最簡單的方法就是用紅石燈來觀察一個方塊是否被充能。當一個紅石燈的任何一個相鄰方塊被充能，或是紅石燈本身被充能時，紅石燈就會點亮，而這邊的「相鄰方塊」指的是紅石燈的上下左右前後共六個方塊。</p>
-        <Image src={require("../../../assets/signal/power.png")} alt="控制桿的充能" width="50%"/>
+        <Image src={require("../assets/pictures/signal/power.png")} alt="控制桿的充能" width="50%"/>
         <p>上圖中，藍色紅石燈因為與控制桿相鄰而被點亮，黃色紅石燈因為直接被控制桿充能而點亮，綠色紅石燈因為與黃色紅石燈（充能方塊）相鄰而被點亮，而紅色紅石燈沒有與任何充能方塊相鄰，也沒有被充能，因此還是暗的。</p>
       </section>
 

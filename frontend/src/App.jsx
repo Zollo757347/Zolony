@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from './components/Header';
 
-import MainPage from "./components/data/article/MainPage";
-import Adder from "./components/data/article/Adder";
-import Notorand from "./components/data/article/Notorand";
-import Repeater from "./components/data/article/Repeater";
-import Signal from "./components/data/article/Signal";
-import Torch from "./components/data/article/Torch";
-import Transmit from "./components/data/article/Transmit";
+import MainPage from "./pages/MainPage";
+import Adder from "./pages/Adder";
+import Notorand from "./pages/Notorand";
+import Repeater from "./pages/Repeater";
+import Signal from "./pages/Signal";
+import Torch from "./pages/Torch";
+import Transmit from "./pages/Transmit";
 
 // import Info from "./containers/Info";
 
