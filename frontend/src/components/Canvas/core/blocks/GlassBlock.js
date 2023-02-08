@@ -1,5 +1,5 @@
-import { BlockType } from "../BlockType";
-import { FullBlock } from "./FullBlock";
+import { BlockType } from "../utils";
+import FullBlock from "./FullBlock";
 
 /**
  * 代表一個玻璃方塊，即透明的單位方塊
@@ -20,4 +20,4 @@ class GlassBlock extends FullBlock {
   PPUpdate() {}
 }
 
-export { GlassBlock };
+export default GlassBlock;

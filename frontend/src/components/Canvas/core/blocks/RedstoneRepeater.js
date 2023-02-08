@@ -1,7 +1,5 @@
-import Axis from "../../Axis";
-import Vector3 from "../../Vector3";
-import { BlockType } from "../BlockType";
-import { Block } from "./Block";
+import { Axis, BlockType, Vector3 } from "../utils";
+import Block from "./Block";
 
 const d = 0.001;
 
@@ -65,7 +63,7 @@ class RedstoneRepeater extends Block {
 
   /**
    * 取得此方塊所有平面的資訊
-   * @returns {import("../Playground").Surface[]}
+   * @returns {import("../../Playground").Surface[]}
    */
   surfaces() {
     const result = [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].map(dir => {
@@ -293,4 +291,4 @@ class RedstoneRepeater extends Block {
   }
 }
 
-export { RedstoneRepeater };
+export default RedstoneRepeater;

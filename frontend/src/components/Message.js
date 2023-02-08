@@ -1,4 +1,4 @@
-import Utils from "../classes/Utils";
+import { sleep } from "../utils";
 
 class Message extends null {
   static async send({ content, duration, type }) {
@@ -20,10 +20,10 @@ class Message extends null {
     messageDiv.innerHTML = content;
     document.body.appendChild(messageDiv);
 
-    await Utils.Sleep(duration ?? 2000);
+    await sleep(duration ?? 2000);
     messageDiv.classList.add('message-animated-leave');
 
-    await Utils.Sleep(500);
+    await sleep(500);
     document.body.removeChild(messageDiv);
   }
 }

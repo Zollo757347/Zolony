@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import styled from "styled-components";
-import { ButtonTexture } from "../classes/ButtonTexture";
-import Button from "./Button";
+import Button, { ButtonTexture } from "./Button";
 
 const Modal = ({ collapsed, setCollapsed, title, items }) => {
   return (

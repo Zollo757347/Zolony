@@ -1,7 +1,5 @@
-import Axis from "../../Axis";
-import Vector3 from "../../Vector3";
-import { BlockType } from "../BlockType";
-import { Block } from "./Block";
+import { Axis, BlockType, Vector3 } from "../utils";
+import Block from "./Block";
 
 /**
  * @typedef _LeverStates
@@ -237,4 +235,4 @@ class Lever extends Block {
   }
 }
 
-export { Lever };
+export default Lever;

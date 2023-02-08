@@ -9,4 +9,4 @@ const BlockType = Object.freeze({
   Lever: 104
 });
 
-export { BlockType };
+export default BlockType;

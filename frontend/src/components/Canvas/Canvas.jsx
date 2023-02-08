@@ -1,10 +1,13 @@
 import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
-import { ButtonTexture } from "../classes/ButtonTexture";
-import { Engine, Playground } from "../classes/Playground";
-import { useHook } from "../hooks/useHook";
-import Button from "./Button";
-import Message from "./Message"
+
+import Button, { ButtonTexture } from "../Button";
+import Message from "../Message";
+
+import Engine from "./Engine";
+import Playground from "./Playground";
+
+import { useHook } from "../../hooks/useHook";
 
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkable, preLoadData }) => {
   const [shiftDown, setShiftDown] = useState(false);

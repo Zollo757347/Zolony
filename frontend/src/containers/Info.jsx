@@ -3,9 +3,8 @@ import { Form, Input, Avatar, Image, Select, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import './css/Info.css';
 import { useHook } from '../hooks/useHook';
-import { ButtonTexture } from '../classes/ButtonTexture';
 import Utils from '../classes/Utils';
-import Button from '../components/Button';
+import Button, { ButtonTexture } from '../components/Button';
 import Canvas from '../components/Canvas';
 import Message from "./components/Message"
 

@@ -1,8 +1,5 @@
-import Axis from "../Axis";
-import Utils from "../Utils";
-import { AirBlock, Block, Concrete } from "./Blocks";
-import { BlockType } from "./BlockType";
-
+import { sleep, strictEqual } from "../../utils";
+import { AirBlock, Axis, Block, BlockType, Concrete } from "./core";
 
 /**
  * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], lampUnlit: [number, number, number] }} TaskParams
@@ -20,7 +17,7 @@ import { BlockType } from "./BlockType";
  * @property {number} zLen z 軸的長度
  * @property {string} mapName 地圖的名稱
  * @property {object?} validation 檢查條件
- * @property {(import("./Blocks/Block").BlockData | null)[][][]} playground 地圖上所有方塊的狀態
+ * @property {(import("./core/blocks/Block").BlockData | null)[][][]} playground 地圖上所有方塊的狀態
  */
 
 class Engine {
@@ -63,7 +60,7 @@ class Engine {
 
     /**
      * 所有方塊
-     * @type {import("./Blocks/Block").Block[][][]}
+     * @type {import("./core/blocks/Block").Block[][][]}
      * @private
      */
     this._pg = Array.from({ length: xLen }, (_, x) => 
@@ -159,7 +156,7 @@ class Engine {
         c++;
       }
 
-      await Utils.Sleep(timeout);
+      await sleep(timeout);
 
       const leverStatus = leverBlocks.map(b => b.states.powered);
       const lampStatus = lampBlocks.map(b => b.states.lit);
@@ -204,7 +201,7 @@ class Engine {
    */
   addTask(name, params, tickAfter = 0) {
     // 忽略重複的工作
-    if (this.taskQueue.some(t => t[0] === name && t[2] === tickAfter && Utils.StrictEqual(t[1], params))) return;
+    if (this.taskQueue.some(t => t[0] === name && t[2] === tickAfter && strictEqual(t[1], params))) return;
 
     this.taskQueue.push([name, params, tickAfter]);
   }
@@ -393,4 +390,4 @@ class Engine {
   }
 }
 
-export { Engine };
+export default Engine;

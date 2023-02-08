@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ButtonTexture } from "../classes/ButtonTexture";
+import { ButtonTexture } from "./ButtonTexture";
 
 const Button = styled.button`
   background-color: ${props => props.disabled ? 'transparent' : getBackgroundColor(props.texture)};

@@ -1,5 +1,5 @@
-import { BlockType } from "../BlockType";
-import { Block } from "./Block";
+import { BlockType } from "../utils";
+import Block from "./Block";
 
 /**
  * 代表一個空氣方塊
@@ -16,4 +16,4 @@ class AirBlock extends Block {
   PPUpdate() {}
 }
 
-export { AirBlock };
+export default AirBlock;

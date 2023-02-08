@@ -1,5 +1,4 @@
-import Axis from "../../Axis";
-import Utils from "../../Utils";
+import { Axis, NewBlock } from "../utils";
 
 /**
  * @typedef Surface 代表一個有限大小的有向表面
@@ -22,7 +21,7 @@ import Utils from "../../Utils";
 /**
  * @typedef BlockData 方塊的數據
  * @type {object}
- * @property {import("../BlockType")} type 方塊的種類
+ * @property {import("../utils/BlockType")} type 方塊的種類
  * @property {boolean} breakable 方塊可否被破壞
  * @property {BlockStates} states 方塊的狀態
  */
@@ -137,7 +136,7 @@ class Block {
    * @returns {Block}
    */
   static spawn(engine, { x, y, z, type, states, breakable }) {
-    const block = new (Utils.NewBlock(type))({ x, y, z, engine });
+    const block = new (NewBlock(type))({ x, y, z, engine });
     block.breakable = breakable;
     block.states = states;
     return block;
@@ -204,4 +203,4 @@ class Block {
   }
 }
 
-export { Block };
+export default Block;

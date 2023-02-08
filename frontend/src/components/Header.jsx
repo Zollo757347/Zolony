@@ -62,9 +62,9 @@ const Header = () => {
     <>
       <HeaderWrapper>
         <LeftHeaderWrapper>
-          <SidbarImg collapsed={sidebarCollapsed} onClick={() => setSidebarCollapsed(!sidebarCollapsed)} src={require("../assets/header/sidebar.png")} />
+          <SidbarImg collapsed={sidebarCollapsed} onClick={() => setSidebarCollapsed(!sidebarCollapsed)} src={require("../assets/pictures/header/sidebar.png")} />
           <Link to='/'>
-            <StyledWordmark src={require("../assets/header/wordmark.png")} />
+            <StyledWordmark src={require("../assets/pictures/header/wordmark.png")} />
           </Link>
         </LeftHeaderWrapper>
         <RightHeaderWrapper>

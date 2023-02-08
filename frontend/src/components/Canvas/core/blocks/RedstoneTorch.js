@@ -1,7 +1,5 @@
-import Axis from "../../Axis";
-import Vector3 from "../../Vector3";
-import { BlockType } from "../BlockType";
-import { Block } from "./Block";
+import { Axis, BlockType, Vector3 } from "../utils";
+import Block from "./Block";
 
 /**
  * @typedef _RedstoneTorchStates
@@ -71,7 +69,7 @@ class RedstoneTorch extends Block {
 
   /**
    * 取得此方塊所有平面的資訊
-   * @returns {import("../Playground").Surface[]}
+   * @returns {import("../../Playground").Surface[]}
    */
   surfaces() {
     return [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].map(dir => {
@@ -296,4 +294,4 @@ class RedstoneTorch extends Block {
   }
 }
 
-export { RedstoneTorch };
+export default RedstoneTorch;

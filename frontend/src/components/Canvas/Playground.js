@@ -1,10 +1,5 @@
-import Axis from "../Axis";
-import Utils from "../Utils";
-import Vector3 from "../Vector3";
-import { AirBlock, Concrete, GlassBlock, RedstoneDust, RedstoneRepeater, RedstoneTorch } from "./Blocks";
-import { Lever } from "./Blocks/Lever";
-import { RedstoneLamp } from "./Blocks/RedstoneLamp";
-import { Engine } from "./Engine";
+import { AirBlock, Axis, Concrete, GlassBlock, Lever, NewBlock, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, Vector3 } from "./core";
+import Engine from "./Engine";
 
 /**
  * @typedef PlaygroundAngles 記錄物體的旋轉角度
@@ -126,9 +121,9 @@ class Playground {
 
     /**
      * 快捷欄上的方塊
-     * @type {(new () => import("./Blocks/Block").Block)[]}
+     * @type {(new () => import("./Playground/Blocks/Block").Block)[]}
      */
-    this.hotbar = preLoadData?.availableBlocks?.length ? preLoadData?.availableBlocks?.map(t => Utils.NewBlock(t)) : [Concrete, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, Lever];
+    this.hotbar = preLoadData?.availableBlocks?.length ? preLoadData?.availableBlocks?.map(t => NewBlock(t)) : [Concrete, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, Lever];
 
     /**
      * 快捷欄上方塊的名稱
@@ -451,4 +446,4 @@ class Playground {
   }
 }
 
-export { Playground };
+export default Playground;

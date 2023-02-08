@@ -1,5 +1,5 @@
-import { BlockType } from "../BlockType";
-import { FullBlock } from "./FullBlock";
+import { BlockType } from "../utils";
+import FullBlock from "./FullBlock";
 
 /**
  * 代表一個混凝土方塊，即不透明的單位方塊
@@ -18,4 +18,4 @@ class Concrete extends FullBlock {
   }
 }
 
-export { Concrete };
+export default Concrete;

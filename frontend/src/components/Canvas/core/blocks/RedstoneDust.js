@@ -1,8 +1,6 @@
-import Axis from "../../Axis";
-import Vector3 from "../../Vector3";
-import Utils from "../../Utils";
-import { Block } from "./Block";
-import { BlockType } from "../BlockType";
+import { Axis, BlockType, Vector3 } from "../utils";
+import Block from "./Block";
+import { strictEqual } from "../../../../utils";
 
 const d = 0.001;
 
@@ -43,7 +41,7 @@ class RedstoneDust extends Block {
 
   /**
    * 取得此方塊所有平面的資訊
-   * @returns {import("../Playground").Surface[]}
+   * @returns {import("../../Playground").Surface[]}
    */
   surfaces() {
     const result = [{ points: this._surfaces.middle.map(i => new Vector3(...this._vertices[i])), color: this.surfaceColor(), dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) }];
@@ -155,7 +153,7 @@ class RedstoneDust extends Block {
       }
     }
 
-    if (!Utils.StrictEqual(oldStates, this.states)) {
+    if (!strictEqual(oldStates, this.states)) {
       this.sendPPUpdate();
     }
   }
@@ -271,7 +269,7 @@ class RedstoneDust extends Block {
   /**
    * 取得此紅石粉指定方向所應渲染的所有平面
    * @param {symbol} dir 指定的法向量方向
-   * @returns {import("../Playground").Surface[]}
+   * @returns {import("../../Playground").Surface[]}
    * @private
    */
   _otherSurfacesOf(dirName) {
@@ -330,4 +328,4 @@ class RedstoneDust extends Block {
   }
 }
 
-export { RedstoneDust };
+export default RedstoneDust;

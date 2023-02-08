@@ -1,6 +1,5 @@
-import Axis from "../../Axis";
-import { BlockType } from "../BlockType";
-import { FullBlock } from "./FullBlock";
+import { Axis, BlockType } from "../utils";
+import FullBlock from "./FullBlock";
 
 /**
  * @typedef _RedstoneLampStates
@@ -72,4 +71,4 @@ class RedstoneLamp extends FullBlock {
   }
 }
 
-export { RedstoneLamp };
+export default RedstoneLamp;
