@@ -29,7 +29,7 @@ class RedstoneLamp extends FullBlock {
    * @returns {string}
    */
   surfaceColor() {
-    return [200, 200, 100];
+    return this.states.lit ? [240, 240, 120] : [200, 200, 100];
   }
 
   PPUpdate() {
