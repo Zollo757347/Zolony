@@ -407,6 +407,9 @@ class Playground {
   _projectSurfaces(surfaces) {
     const offset = new Vector3(this.canvasWidth / 2, this.canvasHeight / 2, 0);
     const camera = new Vector3(0, 0, this.cameraZ);
+    const lightDir = new Vector3(2, 3, 4)
+      .rotateY(this.angles.theta)
+      .rotateX(this.angles.phi);
 
     surfaces.forEach(surface => {
       const newAxes = Axis.VectorMap(v => v
@@ -431,7 +434,7 @@ class Playground {
         checked = true;
 
         if (Array.isArray(surface.color)) {
-          const shade = (newAxes[surface.dir].dot(new Vector3(0, 0.7, 0.7)) + 1) / 2;
+          const shade = (newAxes[surface.dir].dot(lightDir) + 10.8) / 16.2;
           surface.color = surface.color[3] ? 
             `rgba(${surface.color[0] * shade}, ${surface.color[1] * shade}, ${surface.color[2] * shade}, ${surface.color[3]})` :
             `rgb(${surface.color[0] * shade}, ${surface.color[1] * shade}, ${surface.color[2] * shade})`;
