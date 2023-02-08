@@ -4,21 +4,35 @@ import styled from 'styled-components';
 import Dropdown from './Dropdown';
 import Sidebar from './Sidebar';
 import { useHook } from '../hooks/useHook';
+import Modal from './Modal';
 
-const Header = ({ setOpenModal }) => {
+import loginData from '../assets/json/modal/login.json';
+import signinData from '../assets/json/modal/signin.json';
+
+const Header = () => {
   const [sidebarCollapsed, _setSidebarCollapsed] = useState(true);
   const [dropdownCollapsed, _setDropdownCollapsed] = useState(true);
+  const [modalCollapsed, _setModalCollapsed] = useState(true);
+  const [modalData, setModalData] = useState({ title: '', items: [] });
 
   const { loggedIn, logout, avatar } = useHook();
 
   function setSidebarCollapsed(value) {
     _setSidebarCollapsed(value);
     _setDropdownCollapsed(true);
+    _setModalCollapsed(true);
   }
 
   function setDropdownCollapsed(value) {
     _setSidebarCollapsed(true);
     _setDropdownCollapsed(value);
+    _setModalCollapsed(true);
+  }
+
+  function setModalCollapsed(value) {
+    _setSidebarCollapsed(true);
+    _setDropdownCollapsed(true);
+    _setModalCollapsed(value);
   }
 
   const sidebarItems = [
@@ -34,8 +48,14 @@ const Header = ({ setOpenModal }) => {
     { name: '個人資料', todo: () => {} }, 
     { name: '登出', todo: () => logout() }
   ] : [
-    { name: '註冊帳號', todo: () => setOpenModal(2) }, 
-    { name: '登入', todo: () => setOpenModal(1) }
+    { name: '註冊帳號', todo: () => {
+      setModalCollapsed(false);
+      setModalData(signinData);
+    } }, 
+    { name: '登入', todo: () => {
+      setModalCollapsed(false);
+      setModalData(loginData);
+    } }
   ];
 
   return (
@@ -57,6 +77,7 @@ const Header = ({ setOpenModal }) => {
       </HeaderWrapper>
       <Sidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} items={sidebarItems} />
       <Dropdown collapsed={dropdownCollapsed} setCollapsed={setDropdownCollapsed} items={dropdownItems} />
+      <Modal collapsed={modalCollapsed} setCollapsed={setModalCollapsed} items={modalData.items} title={modalData.title} />
     </>
   );
 }

@@ -1,226 +1,105 @@
-import { UserOutlined } from '@ant-design/icons';
-import { Input, Modal } from 'antd';
-import { useRef } from 'react';
-import './css/Modal.css';
-import { useHook } from '../hooks/useHook';
-import Message from './Message';
+import { Fragment } from "react";
+import styled from "styled-components";
+import { ButtonTexture } from "../classes/ButtonTexture";
+import Button from "./Button";
 
-const Modal_Components = ({ open, setOpen }) => {
-  const usernameRef = useRef();
-  const passwordRef = useRef();
-  const checkPasswordRef = useRef();
-  const newPasswordRef = useRef();
-  const avatarRef = useRef();
-  const bioRef = useRef();
-
-  const { login, createUser, editUser, deleteUser, username } = useHook();
-
-  const handleOk = async () => {
-    // 登入
-    if (open === 1) {
-      const modalUsername = usernameRef.current.input.value;
-      const modalPassword = passwordRef.current.input.value;
-
-      if (!modalUsername) {
-        Message.send({ content: '請輸入你的帳號名稱', duration: 2000, type: 'error' });
-        return;
-      }
-      if (!modalPassword) {
-        Message.send({ content: '請輸入你的密碼', duration: 2000, type: 'error' });
-        return;
-      }
-
-      const { error } = await login(modalUsername, modalPassword);
-      switch (error) {
-        case 'loading': return;
-
-        case 'connection':
-          Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
-          return;
-
-        case 'error':
-          Message.send({ content: '使用者資料存取失敗', duration: 2000, type: 'error' });
-          return;
-
-        case 'user':
-          Message.send({ content: '此帳號不存在', duration: 2000, type: 'error' });
-          return;
-
-        case 'password':
-          Message.send({ content: '密碼輸入錯誤', duration: 2000, type: 'error' });
-          return;
-        
-        default: 
-          Message.send({ content: '登入成功！', duration: 2000, type: 'success' });
-          setOpen(0);
-      }
-    }
-
-    // 註冊
-    else if (open === 2) {
-      const modalUsername = usernameRef.current.input.value;
-      const modalPassword = passwordRef.current.input.value;
-      const modalCheckPassword = checkPasswordRef.current.input.value;
-
-      if (modalPassword !== modalCheckPassword) {
-        Message.send({ content: '兩組密碼不相同！', duration: 2000, type: 'error' });
-      }
-      else {
-        const { error } = await createUser(modalUsername, modalPassword);
-        switch (error) {
-          case 'loading': return;
-  
-          case 'connection':
-            Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
-            return;
-  
-          case 'error':
-            Message.send({ content: '使用者資料存取失敗', duration: 2000, type: 'error' });
-            return;
-  
-          case 'user':
-            Message.send({ content: '該帳號已經存在', duration: 2000, type: 'error' });
-            return;
-          
-          default: 
-            Message.send({ content: '成功建立帳號！', duration: 2000, type: 'success' });
-            setOpen(0);
-        }
-      }
-    }
-
-    // 編輯個人資料
-    else if (open === 3) {
-      const modalPassword = passwordRef.current.input.value;
-      const modalCheckPassword = checkPasswordRef.current.input.value;
-      const modalNewPassword = newPasswordRef.current.input.value;
-      const modalAvatar = avatarRef.current.input.value;
-      const modalBio = bioRef.current.input.value;
-
-      if (modalNewPassword !== modalCheckPassword) {
-        Message.send({ content: '兩組密碼不相同！', duration: 2000, type: 'error' });
-      }
-
-      const { error } = await editUser({
-        username, 
-        password: modalPassword, 
-        newPassword: modalNewPassword, 
-        newAvatar: modalAvatar, 
-        newBio: modalBio
-      });
-      switch (error) {
-        case 'loading': return;
-
-        case 'connection':
-          Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
-          return;
-
-        case 'error':
-          Message.send({ content: '使用者資料存取失敗', duration: 2000, type: 'error' });
-          return;
-
-        case 'user':
-          Message.send({ content: '此帳號不存在', duration: 2000, type: 'error' });
-          return;
-
-        case 'password':
-          Message.send({ content: '密碼輸入錯誤', duration: 2000, type: 'error' });
-          return;
-        
-        default: 
-          Message.send({ content: '自介更新成功！', duration: 2000, type: 'success' });
-          setOpen(0);
-      }
-    }
-
-    // 刪除帳號
-    else if (open === 4) {
-      const modalPassword = passwordRef.current.input.value;
-      
-      if (!modalPassword) {
-        Message.send({ content: '請輸入你的密碼', duration: 2000, type: 'error' });
-        return;
-      }
-
-      const { error } = await deleteUser(username, modalPassword);
-      switch (error) {
-        case 'loading': return;
-
-        case 'connection':
-          Message.send({ content: '資料庫連線失敗', duration: 2000, type: 'error' });
-          return;
-
-        case 'error':
-          Message.send({ content: '使用者資料存取失敗', duration: 2000, type: 'error' });
-          return;
-
-        case 'user':
-          Message.send({ content: '此帳號不存在', duration: 2000, type: 'error' });
-          return;
-
-        case 'password':
-          Message.send({ content: '密碼輸入錯誤', duration: 2000, type: 'error' });
-          return;
-        
-        default: 
-          Message.send({ content: '帳號已成功刪除', duration: 2000, type: 'success' });
-          setOpen(0);
-      }
-    }
-  }
-
-  const signInModal = <>
-    <Input ref={usernameRef} placeholder="輸入你的帳號" prefix={<UserOutlined />} />
-    <br/>
-    <br/>
-    <Input.Password ref={passwordRef} placeholder="輸入你的密碼"  />
-    <br/>
-  </>;
-  
-  const signUpModal = <>
-    <Input ref={usernameRef} placeholder="輸入你的帳號" prefix={<UserOutlined />} />
-    <br/>
-    <br/>
-    <Input.Password ref={passwordRef} placeholder="輸入你的密碼" />
-    <br/>
-    <br/>
-    <Input.Password ref={checkPasswordRef} placeholder="確認你的密碼" />
-  </>;
-
-  const modifyModal = <>
-    <Input.Password ref={passwordRef} placeholder="輸入你的原密碼" />
-    <br/>
-    <br/>
-    <Input.Password ref={newPasswordRef} placeholder="輸入你的新密碼" />
-    <br/>
-    <br/>
-    <Input.Password ref={checkPasswordRef} placeholder="確認你的密碼" />
-    <br/>
-    <br/>
-    <Input ref={avatarRef} placeholder="輸入你的新頭像" />
-    <br/>
-    <br/>
-    <Input.TextArea ref={bioRef} placeholder="輸入你的自介" rows={4} />
-  </>;
-
-  const deleteModal = <>
-    <span>請輸入你的密碼以確認將此帳號刪除，注意此動作無法被復原</span>
-    <br/>
-    <br/>
-    <Input.Password ref={passwordRef} placeholder="輸入你的密碼" />
-  </>;
-
+const Modal = ({ collapsed, setCollapsed, title, items }) => {
   return (
-    <Modal
-      title={["登入","註冊", "編輯個人資料"][open - 1]}
-      centered
-      open={(open > 0)}
-      onOk={() => handleOk()}
-      onCancel={() => setOpen(0)}
-    >
-      {[signInModal, signUpModal, modifyModal, deleteModal][open - 1]}
-    </Modal>
+    <ModalWrapper collapsed={collapsed}>
+      <StyledGhostDiv onClick={() => setCollapsed(true)} />
+      <StyleModal>
+        <StyledTitle>{title}</StyledTitle>
+        <InputArea>{
+          items.map((item, i) => {
+            item.type = item.type === 'normal' ? undefined : item.type;
+            return <Fragment key={i}>
+              <span>{item.title}</span>
+              <br />
+              <StyledInput placeholder={item.placeholder} type={item.type} />
+              { i === items.length - 1 ? <></> : <><br /><br /></> }
+            </Fragment>;
+          })
+        }</InputArea>
+        <ButtonArea>
+          <Button texture={ButtonTexture.Primary}>確定</Button>
+          <Button texture={ButtonTexture.Secondary}>取消</Button>
+        </ButtonArea>
+      </StyleModal>
+    </ModalWrapper>
   );
 };
 
-export default Modal_Components;
+const ModalWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 20110;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  opacity: ${props => props.collapsed ? 0 : 1};
+  ${props => props.collapsed ? "transform: translateY(100%);" : ""};
+  transition: transform 0.3s, opacity 0.3s ease-in;
+`;
+
+const StyleModal = styled.div`
+  background-color: rgb(255, 246, 168);
+  width: 450px;
+  padding: 10px;
+  border-radius: 0.5em;
+  box-shadow: 0 0 15px rgba(130, 130, 130, 0.3);
+
+  position: relative;
+  bottom: 40px;
+  z-index: 1;
+`;
+
+const StyledGhostDiv = styled.div`
+  background-color: #888888;
+  opacity: 0.1;
+  height: 100%;
+  width: 100%;
+
+  position: fixed;
+`;
+
+const StyledTitle = styled.div`
+  padding: 5px;
+  text-align: center;
+  font-size: 1.5em;
+`;
+
+const InputArea = styled.div`
+  margin-bottom: 5px;
+  padding: 10px;
+`;
+
+const ButtonArea = styled.div`
+  margin-top: 5px;
+
+  display: flex;
+  justify-content: flex-end;
+
+  & > * {
+    width: 60px;
+  }
+`;
+
+const StyledInput = styled.input`
+  width: 95%;
+  height: 1.5em;
+  padding: 0.3em 0.7em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+
+  border: 1px solid rgb(245, 213, 37);
+  border-radius: 3px;
+
+  &:focus {
+    outline: 2px solid rgb(255, 237, 68);
+  }
+`;
+
+export default Modal;

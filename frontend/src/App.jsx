@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Header from './components/Header';
-import Modal from './components/Modal';
 
 import MainPage from "./components/data/article/MainPage";
 import Adder from "./components/data/article/Adder";
@@ -18,7 +17,6 @@ import './App.css';
 
 const App = () => {
   const divRef = useRef();
-  const [openModal, setOpenModal] = useState(0);
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -27,7 +25,7 @@ const App = () => {
   
   return (
     <AppWrapper>
-      <Header setOpenModal={setOpenModal} />
+      <Header />
       <MainWrapper>
         <div style={{ padding: 15, width: 900, backgroundColor: '#FBFAB7' }}>
           <div ref={divRef} style={{ transform: 'translateY(-100px)' }}></div>
@@ -42,7 +40,6 @@ const App = () => {
           </Routes>
         </div>
       </MainWrapper>
-      <Modal open={openModal} setOpen={setOpenModal} />
     </AppWrapper>
   );
 }
