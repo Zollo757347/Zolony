@@ -19,7 +19,7 @@ const Header = () => {
   const [modalCollapsed, _setModalCollapsed] = useState(true);
   const [modalData, setModalData] = useState({ action: '', title: '', items: [] });
 
-  const { loggedIn, avatar, createUser, login, logout } = useHook();
+  const { user, createUser, login, logout } = useHook();
 
   function setSidebarCollapsed(value) {
     _setSidebarCollapsed(value);
@@ -79,7 +79,7 @@ const Header = () => {
     { name: '計算機的第一步．加法器', path: 'adder' }
   ];
 
-  const dropdownItems = loggedIn ? [
+  const dropdownItems = user.loggedIn ? [
     { name: '個人資料', todo: () => {} }, 
     { name: '登出', todo: () => logout() }
   ] : [
@@ -105,7 +105,7 @@ const Header = () => {
         <RightHeaderWrapper>
           <AvatarWrapper collapsed={dropdownCollapsed}>
             <AvatarMask>
-              <Avatar src={loggedIn ? avatar : 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'} onClick={() => setDropdownCollapsed(!dropdownCollapsed)} />
+              <Avatar src={user.loggedIn ? user.avatar : 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'} onClick={() => setDropdownCollapsed(!dropdownCollapsed)} />
             </AvatarMask>
           </AvatarWrapper>
         </RightHeaderWrapper>

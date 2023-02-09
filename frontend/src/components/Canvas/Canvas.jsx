@@ -16,7 +16,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
   const canvasRef = useRef();
   const spanRef = useRef();
 
-  const { editMap, username } = useHook();
+  const { editMap, user } = useHook();
 
   useEffect(() => {
     const pg = new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData });
@@ -86,7 +86,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
     if (!playground) return;
 
     const map = Engine.extract(playground.engine);
-    const { error } = await editMap(username, map);
+    const { error } = await editMap(user.username, map);
     switch (error) {
       case 'loading': return;
 

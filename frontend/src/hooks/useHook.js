@@ -24,19 +24,23 @@ const HookContext = createContext({
   editMap: async () => {},
   deleteMap: async () => {},
 
-  loggedIn: !!savedUsername,
-  username: savedUsername,
-  avatar: savedAvatar,
-  bio: savedBio,
-  maps: []
+  user: {
+    loggedIn: false,
+    username: '',
+    avatar: '',
+    bio: '',
+    maps: []
+  }
 });
 
 const HookProvider = (props) => {
-  const [username, setUsername] = useState(savedUsername);
-  const [loggedIn, setLoggedIn] = useState(!!savedUsername);
-  const [avatar, setAvatar] = useState(savedAvatar);
-  const [bio, setBio] = useState(savedBio);
-  const [maps, setMaps] = useState(JSON.parse(savedMaps));
+  const [user, _setUser] = useState({
+    loggedIn: !!savedUsername,
+    username: savedUsername,
+    avatar: savedAvatar,
+    bio: savedBio,
+    maps: JSON.parse(savedMaps)
+  });
 
   const [loginQuery] = useLazyQuery(LOG_IN);
   const [getMapQuery] = useLazyQuery(GET_MAP, { fetchPolicy: 'network-only' });
@@ -48,35 +52,19 @@ const HookProvider = (props) => {
   const [deleteMapMutation] = useMutation(DELETE_MAP);
 
   const setUser = (data) => {
-    if (!data) {
-      data = {
-        username: '', 
-        avatar: '', 
-        bio: '', 
-        maps: [], 
-        loggedIn: false
-      };
-    }
+    const newData = {
+      loggedIn: data.loggedIn ?? user.loggedIn, 
+      username: data.username ?? user.username, 
+      avatar: data.avatar ?? user.avatar, 
+      bio: data.bio ?? user.bio, 
+      maps: data.maps ?? user.maps
+    };
 
-    if (data.username != null) {
-      setUsername(data.username);
-      localStorage.setItem(LSK_USERNAME, data.username);
-    }
-    if (data.avatar != null) {
-      setAvatar(data.avatar);
-      localStorage.setItem(LSK_AVATAR, data.avatar);
-    }
-    if (data.bio != null) {
-      setBio(data.bio);
-      localStorage.setItem(LSK_BIO, data.bio);
-    }
-    if (data.maps != null) {
-      setMaps(data.maps);
-      localStorage.setItem(LSK_MAPS, JSON.stringify(data.maps));
-    }
-    if (data.loggedIn != null) {
-      setLoggedIn(data.loggedIn);
-    }
+    _setUser(newData);
+    localStorage.setItem(LSK_USERNAME, newData.username);
+    localStorage.setItem(LSK_AVATAR, newData.avatar);
+    localStorage.setItem(LSK_BIO, newData.bio);
+    localStorage.setItem(LSK_MAPS, JSON.stringify(newData.maps));
   }
 
   const login = async (username, password) => {
@@ -91,18 +79,18 @@ const HookProvider = (props) => {
     if (loading) return { error: 'loading', data: null };
     if (error) return { error: 'error', data: null };
 
-    const user = data.login.data;
-    if (!user) return { error: data.login.error, data: null };
+    const newUser = data.login.data;
+    if (!newUser) return { error: data.login.error, data: null };
 
     setUser({
       username, 
       loggedIn: true, 
-      avatar: user.avatar, 
-      bio: user.bio, 
-      maps: user.maps
+      avatar: newUser.avatar, 
+      bio: newUser.bio, 
+      maps: newUser.maps
     });
 
-    return { error: null, data: user };
+    return { error: null, data: newUser };
   }
 
   const logout = () => {
@@ -142,17 +130,17 @@ const HookProvider = (props) => {
     if (loading) return { error: 'loading', data: null };
     if (error) return { error: 'error', data: null };
 
-    const user = data.createUser.data;
-    if (!user) return { error: data.createUser.error, data: null };
+    const newUser = data.createUser.data;
+    if (!newUser) return { error: data.createUser.error, data: null };
 
     setUser({
       username, 
       loggedIn: true, 
-      avatar: user.avatar, 
-      bio: user.bio, 
-      maps: user.maps
+      avatar: newUser.avatar, 
+      bio: newUser.bio, 
+      maps: newUser.maps
     });
-    return { error: null, data: user };
+    return { error: null, data: newUser };
   }
 
   const editUser = async (editData) => {
@@ -168,17 +156,17 @@ const HookProvider = (props) => {
     if (loading) return { error: 'loading', data: null };
     if (error) return { error: 'error', data: null };
 
-    const user = data.editUser.data;
-    if (!user) return { error: data.editUser.error, data: null };
+    const newUser = data.editUser.data;
+    if (!newUser) return { error: data.editUser.error, data: null };
 
     setUser({
-      username: user.username, 
+      username: newUser.username, 
       loggedIn: true, 
-      avatar: user.avatar, 
-      bio: user.bio, 
-      maps: user.maps
+      avatar: newUser.avatar, 
+      bio: newUser.bio, 
+      maps: newUser.maps
     });
-    return { error: null, data: user };
+    return { error: null, data: newUser };
   }
 
   const deleteUser = async (username, password) => {
@@ -193,11 +181,11 @@ const HookProvider = (props) => {
     if (loading) return { error: 'loading', data: null };
     if (error) return { error: 'error', data: null };
 
-    const user = data.deleteUser.data;
-    if (!user) return { error: data.deleteUser.error, data: null };
+    const oldUser = data.deleteUser.data;
+    if (!oldUser) return { error: data.deleteUser.error, data: null };
 
     logout();
-    return { error: null, data: user };
+    return { error: null, data: oldUser };
   }
 
   const createMap = async (username, mapData) => {
@@ -213,8 +201,7 @@ const HookProvider = (props) => {
     const map = data.createMap.data;
     if (!map) return { error: data.createMap.error, data: null };
 
-    setUser({ maps: [...maps, map.mapName] });
-
+    setUser({ maps: [...user.maps, map.mapName] });
     return { error: null, data: map };
   }
 
@@ -245,8 +232,7 @@ const HookProvider = (props) => {
     if (error) return { error: 'error' };
     if (data.deleteMap.error) return { error: data.deleteMap.error };
 
-    setUser({ maps: maps.filter(name => name !== mapName) });
-
+    setUser({ maps: user.maps.filter(name => name !== mapName) });
     return { error: null };
   }
 
@@ -264,11 +250,7 @@ const HookProvider = (props) => {
         editMap, 
         deleteMap, 
 
-        loggedIn, 
-        username, 
-        avatar, 
-        bio, 
-        maps
+        user
       }}
       {...props}
     />

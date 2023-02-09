@@ -18,10 +18,10 @@ const Info = ({ setOpenModal }) => {
   const [currentMapName, setCurrentMapName] = useState('');
   const [displayCanvas, setDisplayCanvas] = useState(null);
 
-  const { getMap, createMap, deleteMap, username, bio, maps, avatar } = useHook();
+  const { getMap, createMap, deleteMap, user } = useHook();
 
   const onSelect = async (mapName) => {
-    const { error, data } = await getMap(username, mapName);
+    const { error, data } = await getMap(user.username, mapName);
     switch (error) {
       case 'loading': return;
 
@@ -54,7 +54,7 @@ const Info = ({ setOpenModal }) => {
   }
 
   const handleModalOk = async () => {
-    const { error, data } = await createMap(username, {
+    const { error, data } = await createMap(user.username, {
       xLen: parseInt(xLenRef.current.input.value), 
       yLen: parseInt(yLenRef.current.input.value), 
       zLen: parseInt(zLenRef.current.input.value), 
@@ -94,7 +94,7 @@ const Info = ({ setOpenModal }) => {
   }
 
   const handleMapDelete = async () => {
-    const { error } = await deleteMap(username, currentMapName);
+    const { error } = await deleteMap(user.username, currentMapName);
     switch (error) {
       case 'loading': return;
 
@@ -126,12 +126,12 @@ const Info = ({ setOpenModal }) => {
     <Form>
       <div id='Info-username' className='Info-left'>
         <Form.Item label="Username">
-          <Input defaultValue={username} disabled={true}/>
+          <Input defaultValue={user.username} disabled={true}/>
         </Form.Item>
       </div>
       <div id='Info-avatar' className='Info-left'>
         <Avatar
-          src={<Image src={avatar}/>}
+          src={<Image src={user.avatar}/>}
           style={{
             width: 400,
             height: 400,
@@ -139,7 +139,7 @@ const Info = ({ setOpenModal }) => {
         />
       </div>
       <div id='Info-bio' className='Info-left'>
-        <Form.Item label="Bio">{bio}</Form.Item>
+        <Form.Item label="Bio">{user.bio}</Form.Item>
       </div>
       <div id='Info-btn'>
         <Form.Item>
@@ -188,7 +188,7 @@ const Info = ({ setOpenModal }) => {
               filterOption={(input, option) =>
                 (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
               }
-              options={maps.map(name => ({ label: name, value: name }))}
+              options={user.maps.map(name => ({ label: name, value: name }))}
             /></Form.Item></Form>
           </div>
           <Button texture={ButtonTexture.Danger} onClick={handleMapDelete} disabled={!displayCanvas}>
