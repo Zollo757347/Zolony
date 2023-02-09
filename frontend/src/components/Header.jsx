@@ -6,16 +6,20 @@ import Sidebar from './Sidebar';
 import { useHook } from '../hooks/useHook';
 import Modal from './Modal';
 
-import loginData from '../assets/json/modal/login.json';
-import signinData from '../assets/json/modal/signin.json';
+import loginData from '../assets/json/modals/login.json';
+import signinData from '../assets/json/modals/signin.json';
+
+import createUserError from '../assets/json/errors/createUser.json';
+import loginError from '../assets/json/errors/login.json';
+import Message from './Message';
 
 const Header = () => {
   const [sidebarCollapsed, _setSidebarCollapsed] = useState(true);
   const [dropdownCollapsed, _setDropdownCollapsed] = useState(true);
   const [modalCollapsed, _setModalCollapsed] = useState(true);
-  const [modalData, setModalData] = useState({ title: '', items: [] });
+  const [modalData, setModalData] = useState({ action: '', title: '', items: [] });
 
-  const { loggedIn, logout, avatar } = useHook();
+  const { loggedIn, avatar, createUser, login, logout } = useHook();
 
   function setSidebarCollapsed(value) {
     _setSidebarCollapsed(value);
@@ -33,6 +37,37 @@ const Header = () => {
     _setSidebarCollapsed(true);
     _setDropdownCollapsed(true);
     _setModalCollapsed(value);
+  }
+
+  async function handleConfirm(data) {
+    switch (modalData.action) {
+      case 'signin':
+        if (data[1] !== data[2]) {
+          Message.send({ content: createUserError.password, duration: 2000, type: 'error' });
+        }
+        else {
+          const { error } = await createUser(data[0], data[1]);
+          if (!error) {
+            Message.send({ content: "成功建立帳號！", duration: 2000, type: 'success' });
+          }
+          else if (error !== 'loading') {
+            Message.send({ content: createUserError[error], duration: 2000, type: 'error' });
+          }
+        }
+        break;
+
+      case 'login':
+        const { error } = await login(data[0], data[1]);
+        if (!error) {
+          Message.send({ content: "登入成功！", duration: 2000, type: 'success' });
+        }
+        else if (error !== 'loading') {
+          Message.send({ content: loginError[error], duration: 2000, type: 'error' });
+        }
+        break;
+
+      default: break;
+    }
   }
 
   const sidebarItems = [
@@ -77,7 +112,7 @@ const Header = () => {
       </HeaderWrapper>
       <Sidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} items={sidebarItems} />
       <Dropdown collapsed={dropdownCollapsed} setCollapsed={setDropdownCollapsed} items={dropdownItems} />
-      <Modal collapsed={modalCollapsed} setCollapsed={setModalCollapsed} items={modalData.items} title={modalData.title} />
+      <Modal collapsed={modalCollapsed} setCollapsed={setModalCollapsed} onConfirm={handleConfirm} items={modalData.items} title={modalData.title} />
     </>
   );
 }

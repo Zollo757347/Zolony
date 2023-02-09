@@ -1,11 +1,33 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import styled from "styled-components";
 import Button, { ButtonTexture } from "./Button";
 
-const Modal = ({ collapsed, setCollapsed, title, items }) => {
+const Modal = ({ collapsed, setCollapsed, title, items, onConfirm, onCancel }) => {
+  const [data, setData] = useState([]);
+
+  function handleChange(value, index) {
+    const newData = [];
+    for (let i = 0; i < items.length; i++) {
+      newData[i] = i === index ? value : data[i] ?? '';
+    }
+    setData(newData);
+  }
+
+  function handleConfirm() {
+    setData([]);
+    setCollapsed(true);
+    onConfirm?.(data);
+  }
+
+  function handleCancel() {
+    setData([]);
+    setCollapsed(true);
+    onCancel?.();
+  }
+
   return (
     <ModalWrapper collapsed={collapsed}>
-      <StyledGhostDiv onClick={() => setCollapsed(true)} />
+      <StyledGhostDiv onClick={handleCancel} />
       <StyleModal>
         <StyledTitle>{title}</StyledTitle>
         <InputArea>{
@@ -14,14 +36,14 @@ const Modal = ({ collapsed, setCollapsed, title, items }) => {
             return <Fragment key={i}>
               <span>{item.title}</span>
               <br />
-              <StyledInput placeholder={item.placeholder} type={item.type} />
+              <StyledInput value={data[i] ?? ''} placeholder={item.placeholder} type={item.type} onChange={(e) => handleChange(e.target.value, i)} />
               { i === items.length - 1 ? <></> : <><br /><br /></> }
             </Fragment>;
           })
         }</InputArea>
         <ButtonArea>
-          <Button texture={ButtonTexture.Primary}>確定</Button>
-          <Button texture={ButtonTexture.Secondary}>取消</Button>
+          <Button texture={ButtonTexture.Primary} onClick={handleConfirm}>確定</Button>
+          <Button texture={ButtonTexture.Secondary} onClick={handleCancel}>取消</Button>
         </ButtonArea>
       </StyleModal>
     </ModalWrapper>

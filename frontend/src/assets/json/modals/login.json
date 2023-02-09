@@ -1,4 +1,5 @@
 {
+  "action": "login", 
   "title": "登入",
   "items": [{
     "type": "normal", 
