@@ -4,14 +4,16 @@ import styled from 'styled-components';
 import Dropdown from './Dropdown';
 import Sidebar from './Sidebar';
 import { useHook } from '../hooks/useHook';
+import Message from './Message';
 import Modal from './Modal';
 
+import deleteUserData from '../assets/json/modals/deleteUser.json';
 import loginData from '../assets/json/modals/login.json';
 import signinData from '../assets/json/modals/signin.json';
 
 import createUserError from '../assets/json/errors/createUser.json';
+import deleteUserError from '../assets/json/errors/deleteUser.json';
 import loginError from '../assets/json/errors/login.json';
-import Message from './Message';
 
 const Header = () => {
   const [sidebarCollapsed, _setSidebarCollapsed] = useState(true);
@@ -19,7 +21,7 @@ const Header = () => {
   const [modalCollapsed, _setModalCollapsed] = useState(true);
   const [modalData, setModalData] = useState({ action: '', title: '', items: [] });
 
-  const { user, createUser, login, logout } = useHook();
+  const { user, createUser, deleteUser, login, logout } = useHook();
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -43,13 +45,16 @@ const Header = () => {
   }
 
   async function handleConfirm(data) {
+    let error;
+
     switch (modalData.action) {
       case 'signin':
         if (data[1] !== data[2]) {
           Message.send({ content: createUserError.password, duration: 2000, type: 'error' });
         }
         else {
-          const { error } = await createUser(data[0], data[1]);
+          console.log(data[0], data[1]);
+          ({ error } = await createUser(data[0], data[1]));
           if (!error) {
             Message.send({ content: "成功建立帳號！", duration: 2000, type: 'success' });
             navigate('/profile');
@@ -61,13 +66,31 @@ const Header = () => {
         break;
 
       case 'login':
-        const { error } = await login(data[0], data[1]);
+        ({ error } = await login(data[0], data[1]));
         if (!error) {
           Message.send({ content: "登入成功！", duration: 2000, type: 'success' });
           navigate('/profile');
         }
         else if (error !== 'loading') {
           Message.send({ content: loginError[error], duration: 2000, type: 'error' });
+        }
+        break;
+
+      case 'deleteUser':
+        if (data[0] !== user.username) {
+          Message.send({ content: deleteUserError.username, duration: 2000, type: 'error' });
+        }
+        else {
+          ({ error } = await deleteUser(data[0], data[1]));
+          if (!error) {
+            Message.send({ content: "成功刪除帳號", duration: 2000, type: 'success' });
+            if (pathname === '/profile') {
+              navigate('/');
+            }
+          }
+          else if (error !== 'loading') {
+            Message.send({ content: loginError[error], duration: 2000, type: 'error' });
+          }
         }
         break;
 
@@ -95,7 +118,12 @@ const Header = () => {
       if (pathname === '/profile') {
         navigate('/');
       }
-    } }
+    } }, {
+      name: '刪除帳號', todo: () => {
+        setModalCollapsed(false);
+        setModalData(deleteUserData);
+      }
+    }
   ] : [
     { name: '註冊帳號', todo: () => {
       setModalCollapsed(false);

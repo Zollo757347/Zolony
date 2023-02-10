@@ -1,5 +1,5 @@
 {
-  "action": "singin", 
+  "action": "signin", 
   "title": "註冊帳號",
   "items": [{
     "type": "normal", 
