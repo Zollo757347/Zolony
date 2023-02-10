@@ -14,6 +14,7 @@ import Transmit from "./pages/Transmit";
 import Profile from "./pages/Profile";
 
 import './App.css';
+import Footer from './components/Footer';
 
 const App = () => {
   const divRef = useRef();
@@ -27,7 +28,7 @@ const App = () => {
     <AppWrapper>
       <Header />
       <MainWrapper>
-        <div style={{ padding: 15, width: 900, backgroundColor: '#FBFAB7' }}>
+        <Content>
           <div ref={divRef} style={{ transform: 'translateY(-100px)' }}></div>
           <Routes>
             <Route path='/' element={<MainPage />} />
@@ -39,7 +40,8 @@ const App = () => {
             <Route path='/transmit' element={<Transmit />} />
             <Route path='/profile' element={<Profile />} />
           </Routes>
-        </div>
+        </Content>
+        <Footer />
       </MainWrapper>
     </AppWrapper>
   );
@@ -58,7 +60,9 @@ const MainWrapper = styled.div`
   position: relative;
 
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 
   &:before {
     content: '';
@@ -74,6 +78,12 @@ const MainWrapper = styled.div`
     top: 0;
     z-index: -1;
   }
+`;
+
+const Content = styled.div`
+  background-color: #FBFAB7;
+  padding: 15px 15px 100px 15px;
+  width: 900px;
 `;
 
 export default App;
