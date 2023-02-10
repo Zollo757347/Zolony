@@ -11,7 +11,7 @@ import Signal from "./pages/Signal";
 import Torch from "./pages/Torch";
 import Transmit from "./pages/Transmit";
 
-// import Info from "./containers/Info";
+import Profile from "./pages/Profile";
 
 import './App.css';
 
@@ -37,6 +37,7 @@ const App = () => {
             <Route path='/signal' element={<Signal />} />
             <Route path='/torch' element={<Torch />} />
             <Route path='/transmit' element={<Transmit />} />
+            <Route path='/profile' element={<Profile />} />
           </Routes>
         </div>
       </MainWrapper>

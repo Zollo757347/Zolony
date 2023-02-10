@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Dropdown from './Dropdown';
 import Sidebar from './Sidebar';
@@ -20,6 +20,8 @@ const Header = () => {
   const [modalData, setModalData] = useState({ action: '', title: '', items: [] });
 
   const { user, createUser, login, logout } = useHook();
+
+  const navigate = useNavigate();
 
   function setSidebarCollapsed(value) {
     _setSidebarCollapsed(value);
@@ -80,12 +82,13 @@ const Header = () => {
   ];
 
   const dropdownItems = user.loggedIn ? [
-    { name: '個人資料', todo: () => {} }, 
+    { name: '個人資料', path: '/profile', todo: () => navigate('/profile') }, 
     { name: '登出', todo: () => logout() }
   ] : [
     { name: '註冊帳號', todo: () => {
       setModalCollapsed(false);
       setModalData(signinData);
+
     } }, 
     { name: '登入', todo: () => {
       setModalCollapsed(false);

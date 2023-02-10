@@ -1,12 +1,11 @@
 import { useRef, useState } from 'react';
 import { Form, Input, Avatar, Image, Select, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
-import './css/Info.css';
 import { useHook } from '../hooks/useHook';
-import Utils from '../classes/Utils';
 import Button, { ButtonTexture } from '../components/Button';
 import Canvas from '../components/Canvas';
-import Message from "./components/Message"
+import Message from "../components/Message"
+import { sleep } from '../utils';
 
 const Info = ({ setOpenModal }) => {
   const mapNameRef = useRef();
@@ -46,7 +45,7 @@ const Info = ({ setOpenModal }) => {
     }
 
     setDisplayCanvas(null);
-    await Utils.Sleep(1);
+    await sleep(1);
 
     const preLoadData = JSON.parse(JSON.stringify(data));
     setDisplayCanvas(<Canvas canvasWidth={500} canvasHeight={500} xLen={data.xLen} yLen={data.yLen} zLen={data.zLen} preLoadData={preLoadData} storable={true} />);
@@ -84,7 +83,7 @@ const Info = ({ setOpenModal }) => {
     }
 
     setDisplayCanvas(null);
-    await Utils.Sleep(1);
+    await sleep(1);
 
     const preLoadData = JSON.parse(JSON.stringify(data));
     setDisplayCanvas(<Canvas canvasWidth={500} canvasHeight={500} xLen={data.xLen} yLen={data.yLen} zLen={data.zLen} preLoadData={preLoadData} storable={true} />);
