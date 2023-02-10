@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
-import { Form, Input, Avatar, Image, Select, Modal } from 'antd';
+import { Form, Input, Select, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { useHook } from '../hooks/useHook';
 import Button, { ButtonTexture } from '../components/Button';
 import Canvas from '../components/Canvas';
 import Message from "../components/Message"
 import { sleep } from '../utils';
+import styled from 'styled-components';
 
 const Info = ({ setOpenModal }) => {
   const mapNameRef = useRef();
@@ -121,40 +122,6 @@ const Info = ({ setOpenModal }) => {
     setCurrentMapName('');
   }
 
-  const profileForm = <>
-    <Form>
-      <div id='Info-username' className='Info-left'>
-        <Form.Item label="Username">
-          <Input defaultValue={user.username} disabled={true}/>
-        </Form.Item>
-      </div>
-      <div id='Info-avatar' className='Info-left'>
-        <Avatar
-          src={<Image src={user.avatar}/>}
-          style={{
-            width: 400,
-            height: 400,
-          }}
-        />
-      </div>
-      <div id='Info-bio' className='Info-left'>
-        <Form.Item label="Bio">{user.bio}</Form.Item>
-      </div>
-      <div id='Info-btn'>
-        <Form.Item>
-          <Button texture={ButtonTexture.Primary} onClick={() => setOpenModal(3)}>
-            編輯個人資料
-          </Button>
-        </Form.Item>
-        <Form.Item>
-          <Button texture={ButtonTexture.Danger} onClick={() => setOpenModal(4)}>
-            刪除帳號
-          </Button>
-        </Form.Item>
-      </div>
-    </Form>
-  </>;
-
   const MapModal = <>
     <Input ref={mapNameRef} placeholder="輸入你的地圖名稱" prefix={<RightOutlined />} />
     <br/>
@@ -168,10 +135,17 @@ const Info = ({ setOpenModal }) => {
   </>;
 
   return (
-    <div id='Info-wrapper'>
-      <div id='Info-left-wrapper'>
-        {profileForm}
-      </div>
+    <ProfileWrapper>
+      <ProfileCard>
+        <ProfileInfo>
+          <Username>{user.username}</Username>
+          <Bio>{user.bio}</Bio>
+        </ProfileInfo>
+        <ProfileImageWrapper>
+          <ProfileImage src={user.avatar} alt='avatar' />
+        </ProfileImageWrapper>
+      </ProfileCard>
+
       <div id='Info-right-wrapper'>
         <div id='Info-right-header'>
           <div id='Info-select' width="100px">
@@ -211,8 +185,57 @@ const Info = ({ setOpenModal }) => {
       >
         {MapModal}
       </Modal>
-    </div>
+    </ProfileWrapper>
   );
 }
+
+const ProfileWrapper = styled.div`
+  width: 100%;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ProfileCard = styled.div`
+  width: 95%;
+  margin: 20px;
+  padding: 10px 10px 20px 10px;
+  border-bottom: 2px solid #B3A773;
+
+  display: flex;
+  justify-content: space-between;
+`;
+
+const ProfileInfo = styled.div`
+  padding-left: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const Username = styled.div`
+  color: #883500;
+  font-size: 5em;
+  font-family: 'Trebuchet MS';
+`;
+
+const Bio = styled.div`
+  font-size: 1em;
+`;
+
+const ProfileImageWrapper = styled.div`
+  background-color: #EBEAB7;
+  width: 300px;
+  height: 300px;
+  border: 5px solid #EE8500;
+  border-radius: 50%;
+  overflow: hidden;
+`;
+
+const ProfileImage = styled.img`
+  height: 100%;
+`;
 
 export default Info;

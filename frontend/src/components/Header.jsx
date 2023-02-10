@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Dropdown from './Dropdown';
 import Sidebar from './Sidebar';
@@ -21,6 +21,7 @@ const Header = () => {
 
   const { user, createUser, login, logout } = useHook();
 
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
   function setSidebarCollapsed(value) {
@@ -51,6 +52,7 @@ const Header = () => {
           const { error } = await createUser(data[0], data[1]);
           if (!error) {
             Message.send({ content: "成功建立帳號！", duration: 2000, type: 'success' });
+            navigate('/profile');
           }
           else if (error !== 'loading') {
             Message.send({ content: createUserError[error], duration: 2000, type: 'error' });
@@ -62,6 +64,7 @@ const Header = () => {
         const { error } = await login(data[0], data[1]);
         if (!error) {
           Message.send({ content: "登入成功！", duration: 2000, type: 'success' });
+          navigate('/profile');
         }
         else if (error !== 'loading') {
           Message.send({ content: loginError[error], duration: 2000, type: 'error' });
@@ -82,13 +85,21 @@ const Header = () => {
   ];
 
   const dropdownItems = user.loggedIn ? [
-    { name: '個人資料', path: '/profile', todo: () => navigate('/profile') }, 
-    { name: '登出', todo: () => logout() }
+    { name: '個人資料', path: '/profile', todo: () => {
+      setSidebarCollapsed(true);
+      navigate('/profile');
+    } }, 
+    { name: '登出', todo: () => {
+      setSidebarCollapsed(true);
+      logout();
+      if (pathname === '/profile') {
+        navigate('/');
+      }
+    } }
   ] : [
     { name: '註冊帳號', todo: () => {
       setModalCollapsed(false);
       setModalData(signinData);
-
     } }, 
     { name: '登入', todo: () => {
       setModalCollapsed(false);
