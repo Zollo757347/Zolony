@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Form, Input, Select, Modal } from 'antd';
+import { Input, Modal } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import { useHook } from '../hooks/useHook';
 import Button, { ButtonTexture } from '../components/Button';
@@ -7,8 +7,9 @@ import Canvas from '../components/Canvas';
 import Message from "../components/Message"
 import { sleep } from '../utils';
 import styled from 'styled-components';
+import Select from '../components/Select';
 
-const Info = ({ setOpenModal }) => {
+const Info = () => {
   const mapNameRef = useRef();
   const xLenRef = useRef();
   const yLenRef = useRef();
@@ -16,7 +17,7 @@ const Info = ({ setOpenModal }) => {
 
   const [openMapModal, setOpenMapModal] = useState(false);
   const [currentMapName, setCurrentMapName] = useState('');
-  const [displayCanvas, setDisplayCanvas] = useState(null);
+  const [displayCanvas, setDisplayCanvas] = useState(<Canvas canvasWidth={500} canvasHeight={500} xLen={1} yLen={1} zLen={1}></Canvas>);
 
   const { getMap, createMap, deleteMap, user } = useHook();
 
@@ -146,35 +147,25 @@ const Info = ({ setOpenModal }) => {
         </ProfileImageWrapper>
       </ProfileCard>
 
-      <div id='Info-right-wrapper'>
-        <div id='Info-right-header'>
-          <div id='Info-select' width="100px">
-            <Form><Form.Item><Select
-              showSearch
-              placeholder="請選擇一張地圖"
-              optionFilterProp="children"
-              onSelect={onSelect}
-              onChange={onSelect}
-              style = {{
-                width: '100%'
-              }}
-              filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-              }
-              options={user.maps.map(name => ({ label: name, value: name }))}
-            /></Form.Item></Form>
-          </div>
+      <ProfileMapWrapper>
+        <MapFunctions>
+          <Select
+            placeholder={user.maps.length ? "請選擇一張地圖" : "你還沒有任何地圖"}
+            onSelect={onSelect}
+            onChange={onSelect}
+            options={user.maps.map(name => ({ label: name, value: name }))}
+          />
           <Button texture={ButtonTexture.Danger} onClick={handleMapDelete} disabled={!displayCanvas}>
             刪除地圖
           </Button>
           <Button texture={ButtonTexture.Success} onClick={() => setOpenMapModal(true)}> 
             建立地圖
           </Button>
-        </div>
-        <div id='Info-right-section'>
+        </MapFunctions>
+        <MapArea>
           {displayCanvas ?? <></>}
-        </div>
-      </div>
+        </MapArea>
+      </ProfileMapWrapper>
 
       <Modal
         title="建立地圖"
@@ -236,6 +227,23 @@ const ProfileImageWrapper = styled.div`
 
 const ProfileImage = styled.img`
   height: 100%;
+`;
+
+const ProfileMapWrapper = styled.div`
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const MapFunctions = styled.div`
+  padding: 5px;
+`;
+
+const MapArea = styled.div`
+  height: 550px;
+  padding: 5px;
 `;
 
 export default Info;
