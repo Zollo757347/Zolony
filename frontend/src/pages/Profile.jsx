@@ -1,27 +1,25 @@
-import { useRef, useState } from 'react';
-import { Input, Modal } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
+import { useState } from 'react';
+
 import { useHook } from '../hooks/useHook';
+import { sleep } from '../utils';
+
 import Button, { ButtonTexture } from '../components/Button';
 import Canvas from '../components/Canvas';
 import Message from "../components/Message"
-import { sleep } from '../utils';
-import styled from 'styled-components';
+import Modal from '../components/Modal';
 import Select from '../components/Select';
 
-const Info = () => {
-  const mapNameRef = useRef();
-  const xLenRef = useRef();
-  const yLenRef = useRef();
-  const zLenRef = useRef();
+import createMapData from "../assets/json/modals/createMap.json";
 
-  const [openMapModal, setOpenMapModal] = useState(false);
+const Info = () => {
+  const [modalCollapsed, setModalCollapsed] = useState(true);
   const [currentMapName, setCurrentMapName] = useState('');
   const [displayCanvas, setDisplayCanvas] = useState(<Canvas canvasWidth={500} canvasHeight={500} xLen={1} yLen={1} zLen={1}></Canvas>);
 
   const { getMap, createMap, deleteMap, user } = useHook();
 
-  const onSelect = async (mapName) => {
+  const handleChange = async (mapName) => {
     const { error, data } = await getMap(user.username, mapName);
     switch (error) {
       case 'loading': return;
@@ -54,12 +52,12 @@ const Info = () => {
     setCurrentMapName(preLoadData.mapName);
   }
 
-  const handleModalOk = async () => {
+  const handleConfirm = async modalData => {
     const { error, data } = await createMap(user.username, {
-      xLen: parseInt(xLenRef.current.input.value), 
-      yLen: parseInt(yLenRef.current.input.value), 
-      zLen: parseInt(zLenRef.current.input.value), 
-      mapName: mapNameRef.current.input.value
+      xLen: parseInt(modalData[1]), 
+      yLen: parseInt(modalData[2]), 
+      zLen: parseInt(modalData[3]), 
+      mapName: modalData[0]
     });
     switch (error) {
       case 'loading': return;
@@ -91,7 +89,7 @@ const Info = () => {
     setDisplayCanvas(<Canvas canvasWidth={500} canvasHeight={500} xLen={data.xLen} yLen={data.yLen} zLen={data.zLen} preLoadData={preLoadData} storable={true} />);
     setCurrentMapName(preLoadData.mapName);
 
-    setOpenMapModal(false);
+    setModalCollapsed(true);
   }
 
   const handleMapDelete = async () => {
@@ -123,18 +121,6 @@ const Info = () => {
     setCurrentMapName('');
   }
 
-  const MapModal = <>
-    <Input ref={mapNameRef} placeholder="輸入你的地圖名稱" prefix={<RightOutlined />} />
-    <br/>
-    <br/>
-    <span>輸入三軸的長度</span>
-    <div id='Map-Modal-xyz-wrapper'>
-      <Input ref={xLenRef} placeholder="X 軸長" className='Map-Modal-xyz' />
-      <Input ref={yLenRef} placeholder="Y 軸長" className='Map-Modal-xyz' />
-      <Input ref={zLenRef} placeholder="Z 軸長" className='Map-Modal-xyz' />
-    </div>
-  </>;
-
   return (
     <ProfileWrapper>
       <ProfileCard>
@@ -151,14 +137,13 @@ const Info = () => {
         <MapFunctions>
           <Select
             placeholder={user.maps.length ? "請選擇一張地圖" : "你還沒有任何地圖"}
-            onSelect={onSelect}
-            onChange={onSelect}
+            onChange={handleChange}
             options={user.maps.map(name => ({ label: name, value: name }))}
           />
           <Button texture={ButtonTexture.Danger} onClick={handleMapDelete} disabled={!displayCanvas}>
             刪除地圖
           </Button>
-          <Button texture={ButtonTexture.Success} onClick={() => setOpenMapModal(true)}> 
+          <Button texture={ButtonTexture.Success} onClick={() => setModalCollapsed(false)}> 
             建立地圖
           </Button>
         </MapFunctions>
@@ -166,16 +151,7 @@ const Info = () => {
           {displayCanvas ?? <></>}
         </MapArea>
       </ProfileMapWrapper>
-
-      <Modal
-        title="建立地圖"
-        centered
-        open={openMapModal}
-        onOk={() => handleModalOk()}
-        onCancel={() => setOpenMapModal(false)}
-      >
-        {MapModal}
-      </Modal>
+      <Modal collapsed={modalCollapsed} setCollapsed={setModalCollapsed} onConfirm={handleConfirm} items={createMapData.items} title={createMapData.title} />
     </ProfileWrapper>
   );
 }

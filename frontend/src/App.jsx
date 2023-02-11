@@ -82,7 +82,7 @@ const MainWrapper = styled.div`
 
 const Content = styled.div`
   background-color: #FBFAB7;
-  padding: 15px 15px 100px 15px;
+  padding: 0 15px 100px 15px;
   width: 900px;
 `;
 
