@@ -1,20 +1,20 @@
 import { useEffect, useRef } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+
 import Header from './components/Header';
+import Footer from './components/Footer';
 
 import MainPage from "./pages/MainPage";
 import Adder from "./pages/Adder";
 import Notorand from "./pages/Notorand";
+import Profile from "./pages/Profile";
 import Repeater from "./pages/Repeater";
 import Signal from "./pages/Signal";
 import Torch from "./pages/Torch";
 import Transmit from "./pages/Transmit";
 
-import Profile from "./pages/Profile";
 
-import './App.css';
-import Footer from './components/Footer';
 
 const App = () => {
   const divRef = useRef();

@@ -52,3 +52,63 @@
   animation-name: message-leave-ani;
   animation-duration: 1000ms;
 }
+
+
+a {
+  color: rgb(130, 120, 0);
+  text-decoration: none;
+}
+  
+h1 {
+  font-size: 2em;
+  font-weight: normal;
+}
+  
+h1 + hr {
+  border: 1px solid rgb(77, 71, 0);
+  border-radius: 1em;
+  background-color: rgb(77, 71, 0);
+}
+
+.property-list {
+  margin: 2em 0.5em;
+  text-align: center;
+}
+  
+.property-list caption {
+  font-weight: bold;
+}
+  
+.property-list, .property-list caption, th, td {
+  border: 2px solid black;
+  border-collapse: collapse;
+  padding: 1px 5px;
+}
+  
+.property-list caption {
+  border-bottom: none;
+}
+  
+.property-list th {
+  background-color: rgb(242, 233, 119);
+  padding: 0.5em;
+}
+  
+.property-list td {
+  background-color: rgb(250, 248, 217);
+}
+  
+.rs-prop {
+  padding: 10px;
+  border: 3px solid yellow;
+  border-radius: 8px;
+  margin: 0 50px 0 20px;
+}
+  
+.note {
+  font-size: 0.8em;
+  padding: 6px 6px 6px 10px;
+  border: 3px solid lime;
+  border-radius: 8px;
+  margin: 0 50px 0 20px;
+}
