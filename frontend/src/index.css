@@ -59,6 +59,11 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+  color: rgb(172, 158, 7);
+  text-decoration: underline;
+}
+
 h1 {
   font-size: 2em;
   font-weight: normal;

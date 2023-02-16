@@ -13,6 +13,7 @@ import Repeater from "./pages/Repeater";
 import Signal from "./pages/Signal";
 import Torch from "./pages/Torch";
 import Transmit from "./pages/Transmit";
+import General from './pages/general';
 
 
 
@@ -32,6 +33,9 @@ const App = () => {
           <div ref={divRef} style={{ transform: 'translateY(-100px)' }}></div>
           <Routes>
             <Route path='/' element={<MainPage />} />
+            <Route path='/general'>
+              <Route index element={<General />} />
+            </Route>
             <Route path='/adder' element={<Adder />} />
             <Route path='/notorand' element={<Notorand />} />
             <Route path='/repeater' element={<Repeater />} />
