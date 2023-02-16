@@ -7,6 +7,7 @@ import { HookProvider } from './hooks/useHook';
 import { BrowserRouter } from 'react-router-dom';
 
 import "./index.css";
+import 'katex/dist/katex.min.css';
 
 const LINK = process.env.NODE_ENV === "production" ? "/" : "http://localhost:4000/";
 const httpLink = new HttpLink({ uri: LINK });

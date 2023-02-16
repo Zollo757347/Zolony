@@ -1,6 +1,7 @@
-import 'katex/dist/katex.min.css';
-import Latex from 'react-latex-next';
 import Image from '../components/Image';
+import Table from '../components/Table';
+
+import tableData from "../assets/json/tables/signal.json";
 
 const Signal = () => {
   return (
@@ -36,198 +37,20 @@ const Signal = () => {
       <section>
         <h3>永久電源</h3>
         <p>永久電源是無論如何都會啟動的電源。</p>
-        <table className="property-list">
-          <thead>
-            <tr>
-              <th colSpan="2">電源名稱</th>
-              <th>指向方塊</th>
-              <th>充能強度</th>
-              <th>備註</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colSpan="2">紅石方塊</td>
-              <td>無</td>
-              <td>15</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
+        <Table content={tableData.permanent} />
       </section>
 
       <section>
         <h3>條件電源</h3>
         <p>條件電源只有在滿足特定條件下才會啟動，其他時間都會處於未啟動的狀態。</p>
-        <table className="property-list">
-          <thead>
-            <tr>
-              <th colSpan="2">電源名稱</th>
-              <th>啟動條件</th>
-              <th>指向方塊</th>
-              <th>充能強度</th>
-              <th>備註</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colSpan="2">紅石火把</td>
-              <td>附著方塊未充能</td>
-              <td>正上方的方塊</td>
-              <td>15</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td colSpan="2">控制桿</td>
-              <td>控制桿被拉下</td>
-              <td>附著方塊</td>
-              <td>15</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td rowSpan="4">壓力板</td>
-              <td>石</td>
-              <td>壓力板被生物壓住</td>
-              <td rowSpan="4">附著方塊</td>
-              <td rowSpan="2">15</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>木</td>
-              <td rowSpan="3">壓力板被實體壓住</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>金</td>
-              <td><Latex>{'$$ \\min \\left( N, 15 \\right) $$'}</Latex></td>
-              <td rowSpan="2"><Latex>$ N $</Latex> 為實體數量</td>
-            </tr>
-            <tr>
-              <td>鐵</td>
-              <td><Latex>{'$$ \\min \\left( \\Big\\lfloor \\frac{N - 1}{10} \\Big\\rfloor + 1, 15 \\right) $$'}</Latex></td>
-            </tr>
-            <tr>
-              <td rowSpan="2">日光感測器</td>
-              <td>日</td>
-              <td>日照強度足夠大時</td>
-              <td rowSpan="2">無</td>
-              <td>與日照強度呈正相關</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>夜</td>
-              <td>日照強度足夠小時</td>
-              <td>與日照強度呈負相關</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td colSpan="2">絆線鈎</td>
-              <td>至少一個實體在連接的絆線</td>
-              <td>附著方塊</td>
-              <td>15</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td colSpan="2">陷阱儲物箱</td>
-              <td>有至少一個玩家開啟儲物箱</td>
-              <td>下相鄰方塊</td>
-              <td><Latex>{'$$ \\min \\left( N, 15 \\right) $$'}</Latex></td>
-              <td><Latex>$ N $</Latex> 為開啟儲物箱的玩家數</td>
-            </tr>
-            <tr>
-              <td colSpan="2">感測鐵軌</td>
-              <td>鐵軌被礦車壓住</td>
-              <td>附著方塊</td>
-              <td>15</td>
-              <td>啟動時間（紅石刻）無條件進位至十位數</td>
-            </tr>
-          </tbody>
-        </table>
+        <Table content={tableData.conditional} />
       </section>
 
       <section>
         <h3>脈衝電源</h3>
         <p>脈衝電源只有滿足特定條件時才會啟動，且啟動後只會發出一道短暫的紅石訊號，隨即消失，這種短暫的「關→開→關」訊號就稱為「<b>正脈衝</b>（On-pulse）」。</p>
         <div className="note">如果訊號是短暫的「開→關→開」，則此訊號稱為「<b>負脈衝</b>（Off-pulse）」。</div>
-        <table className="property-list">
-          <thead>
-            <tr>
-              <th colSpan="2">電源名稱</th>
-              <th>啟動條件</th>
-              <th>脈衝長度<br/>（紅石刻）</th>
-              <th>指向方塊</th>
-              <th>充能強度</th>
-              <th>備註</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td rowSpan="2">按鈕</td>
-              <td>木</td>
-              <td rowSpan="2">按鈕被按下</td>
-              <td>15</td>
-              <td rowSpan="2">附著方塊</td>
-              <td rowSpan="2">15</td>
-              <td rowSpan="2"></td>
-            </tr>
-            <tr>
-              <td>石</td>
-              <td>10</td>
-            </tr>
-            <tr>
-              <td colSpan="2">偵測器</td>
-              <td>前相鄰方塊更新</td>
-              <td>1</td>
-              <td>後相鄰方塊</td>
-              <td>15</td>
-              <td>偵測器本身不充能</td>
-            </tr>
-            <tr>
-              <td colSpan="2">絆線鈎</td>
-              <td>連接的絆線被剪刀外的工具破壞</td>
-              <td>5</td>
-              <td>附著方塊</td>
-              <td>15</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td colSpan="2">講台</td>
-              <td>講台上的書被玩家翻頁</td>
-              <td>0.5</td>
-              <td>下相鄰方塊</td>
-              <td>15</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td colSpan="2" rowSpan="2">標靶</td>
-              <td>被箭矢、三叉戟擊中</td>
-              <td>10</td>
-              <td rowSpan="2">無</td>
-              <td rowSpan="2"><Latex>{'$$ \\min \\left( \\lfloor 16 - 30D \\rfloor ,15 \\right) $$'}</Latex></td>
-              <td rowSpan="2"><Latex>$ D $</Latex> 為與中心的距離（格）</td>
-            </tr>
-            <tr>
-              <td>被其他投射物擊中</td>
-              <td>4</td>
-            </tr>
-            <tr>
-              <td colSpan="2">避雷針</td>
-              <td>被閃電擊中</td>
-              <td>4</td>
-              <td>下相鄰方塊</td>
-              <td>15</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td colSpan="2">伏聆振測器<br/>（Sculk Sensor）</td>
-              <td>偵測到附近有聲音</td>
-              <td>20</td>
-              <td>無</td>
-              <td>與聲音發出的距離成反比</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
+        <Table content={tableData.pulse} />
       </section>
     </article>
   );

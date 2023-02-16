@@ -1,6 +1,9 @@
 import Canvas from '../components/Canvas';
 import Image from '../components/Image';
-import data from "../assets/json/levels/Official Map 4.json"
+import Table from '../components/Table';
+
+import data from "../assets/json/levels/Official Map 4.json";
+import tableData from "../assets/json/tables/notorand.json";
 
 const Notorand = () => {
   return (
@@ -18,24 +21,7 @@ const Notorand = () => {
         <h2>NOT Gate</h2>
         <p><b>非閘</b>（NOT Gate）是個只有一個輸入端、一個輸出端的邏輯閘，這個邏輯閘的規則是「輸入是否等於 0」，NOT Gate 的真值表會是：</p>
 
-        <table className="property-list">
-          <thead>
-            <tr>
-              <th>輸入</th>
-              <th>輸出</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
+        <Table content={tableData.notGate} />
 
         <div className="rs-prop"><b>真值表</b>：一種把所有輸入的可能、以及每組輸入組合所對應的輸出全部列出來的表。</div>
 
@@ -50,37 +36,7 @@ const Notorand = () => {
         <h2>OR Gate</h2>
         <p><b>或閘</b>（OR Gate）是個有兩個輸入端、一個輸出端的邏輯閘，這個邏輯閘的規則是「輸入 A 或輸入 B 其中一個是 1」，OR Gate 的真值表會是：</p>
 
-        <table className="property-list">
-          <thead>
-            <tr>
-              <th>輸入 A</th>
-              <th>輸入 B</th>
-              <th>輸出</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>0</td>
-              <td>1</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>0</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>1</td>
-              <td>1</td>
-            </tr>
-          </tbody>
-        </table>
+        <Table content={tableData.orGate} />
 
         <p>其實 OR Gate 的規則可以換句話說：「輸入 A <b>或</b>輸入 B 其中一個是 1」，從這個角度來看，就可以很明顯地看出為什麼 OR Gate 被叫做 OR Gate 了。</p>
 
@@ -93,37 +49,7 @@ const Notorand = () => {
         <h2>AND Gate</h2>
         <p><b>與閘</b>（AND Gate）是個有兩個輸入端、一個輸出端的邏輯閘，這個邏輯閘的規則是「兩個輸入端是否都是 1」，AND Gate 的真值表會是：</p>
 
-        <table className="property-list">
-          <thead>
-            <tr>
-              <th>輸入 A</th>
-              <th>輸入 B</th>
-              <th>輸出</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>0</td>
-              <td>1</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>1</td>
-              <td>1</td>
-            </tr>
-          </tbody>
-        </table>
+        <Table content={tableData.andGate} />
 
         <p>就跟 OR Gate 差不多，AND Gate 的規則也可以換句話說：「輸入 A <b>與</b>輸入 B 都是 1」，如此一來 AND Gate 的命名來源也是顯而易見的。</p>
 
@@ -135,43 +61,12 @@ const Notorand = () => {
         <h2>XOR Gate</h2>
         <p><b>異或閘</b>（XOR Gate）是個有兩個輸入端、一個輸出端的邏輯閘，這個邏輯閘的規則是「兩個輸入端是否不相等」，XOR Gate 的真值表會是：</p>
 
-        <table className="property-list">
-          <thead>
-            <tr>
-              <th>輸入 A</th>
-              <th>輸入 B</th>
-              <th>輸出</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td>0</td>
-              <td>1</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>0</td>
-              <td>1</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>1</td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
+        <Table content={tableData.xorGate} />
 
         <p>乍看之下，XOR Gate 似乎沒什麼特別的規律，但如果把 XOR Gate 看成是二進位的加法，輸入 A 與輸入 B 分別當成加數與被加數，輸出就可以當成和的個位數。事實上，在我們稍後將介紹的加法器中，正是利用了 XOR Gate 製作出來的。</p>
 
         <p>因為 XOR Gate 並不是最基本的邏輯閘，所以在紅石電路中製作 XOR Gate 會相對比較複雜，因此根據不同的需求（如最小、最快、最易得等等）也有許多不同的方法，這邊就舉其中一個實作的方法，這種方法會需要用到 5 個紅石火把、2 個紅石中繼器：</p>
         <Image src={require("../assets/pictures/notorand/xor-gate.png")} alt="紅石電路中的 XOR Gate" width="50%"/>
-
       </section>
 
       <section>

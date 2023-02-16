@@ -1,6 +1,9 @@
 import Canvas from '../components/Canvas';
 import Image from '../components/Image';
-import data from "../assets/json/levels/Official Map 5.json"
+import Table from '../components/Table';
+
+import data from "../assets/json/levels/Official Map 5.json";
+import tableData from "../assets/json/tables/adder.json";
 
 const Adder = () => {
   return (
@@ -40,42 +43,7 @@ const Adder = () => {
       <p>一個半加器應該要有辦法處理 0 + 0、0 + 1、1 + 0、1 + 1 共四種不同的輸入，並產生 0、1、2 三種不同的輸出。輸入的部分可以把被加數當成輸入 A、加數當成輸入 B；而因為輸出需要表示 3 個不同的值，所以單個布林輸出是不夠的，會需要用到一個輸出 X 表示和的第二位數、另一個輸出 Y 表示和的第一位數。</p>
 
       <p>如果把上面這段文字轉換為真值表，會變成下表這樣：</p>
-      <table className="property-list">
-        <thead>
-          <tr>
-            <th>輸入 A</th>
-            <th>輸入 B</th>
-            <th>輸出 X</th>
-            <th>輸出 Y</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-          </tr>
-          <tr>
-            <td>0</td>
-            <td>1</td>
-            <td>0</td>
-            <td>1</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>0</td>
-            <td>0</td>
-            <td>1</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
-            <td>0</td>
-          </tr>
-        </tbody>
-      </table>
+      <Table content={tableData.halfAdder} />
 
       <p>眼尖的你可能會發現，輸出 X 似乎就是 A 和 B 經過 AND Gate 之後的結果，而輸出 Y 是 A 和 B 經過 XOR Gate 之後的結果。因此，所謂半加器，其實就是一個 AND Gate 和一個 XOR Gate 而已。</p>
 
@@ -97,61 +65,7 @@ const Adder = () => {
       <p>前段提到的<b>全加器</b>（Full Adder）其實就是把兩個半加器合起來的單位數加法器。雖然說聽起來很像是只要把兩個半加器直接串起來就可以了，但其實新加入的半加器要處理的運算是不一樣的，它會需要處理 0 + 0、0 + 1、1 + 0、1 + 1、2 + 0、2 + 1 共六種不同的輸入，並產生 0、1、2、3 共四種不同的輸出。在輸入中，被加數是從前一個加法器來的，所以可以直接引用 X 和 Y 作為輸入，並多加一個輸入 C 來代表前一位數的進位；而輸出的部分可以用輸出 S 來表示和的第二位數、用輸出 T 來表示和的第一位數。</p>
 
       <p>我們就繼續用相同的手法，把所有可能組合的真值表全部列出來：</p>
-      <table className="property-list">
-        <thead>
-          <tr>
-            <th>輸入 X</th>
-            <th>輸入 Y</th>
-            <th>輸入 C</th>
-            <th>輸出 S</th>
-            <th>輸出 T</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-          </tr>
-          <tr>
-            <td>0</td>
-            <td>0</td>
-            <td>1</td>
-            <td>0</td>
-            <td>1</td>
-          </tr>
-          <tr>
-            <td>0</td>
-            <td>1</td>
-            <td>0</td>
-            <td>0</td>
-            <td>1</td>
-          </tr>
-          <tr>
-            <td>0</td>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
-            <td>0</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>0</td>
-            <td>0</td>
-            <td>1</td>
-            <td>0</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>0</td>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
-          </tr>
-        </tbody>
-      </table>
+      <Table content={tableData.fullAdder} />
 
       <p>因為 X 和 Y 是前一個半加器計算後的結果，而前一個半加器不可能計算出 3 這個數字，所以 X 和 Y 不可能同時為 1，在上表就直接忽略這種組合了。</p>
 
