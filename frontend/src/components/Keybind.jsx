@@ -49,6 +49,10 @@ const KeybindWrapper = styled.span`
 
 const StyledSpan = styled.span`
   text-decoration: underline dotted;
+
+  &:hover {
+    cursor: help;
+  }
 `;
 
 const Tooltip = styled.span`

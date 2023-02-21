@@ -72,7 +72,7 @@ const MainWrapper = styled.div`
 
   &:before {
     content: '';
-    background-image: url("./background.png");
+    background-image: url("/background.png");
     background-size: 500px;
     filter: opacity(0.2);
 
