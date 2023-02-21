@@ -1,0 +1,14 @@
+{
+  "/": {
+    "name": "首頁", 
+    "next": ["/general"]
+  }, 
+  "/general": {
+    "name": "在一切開始之前……", 
+    "next": ["/general/nouns"]
+  }, 
+  "/general/nouns": {
+    "name": "一些你需要的名詞", 
+    "next": ["/"]
+  }
+}
