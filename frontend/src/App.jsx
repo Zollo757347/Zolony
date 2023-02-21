@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Header from './components/Header';
@@ -16,6 +16,7 @@ import Transmit from "./pages/Transmit";
 import General from './pages/general';
 import Nouns from './pages/general/Nouns';
 
+import CourseMap from './assets/json/utils/courseMap.json';
 
 
 const App = () => {
@@ -25,7 +26,13 @@ const App = () => {
   useEffect(() => {
     divRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [pathname]);
-  
+
+  const Next = (pathname !== '/' && CourseMap[pathname]) ? 
+    <NextPage>{
+      CourseMap[pathname].next.map((path, i) => <Link to={path} key={i}>{CourseMap[path].name + ' ‧>'}</Link>)
+    }</NextPage> : 
+    <></>;
+
   return (
     <AppWrapper>
       <Header />
@@ -46,6 +53,7 @@ const App = () => {
             <Route path='/transmit' element={<Transmit />} />
             <Route path='/profile' element={<Profile />} />
           </Routes>
+          {Next}
         </Content>
         <Footer />
       </MainWrapper>
@@ -90,6 +98,14 @@ const Content = styled.div`
   background-color: #FBFAB7;
   padding: 0 15px 100px 15px;
   width: 900px;
+
+  display: flex;
+  flex-direction: column;
+`;
+
+const NextPage = styled.div`
+  margin: 20px;
+  align-self: flex-end;
 `;
 
 export default App;
