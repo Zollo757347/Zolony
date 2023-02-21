@@ -1,20 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
-
-import MainPage from "./pages/MainPage";
-import Adder from "./pages/Adder";
-import Notorand from "./pages/Notorand";
-import Profile from "./pages/Profile";
-import Repeater from "./pages/Repeater";
-import Signal from "./pages/Signal";
-import Torch from "./pages/Torch";
-import Transmit from "./pages/Transmit";
-import General from './pages/general';
-import Nouns from './pages/general/Nouns';
+import Routes from './components/Routes';
 
 import CourseMap from './assets/json/utils/courseMap.json';
 
@@ -39,20 +29,7 @@ const App = () => {
       <MainWrapper>
         <Content>
           <div ref={divRef} style={{ transform: 'translateY(-100px)' }}></div>
-          <Routes>
-            <Route path='/' element={<MainPage />} />
-            <Route path='/general'>
-              <Route index element={<General />} />
-              <Route path="nouns" element={<Nouns />} />
-            </Route>
-            <Route path='/adder' element={<Adder />} />
-            <Route path='/notorand' element={<Notorand />} />
-            <Route path='/repeater' element={<Repeater />} />
-            <Route path='/signal' element={<Signal />} />
-            <Route path='/torch' element={<Torch />} />
-            <Route path='/transmit' element={<Transmit />} />
-            <Route path='/profile' element={<Profile />} />
-          </Routes>
+          <Routes />
           {Next}
         </Content>
         <Footer />
