@@ -14,6 +14,7 @@ import Signal from "./pages/Signal";
 import Torch from "./pages/Torch";
 import Transmit from "./pages/Transmit";
 import General from './pages/general';
+import Nouns from './pages/general/Nouns';
 
 
 
@@ -35,6 +36,7 @@ const App = () => {
             <Route path='/' element={<MainPage />} />
             <Route path='/general'>
               <Route index element={<General />} />
+              <Route path="nouns" element={<Nouns />} />
             </Route>
             <Route path='/adder' element={<Adder />} />
             <Route path='/notorand' element={<Notorand />} />
