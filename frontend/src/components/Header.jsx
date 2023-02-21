@@ -103,7 +103,7 @@ const Header = () => {
     { name: '明與暗的旅程．訊號傳遞', path: '/redstone/transmit' },
     { name: '強棒接力．紅石中繼器', path: '/redstone/repeater' },
     { name: '顛倒是非．紅石火把', path: '/redstone/torch' },
-    { name: '邏輯閘．非或與', path: '/notorand' },
+    { name: '邏輯閘．非或與', path: '/concepts/notorand' },
     { name: '計算機的第一步．加法器', path: '/redstone/adder' }
   ];
 
