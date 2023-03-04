@@ -326,10 +326,9 @@ class Engine {
     }
 
     // 其他情形則直接把方塊放在指定位置上
-    let norm = Axis.VECTOR[normDir];
-    x += norm.x;
-    y += norm.y;
-    z += norm.z;
+    x += normDir[0];
+    y += normDir[1];
+    z += normDir[2];
 
     // 不能超出範圍
     if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
@@ -338,7 +337,7 @@ class Engine {
     if (this._pg[x][y][z].type !== 0) return;
 
     const newBlock = new B({ x, y, z, engine: this });
-    newBlock.setFacing?.(normDir, facingDir);
+    newBlock.setFacing?.(Axis.PX, facingDir);
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 
     this._pg[x][y][z] = newBlock;

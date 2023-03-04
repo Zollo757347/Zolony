@@ -1,5 +1,6 @@
 import { AirBlock, Axis, Concrete, GlassBlock, Lever, NewBlock, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, Vector3 } from "./core";
 import Engine from "./Engine";
+import Renderer from "./Renderer";
 
 /**
  * @typedef PlaygroundAngles 記錄物體的旋轉角度
@@ -17,15 +18,6 @@ import Engine from "./Engine";
  * @property {number} yLen 畫布中物體的 y 軸長度，單位為格
  * @property {number} zLen 畫布中物體的 z 軸長度，單位為格
  * @property {PlaygroundAngles} 物體的初始角度
- */
-
-/**
- * @typedef TargetBlock 目標方塊的資訊
- * @type {object}
- * @property {Vector3} cords 目標方塊在旋轉前的三維坐標
- * @property {Vector3[]} points 目標平面在旋轉、投影後的三維座標
- * @property {symbol} normDir 目標平面在旋轉前的法向量
- * @property {symbol} facingDir 與觀察者視角最接近的軸向量
  */
 
 /**
@@ -96,30 +88,6 @@ class Playground {
     this.cursorY = 0;
 
     /**
-     * 物體的縮放倍率
-     * @type {number}
-     */
-    this.stretchMult = Math.min(canvasWidth, canvasHeight) / Math.max(this.xLen, this.yLen, this.zLen);
-
-    /**
-     * 投影面的 z 座標
-     * @type {number}
-     */
-    this.screenZ = Math.min(canvasWidth, canvasHeight);
-
-    /**
-     * 觀察點的 z 座標
-     * @type {number}
-     */
-    this.cameraZ = Math.min(canvasWidth, canvasHeight) * 2;
-
-    /**
-     * 投影面與觀察點的距離
-     * @type {number}
-     */
-    this.distance = this.cameraZ - this.screenZ;
-
-    /**
      * 快捷欄上的方塊
      * @type {(new () => import("./Playground/Blocks/Block").Block)[]}
      */
@@ -144,6 +112,12 @@ class Playground {
     this.engine = preLoadData ? Engine.spawn(preLoadData) : new Engine({ xLen, yLen, zLen });
 
     /**
+     * 遊戲渲染器
+     * @type {Renderer}
+     */
+    this.renderer = new Renderer(this);
+
+    /**
      * 此畫布是否被更新過，需要重新渲染
      */
     this._updated = true;
@@ -154,8 +128,6 @@ class Playground {
      * @private
      */
     this._alive = true;
-
-    this.render = this.render.bind(this);
   }
 
   /**
@@ -164,8 +136,8 @@ class Playground {
    */
   initialize(canvas) {
     this.canvas = canvas;
-    requestAnimationFrame(this.render);
     this.engine.startTicking();
+    this.renderer.initialize(canvas);
   }
 
   /**
@@ -192,8 +164,8 @@ class Playground {
   adjustAngles(cursorX, cursorY, init = false) {
     if (!init) {
       this.angles = {
-        theta: this.angles.theta + (cursorX - this._prevRefX) * 0.0087, 
-        phi: Math.max(Math.min(this.angles.phi + (cursorY - this._prevRefY) * 0.0087, Math.PI / 2), -(Math.PI / 2))
+        theta: this.angles.theta + (this._prevRefX - cursorX) * 0.0087, 
+        phi: Math.max(Math.min(this.angles.phi + (this._prevRefY - cursorY) * 0.0087, Math.PI / 2), -(Math.PI / 2))
       };
     }
 
@@ -220,7 +192,8 @@ class Playground {
    * @param {number} cursorY 游標在畫布上的 y 座標
    */
   leftClick(canvasX, canvasY) {
-    const target = this._getTarget(canvasX, canvasY);
+    this.renderer.getTarget(canvasX, canvasY);
+    const target = null;
     if (!target) return;
 
     const { cords: { x, y, z } } = target;
@@ -236,72 +209,14 @@ class Playground {
    * @param {number} cursorY 游標在畫布上的 y 座標
    * @param {boolean} shiftDown 是否有按下 Shift 鍵
    */
-  rightClick(canvasX, canvasY, shiftDown) {
-    const target = this._getTarget(canvasX, canvasY);
+  async rightClick(canvasX, canvasY, shiftDown) {
+    const target = await this.renderer.getTarget(canvasX, canvasY);
     if (!target) return;
 
-    let { cords: { x, y, z }, normDir, pointingDir } = target;
+    const [x, y, z, ...normDir] = target;
     
-    this.engine.addTask('rightClick', [x, y, z, shiftDown, normDir, pointingDir, this.hotbar[this.hotbarTarget] ?? AirBlock]);
+    this.engine.addTask('rightClick', [x, y, z, shiftDown, normDir, Axis.PX, this.hotbar[this.hotbarTarget] ?? AirBlock]);
     this._updated = true;
-  }
-
-
-  /**
-   * 開始渲染畫面
-   */
-  render() {
-    if (typeof this.canvas?.getContext === 'function' && this._needRender) {
-      const context = this.canvas.getContext('2d', { alpha: false });
-      context.fillStyle = 'rgb(255, 246, 168)';
-      context.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-  
-      const target = this._getTarget(this.cursorX, this.cursorY);
-      
-      const surfaces = this._visibleSurfaces();
-      const projectedSurfaces = this._projectSurfaces(surfaces);
-  
-      projectedSurfaces.sort(({ points: p1 }, { points: p2 }) => {
-        return Math.min(...p1.map(({z}) => z)) - Math.min(...p2.map(({z}) => z));
-      });
-  
-      projectedSurfaces.forEach(({ cords, points: [p1, p2, p3, p4], color }) => {
-        context.fillStyle = color;
-        context.beginPath();
-        context.moveTo(p1.x, p1.y);
-        context.lineTo(p2.x, p2.y);
-        context.lineTo(p3.x, p3.y);
-        context.lineTo(p4.x, p4.y);
-        context.closePath();
-        context.fill();
-  
-        if (target && target.cords.x === cords.x && target.cords.y === cords.y && target.cords.z === cords.z) {
-          const p = target.points;
-          context.beginPath();
-          context.moveTo(p[0].x, p[0].y);
-          context.lineTo(p[1].x, p[1].y);
-          context.lineTo(p[2].x, p[2].y);
-          context.lineTo(p[3].x, p[3].y);
-          context.closePath();
-
-          context.strokeStyle = this.engine.block(target.cords.x, target.cords.y, target.cords.z)?.breakable ? 'black' : 'red';
-          context.stroke();
-        }
-      });
-  
-      context.fillStyle = 'black';
-      context.font = '30px Arias';
-      if (this.hotbar.length) {
-        context.fillText(this.hotbarName[this.hotbarTarget], 20, 50);
-      }
-
-      this._updated = false;
-      this.engine.needRender = false;
-    }
-
-    if (this._alive) {
-      requestAnimationFrame(this.render);
-    }
   }
 
   /**
@@ -317,132 +232,6 @@ class Playground {
    */
   get _needRender() {
     return this._updated || this.engine.needRender;
-  }
-
-  /**
-   * 取得游標指向方塊的資訊
-   * @param {number} cursorX 游標在畫布上的 x 座標
-   * @param {number} cursorY 游標在畫布上的 y 座標
-   * @returns {TargetBlock?}
-   * @private
-   */
-  _getTarget(canvasX, canvasY) {
-    const surfaces = this._visibleSurfaces(true);
-    const projectedSurfaces = this._projectSurfaces(surfaces);
-
-    let maxZ = -Infinity;
-    let target = null;
-
-    projectedSurfaces.forEach(({ cords, points, dir }) => {
-      const min = Math.min(...points.map(p => p.z));
-      if (maxZ >= min) return;
-
-      let sign = 0, v1, v2, cross;
-      for (let i = 0; i < 4; i++) {
-        const { x: x1, y: y1 } = points[i];
-        const { x: x2, y: y2 } = points[(i + 1) & 3];
-
-        v1 = { x: x2 - x1, y: y2 - y1 };
-        v2 = { x: canvasX - x1, y: canvasY - y1 };
-        cross = v1.x * v2.y - v2.x * v1.y;
-        if (cross * sign < 0) return;
-        sign = cross > 0 ? 1 : (cross === 0 ? 0 : -1);
-      }
-
-      maxZ = min;
-      target = { cords, normDir: dir, points };
-    });
-
-    const newAxes = Axis.VectorMap(v => v
-      .rotateY(this.angles.theta)
-      .rotateX(this.angles.phi)
-    );
-    let pointingDir = null, dot = -Infinity;
-    [Axis.PX, Axis.NX, Axis.PZ, Axis.NZ].forEach(dir => {
-      const newDot = newAxes[dir].dot(new Vector3(0, 0, -1));
-      if (newDot > dot) {
-        pointingDir = dir;
-        dot = newDot;
-      }
-    });
-
-    if (!target) return null;
-    return { pointingDir, ...target };
-  }
-
-  /**
-   * 尋找所有指定的表面（互動箱或渲染箱）
-   * @param {boolean} interactionBox true：互動箱，false：渲染箱
-   * @returns {Surface[]}
-   * @private
-   */
-  _visibleSurfaces(interactionBox = false) {
-    const surfaces = [];
-
-    for (let i = 0; i < this.xLen; i++) {
-      for (let j = 0; j < this.yLen; j++) {
-        for (let k = 0; k < this.zLen; k++) {
-          if (this.engine.block(i, j, k).type === 0) continue;
-
-          const blockSurfaces = interactionBox ? this.engine.block(i, j, k).interactionSurfaces() : this.engine.block(i, j, k).surfaces();
-          surfaces.push(...blockSurfaces);
-        }
-      }
-    }
-
-    return surfaces;
-  }
-
-  /**
-   * 將所有平面投影在螢幕上，傳入參數的部分值會被改動，為了加速渲染會移除部分看不見的平面
-   * @param {Surface[]} surfaces 投影前的平面
-   * @returns {Surface[]} 投影後且有可能會被看見的平面
-   * @private
-   */
-  _projectSurfaces(surfaces) {
-    const offset = new Vector3(this.canvasWidth / 2, this.canvasHeight / 2, 0);
-    const camera = new Vector3(0, 0, this.cameraZ);
-    const lightDir = new Vector3(2, 3, 4)
-      .rotateY(this.angles.theta)
-      .rotateX(this.angles.phi);
-
-    surfaces.forEach(surface => {
-      const newAxes = Axis.VectorMap(v => v
-        .rotateX(surface.xAngle || 0)
-        .rotateZ(surface.zAngle || 0)
-        .rotateY(this.angles.theta)
-        .rotateX(this.angles.phi)
-      );
-
-      let checked = false;
-      for (let i = 0; i < surface.points.length; i++) {
-        const newPoint = surface.points[i]
-          .subtract(this.center)
-          .multiply(this.stretchMult)
-          .rotateY(this.angles.theta)
-          .rotateX(this.angles.phi);
-
-        if (!checked && newPoint.subtract(camera).dot(newAxes[surface.dir]) > 0) {
-          surface.points = [];
-          return;
-        }
-        checked = true;
-
-        if (Array.isArray(surface.color)) {
-          const shade = (newAxes[surface.dir].dot(lightDir) + 10.8) / 16.2;
-          surface.color = surface.color[3] ? 
-            `rgba(${surface.color[0] * shade}, ${surface.color[1] * shade}, ${surface.color[2] * shade}, ${surface.color[3]})` :
-            `rgb(${surface.color[0] * shade}, ${surface.color[1] * shade}, ${surface.color[2] * shade})`;
-        }
-
-        surface.points[i] = newPoint
-          .projectZ(this.cameraZ, this.distance)
-          .mirrorY()
-          .add(offset);
-      }
-    });
-
-    return surfaces.filter(s => s.points.length);
   }
 }
 
