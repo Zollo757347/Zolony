@@ -214,8 +214,7 @@ class Engine {
    * @returns {import("./Blocks/Block").Block | null}
    */
   block(x, y, z) {
-    if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return null;
-    return this._pg[x][y][z];
+    return this._pg[x]?.[y]?.[z] ?? null;
   }
 
   /**
@@ -299,11 +298,11 @@ class Engine {
    * @private
    */
   _leftClick(x, y, z) {
-    const block = this._pg[x][y][z];
-    if (!block.breakable) return null;
+    const block = this.block(x, y, z);
+    if (!block?.breakable) return null;
 
     this._pg[x][y][z] = new AirBlock({ x, y, z, engine: this });
-    block.sendPPUpdate(this._pg[x][y][z]);
+    this._pg[x][y][z].sendPPUpdate();
     return block;
   }
 
@@ -319,9 +318,12 @@ class Engine {
    * @private
    */
   _rightClick(x, y, z, shiftDown, normDir, facingDir, B) {
+    let block = this.block(x, y, z);
+    if (!block) return;
+
     // 如果指向的方塊可以互動，就互動
-    if (!shiftDown && this._pg[x][y][z].interactable) {
-      this._pg[x][y][z].interact();
+    if (!shiftDown && block.interactable) {
+      block.interact();
       return;
     }
 
@@ -329,12 +331,10 @@ class Engine {
     x += normDir[0];
     y += normDir[1];
     z += normDir[2];
+    block = this.block(x, y, z);
 
-    // 不能超出範圍
-    if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
-
-    // 原位置必須為空
-    if (this._pg[x][y][z].type !== 0) return;
+    // 不能超出範圍，且原位置必須為空
+    if (!block || block.type !== 0) return;
 
     const newBlock = new B({ x, y, z, engine: this });
     newBlock.setFacing?.(Axis.PX, facingDir);
