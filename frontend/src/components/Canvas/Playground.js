@@ -1,4 +1,4 @@
-import { AirBlock, Axis, Concrete, GlassBlock, Lever, NewBlock, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, Vector3 } from "./core";
+import { AirBlock, Axis, Concrete, GlassBlock, Lever, NewBlock, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "./core";
 import Engine from "./Engine";
 import Renderer from "./Renderer";
 
@@ -12,80 +12,25 @@ import Renderer from "./Renderer";
 /**
  * @typedef PlaygroundOptions
  * @type {object}
- * @property {number} canvasWidth 畫布的寬度，單位為像素
- * @property {number} canvasHeight 畫布的高度，單位為像素
  * @property {number} xLen 畫布中物體的 x 軸長度，單位為格
  * @property {number} yLen 畫布中物體的 y 軸長度，單位為格
  * @property {number} zLen 畫布中物體的 z 軸長度，單位為格
- * @property {PlaygroundAngles} 物體的初始角度
  */
 
 /**
  * 3D 渲染的邏輯實作
  */
 class Playground {
-  constructor({ canvasWidth, canvasHeight, xLen, yLen, zLen, angles, canvas, preLoadData }) {
-    /**
-     * 畫布中物體的 x 軸長度，單位為格
-     * @type {number}
-     */
-    this.xLen = preLoadData?.xLen ?? xLen;
-    
-    /**
-     * 畫布中物體的 y 軸長度，單位為格
-     * @type {number}
-     */
-    this.yLen = preLoadData?.yLen ?? yLen;
-    
-    /**
-     * 畫布中物體的 z 軸長度，單位為格
-     * @type {number}
-     */
-    this.zLen = preLoadData?.zLen ?? zLen;
-
-    /**
-     * 畫布的中心點位置
-     * @type {Vector3}
-     */
-    this.center = new Vector3(this.xLen / 2, this.yLen / 2, this.zLen / 2);
+  constructor({ xLen, yLen, zLen, preLoadData }) {
+    xLen = xLen ?? preLoadData.xLen;
+    yLen = yLen ?? preLoadData.yLen;
+    zLen = zLen ?? preLoadData.zLen;
 
     /**
      * 物體的旋轉角度
      * @type {PlaygroundAngles}
      */
-    this.angles = {
-      theta: angles?.theta || 0, 
-      phi: angles?.phi || 0
-    };
-
-    /**
-     * 渲染的目標畫布
-     */
-    this.canvas = canvas;
-
-    /**
-     * 畫布的寬度，單位為像素
-     * @type {number}
-     */
-    this.canvasWidth = canvasWidth;
-
-    /**
-     * 畫布的高度，單位為像素
-     * @type {number}
-     */
-    this.canvasHeight = canvasHeight;
-
-    /**
-     * 游標當前的 x 座標
-     * @type {number}
-     */
-    this.cursorX = 0;
-
-    /**
-     * 游標當前的 y 座標
-     * @type {number}
-     */
-    this.cursorY = 0;
+    this.angles = { theta: 0, phi: 0 };
 
     /**
      * 快捷欄上的方塊
@@ -115,7 +60,7 @@ class Playground {
      * 遊戲渲染器
      * @type {Renderer}
      */
-    this.renderer = new Renderer(this);
+    this.renderer = new Renderer(this, [xLen, yLen, zLen]);
 
     /**
      * 此畫布是否被更新過，需要重新渲染
@@ -135,20 +80,8 @@ class Playground {
    * @param {*} canvas 
    */
   initialize(canvas) {
-    this.canvas = canvas;
     this.engine.startTicking();
     this.renderer.initialize(canvas);
-  }
-
-  /**
-   * 設定游標當前的座標
-   * @param {number} x 
-   * @param {number} y 
-   */
-  setCursor(x, y) {
-    this.cursorX = x;
-    this.cursorY = y;
-    this._updated = true;
   }
 
   _prevRefX = 0;
@@ -191,13 +124,11 @@ class Playground {
    * @param {number} cursorX 游標在畫布上的 x 座標
    * @param {number} cursorY 游標在畫布上的 y 座標
    */
-  leftClick(canvasX, canvasY) {
-    this.renderer.getTarget(canvasX, canvasY);
-    const target = null;
+  async leftClick(canvasX, canvasY) {
+    const target = await this.renderer.getTarget(canvasX, canvasY);
     if (!target) return;
 
-    const { cords: { x, y, z } } = target;
-    if (!(0 <= x && x < this.xLen && 0 <= y && y < this.yLen && 0 <= z && z < this.zLen)) return;
+    const [x, y, z] = target;
 
     this.engine.addTask('leftClick', [x, y, z]);
     this._updated = true;

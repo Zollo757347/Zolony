@@ -34,11 +34,6 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
     setShiftDown(e.shiftKey);
   }
 
-  function handleMouseMove(e) {
-    const p = getPosition(canvasRef.current, e);
-    playground?.setCursor(p.x, p.y);
-  }
-
   function handleMouseEnter() {
     window.addEventListener('wheel', preventDefault, { passive: false });
   }
@@ -134,7 +129,6 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
           onKeyDown={handleKeyDown}
           onKeyUp={handleKeyUp}
 
-          onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           
