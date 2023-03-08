@@ -17,6 +17,7 @@ class RedstoneLamp extends FullBlock {
   constructor(options) {
     super({ type: BlockType.RedstoneLamp, blockName: data.name, ...options });
 
+    this.outline = data.outline;
     this.texture = data.texture;
 
     /**

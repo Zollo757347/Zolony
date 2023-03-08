@@ -9,6 +9,7 @@ class Concrete extends FullBlock {
   constructor(options) {
     super({ type: BlockType.Concrete, blockName: data.name, ...options });
 
+    this.outline = data.outline;
     this.texture = data.texture;
   }
 }

@@ -70,58 +70,6 @@ class Renderer {
     return this._loadProgram(gl, vertexShader, fragmentShader);
   }
 
-
-  /**
-   * 根據引擎的資料生成指定方塊的頂點
-   * @param {import("../core").BlockType} type
-   * @private
-   * @returns {number[]}
-   */
-  _getVertices(type) {
-    const result = [];
-
-    for (let i = 0; i < this.dimensions[0]; i++) {
-      for (let j = 0; j < this.dimensions[1]; j++) {
-        for (let k = 0; k < this.dimensions[2]; k++) {
-          if (this.engine.block(i, j, k).type !== type) continue;
-          result.push(...this._genVertices(i, j, k));
-
-          // const blockSurfaces = interactionBox ? this.engine.block(i, j, k).interactionSurfaces() : this.engine.block(i, j, k).surfaces();
-          // surfaces.push(...blockSurfaces);
-        }
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * 根據引擎的資料生成指定方塊的面的組成順序
-   * @param {import("../core").BlockType} type
-   * @private
-   * @returns {number[]}
-   */
-  _getIndices(type) {
-    const result = [];
-
-    let length = 0;
-    for (let i = 0; i < this.dimensions[0]; i++) {
-      for (let j = 0; j < this.dimensions[1]; j++) {
-        for (let k = 0; k < this.dimensions[2]; k++) {
-          if (this.engine.block(i, j, k).type === type) {
-            length++;
-          }
-        }
-      }
-    }
-    
-    for (let i = 0; i < length; i++) {
-      result.push(...genIndices(i));
-    }
-
-    return result;
-  }
-
   /**
    * 設置緩衝區的內容
    * @param {WebGLRenderingContext} gl 
@@ -187,53 +135,6 @@ class Renderer {
     return program;
   }
 
-  _genVertices(x, y, z) {
-    const xs = x - this.dimensions[0] / 2;
-    const ys = y - this.dimensions[1] / 2;
-    const zs = z - this.dimensions[2] / 2;
-    const xl = xs + 1;
-    const yl = ys + 1;
-    const zl = zs + 1;
-
-    return [
-      // Top
-      xs, yl, zs,   0, 0,   0.0, 1.0, 0.0,
-      xs, yl, zl,   0, 1,   0.0, 1.0, 0.0,
-      xl, yl, zl,   1, 1,   0.0, 1.0, 0.0,
-      xl, yl, zs,   1, 0,   0.0, 1.0, 0.0,
-    
-      // Left
-      xs, yl, zl,   1, 0,   -1.0, 0.0, 0.0,
-      xs, ys, zl,   1, 1,   -1.0, 0.0, 0.0,
-      xs, ys, zs,   0, 1,   -1.0, 0.0, 0.0,
-      xs, yl, zs,   0, 0,   -1.0, 0.0, 0.0,
-    
-      // Right
-      xl, yl, zl,   0, 0,   1.0, 0.0, 0.0,
-      xl, ys, zl,   0, 1,   1.0, 0.0, 0.0,
-      xl, ys, zs,   1, 1,   1.0, 0.0, 0.0,
-      xl, yl, zs,   1, 0,   1.0, 0.0, 0.0,
-    
-      // Front
-      xl, yl, zl,   1, 0,   0.0, 0.0, 1.0,
-      xl, ys, zl,   1, 1,   0.0, 0.0, 1.0,
-      xs, ys, zl,   0, 1,   0.0, 0.0, 1.0,
-      xs, yl, zl,   0, 0,   0.0, 0.0, 1.0,
-    
-      // Back
-      xl, yl, zs,   0, 0,   0.0, 0.0, -1.0,
-      xl, ys, zs,   0, 1,   0.0, 0.0, -1.0,
-      xs, ys, zs,   1, 1,   0.0, 0.0, -1.0,
-      xs, yl, zs,   1, 0,   0.0, 0.0, -1.0,
-    
-      // Bottom
-      xs, ys, zs,   0, 1,   0.0, -1.0, 0.0,
-      xs, ys, zl,   0, 0,   0.0, -1.0, 0.0,
-      xl, ys, zl,   1, 0,   0.0, -1.0, 0.0,
-      xl, ys, zs,   1, 1,   0.0, -1.0, 0.0,
-    ];
-  }
-
   get _worldMatrix() {
     const { theta, phi } = this.playground.angles;
     const c1 = Math.cos(theta), s1 = Math.sin(theta);
@@ -264,34 +165,6 @@ class Renderer {
   _vertexShaderSource = "";
 
   _fragmentShaderSource = "";
-}
-
-function genIndices(offset) {
-  return [
-    // Top
-    0, 1, 2,
-    0, 2, 3,
-
-    // Left
-    5, 4, 6,
-    6, 4, 7,
-
-    // Right
-    8, 9, 10,
-    8, 10, 11,
-
-    // Front
-    13, 12, 14,
-    15, 14, 12,
-
-    // Back
-    16, 17, 18,
-    16, 18, 19,
-
-    // Bottom
-    21, 20, 22,
-    22, 20, 23
-  ].map(a => a + offset * 24);
 }
 
 export default Renderer;

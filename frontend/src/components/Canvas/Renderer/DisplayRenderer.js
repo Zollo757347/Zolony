@@ -5,13 +5,15 @@ class DisplayRenderer extends Renderer {
   constructor(playground, dimensions) {
     super(playground, dimensions);
 
+    this.images = new Map();
+
+    this._devMode = false;
+
     /**
      * @type {OffRenderer}
      * @private
      */
     this._offRenderer = new OffRenderer(playground, dimensions);
-
-    this.images = new Map();
   }
 
   initialize(canvas) {
@@ -23,8 +25,14 @@ class DisplayRenderer extends Renderer {
     image.src = "/assets/minecraft/redstone_lamp.png";
     this.images.set("redstone_lamp.png", image);
 
-    super.initialize(canvas);
-    this._offRenderer.initialize(new OffscreenCanvas(canvas.width, canvas.height));
+    if (this._devMode) {
+      super.initialize(new OffscreenCanvas(canvas.width, canvas.height));
+      this._offRenderer.initialize(canvas);
+    }
+    else {
+      super.initialize(canvas);
+      this._offRenderer.initialize(new OffscreenCanvas(canvas.width, canvas.height));
+    }
   }
 
   startRendering() {
@@ -58,6 +66,7 @@ class DisplayRenderer extends Renderer {
     gl.uniform3f(ambientUniformLocation, 0.4, 0.4, 0.7);
     gl.uniform3f(lightColorUniformLocation, 0.8, 0.8, 0.4);
     gl.uniform3f(lightDirectionUniformLocation, 1.0, 2.0, 3.0);
+
 
     const positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
     const texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');

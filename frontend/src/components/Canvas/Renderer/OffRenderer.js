@@ -18,38 +18,43 @@ class OffRenderer extends Renderer {
 
     const matViewUniformLocation = gl.getUniformLocation(program, 'mView');
     const matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
+    const matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
 
     gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, this._viewMatrix);
     gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, this._projMatrix);
 
 
-    const matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
-    const pixels = new Uint8Array(4);
-    let vertices, indices;
-    let positionAttribLocation, surfaceAttribLocation;
+    const positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+    const surfaceAttribLocation = gl.getAttribLocation(program, 'surfaceInfo');
+    
+    gl.enableVertexAttribArray(positionAttribLocation);
+    gl.enableVertexAttribArray(surfaceAttribLocation);
 
+    const pixels = new Uint8Array(4);
+    const indices = new Uint16Array(
+      Array.from(
+        { length: 1000 }, 
+        (_, i) => {
+          i <<= 2;
+          return [i, i + 1, i + 2, i, i + 2, i + 3];
+        }
+      ).flat()
+    );
+    
+    let vertices;
     const draw = () => {
       gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, this._worldMatrix);
 
       gl.clearColor(0, 0, 0, 1);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       
-      [1, 103].forEach(type => {
-        vertices = this._getVertices(type);
-        indices = this._getIndices(type);
-        this._setupBuffer(gl, vertices, indices);
-      
-        positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-        surfaceAttribLocation = gl.getAttribLocation(program, 'surfaceInfo');
-  
-        gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-        gl.vertexAttribPointer(surfaceAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-      
-        gl.enableVertexAttribArray(positionAttribLocation);
-        gl.enableVertexAttribArray(surfaceAttribLocation);
-  
-        gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-      });
+      vertices = this._getBlockVertices();
+      this._setupBuffer(gl, vertices, indices);
+
+      gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+      gl.vertexAttribPointer(surfaceAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+
+      gl.drawElements(gl.TRIANGLES, vertices.length / 3, gl.UNSIGNED_SHORT, 0);
 
       if (this.print) {
         gl.readPixels(this.print[0], 500-this.print[1], 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
@@ -90,51 +95,23 @@ class OffRenderer extends Renderer {
     ];
   }
 
-  _genVertices(x, y, z) {
-    const xs = x - this.dimensions[0] / 2;
-    const ys = y - this.dimensions[1] / 2;
-    const zs = z - this.dimensions[2] / 2;
-    const xl = xs + 1;
-    const yl = ys + 1;
-    const zl = zs + 1;
-    
-    return [
-      // Top
-      xs, yl, zs,  ((x<<3)|2)+128, ((y<<3)|4)+128, ((z<<3)|2)+128, 
-      xs, yl, zl,  ((x<<3)|2)+128, ((y<<3)|4)+128, ((z<<3)|2)+128, 
-      xl, yl, zl,  ((x<<3)|2)+128, ((y<<3)|4)+128, ((z<<3)|2)+128, 
-      xl, yl, zs,  ((x<<3)|2)+128, ((y<<3)|4)+128, ((z<<3)|2)+128, 
-    
-      // Left
-      xs, yl, zl,  ((x<<3)|0)+128, ((y<<3)|2)+128, ((z<<3)|2)+128, 
-      xs, ys, zl,  ((x<<3)|0)+128, ((y<<3)|2)+128, ((z<<3)|2)+128, 
-      xs, ys, zs,  ((x<<3)|0)+128, ((y<<3)|2)+128, ((z<<3)|2)+128, 
-      xs, yl, zs,  ((x<<3)|0)+128, ((y<<3)|2)+128, ((z<<3)|2)+128, 
-    
-      // Right
-      xl, yl, zl,  ((x<<3)|4)+128, ((y<<3)|2)+128, ((z<<3)|2)+128, 
-      xl, ys, zl,  ((x<<3)|4)+128, ((y<<3)|2)+128, ((z<<3)|2)+128, 
-      xl, ys, zs,  ((x<<3)|4)+128, ((y<<3)|2)+128, ((z<<3)|2)+128, 
-      xl, yl, zs,  ((x<<3)|4)+128, ((y<<3)|2)+128, ((z<<3)|2)+128, 
-    
-      // Front
-      xl, yl, zl,  ((x<<3)|2)+128, ((y<<3)|2)+128, ((z<<3)|4)+128, 
-      xl, ys, zl,  ((x<<3)|2)+128, ((y<<3)|2)+128, ((z<<3)|4)+128, 
-      xs, ys, zl,  ((x<<3)|2)+128, ((y<<3)|2)+128, ((z<<3)|4)+128, 
-      xs, yl, zl,  ((x<<3)|2)+128, ((y<<3)|2)+128, ((z<<3)|4)+128, 
-    
-      // Back
-      xl, yl, zs,  ((x<<3)|2)+128, ((y<<3)|2)+128, ((z<<3)|0)+128, 
-      xl, ys, zs,  ((x<<3)|2)+128, ((y<<3)|2)+128, ((z<<3)|0)+128, 
-      xs, ys, zs,  ((x<<3)|2)+128, ((y<<3)|2)+128, ((z<<3)|0)+128, 
-      xs, yl, zs,  ((x<<3)|2)+128, ((y<<3)|2)+128, ((z<<3)|0)+128, 
-    
-      // Bottom
-      xs, ys, zs,  ((x<<3)|2)+128, ((y<<3)|0)+128, ((z<<3)|2)+128, 
-      xs, ys, zl,  ((x<<3)|2)+128, ((y<<3)|0)+128, ((z<<3)|2)+128, 
-      xl, ys, zl,  ((x<<3)|2)+128, ((y<<3)|0)+128, ((z<<3)|2)+128, 
-      xl, ys, zs,  ((x<<3)|2)+128, ((y<<3)|0)+128, ((z<<3)|2)+128, 
-    ];
+  _getBlockVertices() {
+    const result = [];
+    for (let i = 0; i < this.dimensions[0]; i++) {
+      for (let j = 0; j < this.dimensions[1]; j++) {
+        for (let k = 0; k < this.dimensions[2]; k++) {
+          const block = this.engine.block(i, j, k);
+          if (!block?.outline) continue;
+
+          const x = i - this.dimensions[0] / 2;
+          const y = j - this.dimensions[1] / 2;
+          const z = k - this.dimensions[2] / 2;
+
+          result.push(...block.outline.map((v, n) => n % 6 < 3 ? v + [x, y, z][n % 3] : (([i, j, k][n % 3] << 3) | ((v + 1) << 1)) + 128));
+        }
+      }  
+    }
+    return result;
   }
 
   _vertexShaderSource = `
