@@ -87,6 +87,12 @@ class Block {
     this.transparent = options.transparent ?? false;
 
     /**
+     * 此方塊是否為完整方塊
+     * @type {boolean}
+     */
+    this.fullBlock = options.fullBlock ?? false;
+
+    /**
      * 此方塊是否提供頂部支撐點
      * @type {boolean}
      */

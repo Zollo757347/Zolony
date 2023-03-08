@@ -1,3 +1,4 @@
+import { BlockType } from "../core";
 import OffRenderer from "./OffRenderer";
 import Renderer from "./Renderer";
 
@@ -131,7 +132,9 @@ class DisplayRenderer extends Renderer {
           const y = j - this.dimensions[1] / 2;
           const z = k - this.dimensions[2] / 2;
 
-          for (const data of Object.values(block.texture)) {
+          for (const [dirName, data] of Object.entries(block.texture)) {
+            if (!this._shouldRender(block, dirName)) continue;
+
             let storage = map.get(data.source);
             if (!storage) {
               storage = { vertices: [], indices: [], counter: 0 };
@@ -145,6 +148,25 @@ class DisplayRenderer extends Renderer {
       }  
     }
     return map;
+  }
+
+  _shouldRender(block, dirName) {
+    if (block.type !== BlockType.IronBlock && block.type !== BlockType.GlassBlock) return true;
+
+    const [dx, dy, dz] = {
+      'up': [0, 1, 0], 
+      'west': [-1, 0, 0], 
+      'east': [1, 0, 0], 
+      'south': [0, 0, 1], 
+      'north': [0, 0, -1], 
+      'down': [0, -1, 0]
+    }[dirName];
+
+    const adjacentBlock = this.engine.block(block.x + dx, block.y + dy, block.z + dz);
+    if (!adjacentBlock) return true;
+
+    if (block.type === BlockType.GlassBlock) return !adjacentBlock.fullBlock;
+    return !adjacentBlock.fullBlock || adjacentBlock.type === BlockType.AirBlock || adjacentBlock.type === BlockType.GlassBlock;
   }
 
   _vertexShaderSource = `

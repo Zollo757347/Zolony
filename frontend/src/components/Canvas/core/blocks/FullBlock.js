@@ -7,7 +7,7 @@ import Block from "./Block";
  */
 class FullBlock extends Block {
   constructor(options) {
-    super({ fullSupport: true, ...options });
+    super({ fullBlock: true, fullSupport: true, ...options });
   }
 
   /**
