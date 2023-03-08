@@ -1,6 +1,6 @@
 const BlockType = Object.freeze({
   AirBlock: 0, 
-  Concrete: 1, 
+  IronBlock: 1, 
   GlassBlock: 2, 
   RedstoneDust: 100, 
   RedstoneTorch: 101, 

@@ -120,7 +120,7 @@ const Mutation = {
   },
 };
 
-function getConcrete() {
+function getIronBlock() {
   return {
     type: 1,
     breakable: false,
@@ -134,7 +134,7 @@ function getConcrete() {
 function getNewMap(data, userId) {
   const playground = Array.from({ length: data.xLen }, () => 
     Array.from({ length: data.yLen }, (_, y) => 
-      Array.from({ length: data.zLen }, () => y === 0 ? getConcrete() : null)
+      Array.from({ length: data.zLen }, () => y === 0 ? getIronBlock() : null)
     )
   );
 

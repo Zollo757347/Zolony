@@ -3,7 +3,7 @@ import BlockType from "./utils/BlockType";
 import {
   AirBlock, 
   Block, 
-  Concrete, 
+  IronBlock, 
   GlassBlock, 
   Lever, 
   RedstoneDust, 
@@ -23,7 +23,7 @@ export {
 
   AirBlock, 
   Block, 
-  Concrete, 
+  IronBlock, 
   GlassBlock, 
   Lever, 
   RedstoneDust, 

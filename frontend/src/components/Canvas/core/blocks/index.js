@@ -1,6 +1,6 @@
 import AirBlock from "./AirBlock";
 import Block from "./Block";
-import Concrete from "./Concrete";
+import IronBlock from "./IronBlock";
 import GlassBlock from "./GlassBlock";
 import Lever from "./Lever";
 import RedstoneDust from "./RedstoneDust";
@@ -11,7 +11,7 @@ import RedstoneTorch from "./RedstoneTorch";
 export {
   AirBlock, 
   Block, 
-  Concrete, 
+  IronBlock, 
   GlassBlock, 
   Lever, 
   RedstoneDust, 

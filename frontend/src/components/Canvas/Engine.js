@@ -1,5 +1,5 @@
 import { sleep, strictEqual } from "../../utils";
-import { AirBlock, Axis, Block, BlockType, Concrete } from "./core";
+import { AirBlock, Axis, Block, BlockType, IronBlock } from "./core";
 
 /**
  * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], lampUnlit: [number, number, number] }} TaskParams
@@ -65,7 +65,7 @@ class Engine {
      */
     this._pg = Array.from({ length: xLen }, (_, x) => 
       Array.from({ length: yLen }, (_, y) => 
-        Array.from({ length: zLen }, (_, z) => y === 0 ? new Concrete({ x, y, z, engine: this, breakable: false }) : new AirBlock({ x, y, z, engine: this }))
+        Array.from({ length: zLen }, (_, z) => y === 0 ? new IronBlock({ x, y, z, engine: this, breakable: false }) : new AirBlock({ x, y, z, engine: this }))
       )
     );
 

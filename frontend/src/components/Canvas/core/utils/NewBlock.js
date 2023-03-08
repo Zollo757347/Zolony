@@ -1,4 +1,4 @@
-import { AirBlock, Concrete, GlassBlock, Lever, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "../blocks";
+import { AirBlock, IronBlock, GlassBlock, Lever, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "../blocks";
 import BlockType from "./BlockType";
 
 /**
@@ -11,8 +11,8 @@ function NewBlock(type) {
     case BlockType.AirBlock:
       return AirBlock;
       
-    case BlockType.Concrete:
-      return Concrete;
+    case BlockType.IronBlock:
+      return IronBlock;
       
     case BlockType.GlassBlock:
       return GlassBlock;
