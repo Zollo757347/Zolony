@@ -1,5 +1,6 @@
 import { Axis, BlockType } from "../utils";
 import FullBlock from "./FullBlock";
+import data from "../../../../assets/json/blocks/redstoneLamp.json";
 
 /**
  * @typedef _RedstoneLampStates
@@ -14,21 +15,15 @@ import FullBlock from "./FullBlock";
  */
 class RedstoneLamp extends FullBlock {
   constructor(options) {
-    super({ type: BlockType.RedstoneLamp, blockName: 'Redstone Lamp', ...options });
+    super({ type: BlockType.RedstoneLamp, blockName: data.name, ...options });
+
+    this.texture = data.texture;
 
     /**
      * 此紅石燈的狀態
      * @type {RedstoneLampStates}
      */
     this.states = { ...(this.states ?? {}), lit: false };
-  }
-
-  /**
-   * 取得此方塊的顏色
-   * @returns {string}
-   */
-  surfaceColor() {
-    return this.states.lit ? [240, 240, 120] : [200, 200, 100];
   }
 
   PPUpdate() {
@@ -67,7 +62,6 @@ class RedstoneLamp extends FullBlock {
       return block.states.source || !!block?.power;
     });
     if (litByPower) return true;
-
   }
 }
 

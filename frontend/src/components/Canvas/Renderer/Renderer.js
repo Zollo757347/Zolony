@@ -130,12 +130,10 @@ class Renderer {
    * @private
    */
   _setupBuffer(gl, vertices, indices) {
-    const verticesBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-  
-    const indicesBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesBuffer);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
   }
 
@@ -205,22 +203,22 @@ class Renderer {
       xl, yl, zs,   1, 0,   0.0, 1.0, 0.0,
     
       // Left
-      xs, yl, zl,   0, 0,   -1.0, 0.0, 0.0,
-      xs, ys, zl,   1, 0,   -1.0, 0.0, 0.0,
-      xs, ys, zs,   1, 1,   -1.0, 0.0, 0.0,
-      xs, yl, zs,   0, 1,   -1.0, 0.0, 0.0,
+      xs, yl, zl,   1, 0,   -1.0, 0.0, 0.0,
+      xs, ys, zl,   1, 1,   -1.0, 0.0, 0.0,
+      xs, ys, zs,   0, 1,   -1.0, 0.0, 0.0,
+      xs, yl, zs,   0, 0,   -1.0, 0.0, 0.0,
     
       // Right
-      xl, yl, zl,   1, 1,   1.0, 0.0, 0.0,
+      xl, yl, zl,   0, 0,   1.0, 0.0, 0.0,
       xl, ys, zl,   0, 1,   1.0, 0.0, 0.0,
-      xl, ys, zs,   0, 0,   1.0, 0.0, 0.0,
+      xl, ys, zs,   1, 1,   1.0, 0.0, 0.0,
       xl, yl, zs,   1, 0,   1.0, 0.0, 0.0,
     
       // Front
-      xl, yl, zl,   1, 1,   0.0, 0.0, 1.0,
-      xl, ys, zl,   1, 0,   0.0, 0.0, 1.0,
-      xs, ys, zl,   0, 0,   0.0, 0.0, 1.0,
-      xs, yl, zl,   0, 1,   0.0, 0.0, 1.0,
+      xl, yl, zl,   1, 0,   0.0, 0.0, 1.0,
+      xl, ys, zl,   1, 1,   0.0, 0.0, 1.0,
+      xs, ys, zl,   0, 1,   0.0, 0.0, 1.0,
+      xs, yl, zl,   0, 0,   0.0, 0.0, 1.0,
     
       // Back
       xl, yl, zs,   0, 0,   0.0, 0.0, -1.0,
@@ -229,10 +227,10 @@ class Renderer {
       xs, yl, zs,   1, 0,   0.0, 0.0, -1.0,
     
       // Bottom
-      xs, ys, zs,   1, 1,   0.0, -1.0, 0.0,
-      xs, ys, zl,   1, 0,   0.0, -1.0, 0.0,
-      xl, ys, zl,   0, 0,   0.0, -1.0, 0.0,
-      xl, ys, zs,   0, 1,   0.0, -1.0, 0.0,
+      xs, ys, zs,   0, 1,   0.0, -1.0, 0.0,
+      xs, ys, zl,   0, 0,   0.0, -1.0, 0.0,
+      xl, ys, zl,   1, 0,   0.0, -1.0, 0.0,
+      xl, ys, zs,   1, 1,   0.0, -1.0, 0.0,
     ];
   }
 

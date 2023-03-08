@@ -179,22 +179,6 @@ class Block {
   }
 
   /**
-   * 取得此方塊的渲染箱的所有表面
-   * @returns {Surface[]}
-   * @abstract
-   */
-  surfaces() {
-    throw new Error('Not implemented yet.');
-  }
-
-  /**
-   * 取得此方塊的互動箱的所有表面
-   */
-  interactionSurfaces() {
-    return this.surfaces();
-  }
-
-  /**
    * 根據 Post Placement Update 的來源方向更新自身狀態
    * @abstract
    */

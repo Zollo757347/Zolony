@@ -11,13 +11,17 @@ class DisplayRenderer extends Renderer {
      */
     this._offRenderer = new OffRenderer(playground, dimensions);
 
-    this.images = [];
+    this.images = new Map();
   }
 
   initialize(canvas) {
-    this.images = [new Image(), new Image()];
-    this.images[0].src = "/assets/minecraft/iron_block.png";
-    this.images[1].src = "/assets/minecraft/redstone_lamp.png";
+    let image = new Image();
+    image.src = "/assets/minecraft/iron_block.png";
+    this.images.set("iron_block.png", image);
+
+    image = new Image();
+    image.src = "/assets/minecraft/redstone_lamp.png";
+    this.images.set("redstone_lamp.png", image);
 
     super.initialize(canvas);
     this._offRenderer.initialize(new OffscreenCanvas(canvas.width, canvas.height));
@@ -49,14 +53,29 @@ class DisplayRenderer extends Renderer {
     const ambientUniformLocation = gl.getUniformLocation(program, 'ambientIntensity');
     const lightColorUniformLocation = gl.getUniformLocation(program, 'lightColor');
     const lightDirectionUniformLocation = gl.getUniformLocation(program, 'lightDirection');
+    const matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
 
     gl.uniform3f(ambientUniformLocation, 0.4, 0.4, 0.7);
     gl.uniform3f(lightColorUniformLocation, 0.8, 0.8, 0.4);
     gl.uniform3f(lightDirectionUniformLocation, 1.0, 2.0, 3.0);
 
-    const matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
-    let vertices, indices;
-    let positionAttribLocation, texCoordAttribLocation, normalAttribLocation;
+    const positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
+    const texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
+    const normalAttribLocation = gl.getAttribLocation(program, 'vertNormal');
+      
+    gl.enableVertexAttribArray(positionAttribLocation);
+    gl.enableVertexAttribArray(texCoordAttribLocation);
+    gl.enableVertexAttribArray(normalAttribLocation);
+
+    const indices = new Uint16Array(
+      Array.from(
+        { length: 1000 }, 
+        (_, i) => {
+          i <<= 2;
+          return [i, i + 1, i + 2, i, i + 2, i + 3];
+        }
+      ).flat()
+    );
 
     const draw = () => {
       gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, this._worldMatrix);
@@ -64,28 +83,20 @@ class DisplayRenderer extends Renderer {
       gl.clearColor(1, 0.96, 0.66, 1);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-      [1, 103].forEach((type, i) => {
-        vertices = this._getVertices(type);
-        indices = this._getIndices(type);
+      for (const [image, { vertices }] of this._getBlockVertices()) {
         this._setupBuffer(gl, vertices, indices);
-    
-        positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
-        texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
-        normalAttribLocation = gl.getAttribLocation(program, 'vertNormal');
     
         gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 8 * Float32Array.BYTES_PER_ELEMENT, 0);
         gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 8 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
         gl.vertexAttribPointer(normalAttribLocation, 3, gl.FLOAT, gl.TRUE, 8 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
-      
-        gl.enableVertexAttribArray(positionAttribLocation);
-        gl.enableVertexAttribArray(texCoordAttribLocation);
-        gl.enableVertexAttribArray(normalAttribLocation);
   
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images[i]);
-        gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-      });
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images.get(image));
+        gl.drawElements(gl.TRIANGLES, (vertices.length * 3) >> 4, gl.UNSIGNED_SHORT, 0);
+      }
 
-      requestAnimationFrame(draw);
+      if (this.playground.alive) {
+        requestAnimationFrame(draw);
+      }
     }
 
     requestAnimationFrame(draw);
@@ -93,6 +104,34 @@ class DisplayRenderer extends Renderer {
 
   async getTarget(canvasX, canvasY) {
     return this._offRenderer.getTarget(canvasX, canvasY);
+  }
+
+  _getBlockVertices() {
+    const map = new Map();
+    for (let i = 0; i < this.dimensions[0]; i++) {
+      for (let j = 0; j < this.dimensions[1]; j++) {
+        for (let k = 0; k < this.dimensions[2]; k++) {
+          const block = this.engine.block(i, j, k);
+          if (!block?.texture) continue;
+
+          const x = i - this.dimensions[0] / 2;
+          const y = j - this.dimensions[1] / 2;
+          const z = k - this.dimensions[2] / 2;
+
+          for (const data of Object.values(block.texture)) {
+            let storage = map.get(data.source);
+            if (!storage) {
+              storage = { vertices: [], indices: [], counter: 0 };
+              map.set(data.source, storage);
+            }
+            storage.vertices.push(...data.vertices.map((v, n) => (n % 8) < 3 ? v + [x, y, z][n % 8] : v));
+            storage.indices.push(...[0, 1, 2, 0, 2, 3].map(v => v + (storage.counter << 2)));
+            storage.counter++;
+          }
+        }
+      }  
+    }
+    return map;
   }
 
   _vertexShaderSource = `

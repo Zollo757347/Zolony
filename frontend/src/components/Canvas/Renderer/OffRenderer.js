@@ -57,7 +57,9 @@ class OffRenderer extends Renderer {
         this.print = null;
       }
 
-      requestAnimationFrame(draw);
+      if (this.playground.alive) {
+        requestAnimationFrame(draw);
+      }
     }
 
     requestAnimationFrame(draw);

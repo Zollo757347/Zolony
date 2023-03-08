@@ -70,9 +70,8 @@ class Playground {
     /**
      * 此畫布是否仍在運作中
      * @type {boolean}
-     * @private
      */
-    this._alive = true;
+    this.alive = true;
   }
 
   /**
@@ -154,7 +153,7 @@ class Playground {
    * 不使用此畫布時必須呼叫此函式
    */
   destroy() {
-    this._alive = false;
+    this.alive = false;
     this.engine.destroy();
   }
 
