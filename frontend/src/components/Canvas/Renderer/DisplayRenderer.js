@@ -25,6 +25,10 @@ class DisplayRenderer extends Renderer {
     image.src = "/assets/minecraft/redstone_lamp.png";
     this.images.set("redstone_lamp.png", image);
 
+    image = new Image();
+    image.src = "/assets/minecraft/glass.png";
+    this.images.set("glass.png", image);
+
     if (this._devMode) {
       super.initialize(new OffscreenCanvas(canvas.width, canvas.height));
       this._offRenderer.initialize(canvas);
@@ -177,6 +181,7 @@ class DisplayRenderer extends Renderer {
       vec3 lightIntensity = ambientIntensity + lightColor * max(dot(normalize(fragNormal), normalize(lightDirection)), 0.0);
 
       gl_FragColor = vec4(texel.rgb * lightIntensity, texel.a);
+      if (gl_FragColor.a < 0.1) discard;
     }
   `;
 }
