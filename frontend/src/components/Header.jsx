@@ -53,7 +53,6 @@ const Header = () => {
           Message.send({ content: createUserError.password, duration: 2000, type: 'error' });
         }
         else {
-          console.log(data[0], data[1]);
           ({ error } = await createUser(data[0], data[1]));
           if (!error) {
             Message.send({ content: "成功建立帳號！", duration: 2000, type: 'success' });
