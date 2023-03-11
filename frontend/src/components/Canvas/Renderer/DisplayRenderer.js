@@ -20,15 +20,15 @@ class DisplayRenderer extends Renderer {
   initialize(canvas) {
     let image = new Image();
     image.src = "/assets/minecraft/iron_block.png";
-    this.images.set("iron_block.png", image);
+    this.images.set("iron_block", image);
 
     image = new Image();
     image.src = "/assets/minecraft/redstone_lamp.png";
-    this.images.set("redstone_lamp.png", image);
+    this.images.set("redstone_lamp", image);
 
     image = new Image();
     image.src = "/assets/minecraft/glass.png";
-    this.images.set("glass.png", image);
+    this.images.set("glass", image);
 
     if (this._devMode) {
       super.initialize(new OffscreenCanvas(canvas.width, canvas.height));
@@ -132,7 +132,7 @@ class DisplayRenderer extends Renderer {
           const y = j - this.dimensions[1] / 2;
           const z = k - this.dimensions[2] / 2;
 
-          for (const [dirName, data] of Object.entries(block.texture)) {
+          for (const [dirName, data] of Object.entries(block.texture[0])) {
             if (!this._shouldRender(block, dirName)) continue;
 
             let storage = map.get(data.source);

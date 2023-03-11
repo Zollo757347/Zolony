@@ -1,6 +1,6 @@
 import { Axis, BlockType } from "../utils";
 import FullBlock from "./FullBlock";
-import data from "../../../../assets/json/blocks/redstoneLamp.json";
+import { redstone_lamp } from "../../../../assets/json/blocks";
 
 /**
  * @typedef _RedstoneLampStates
@@ -15,10 +15,10 @@ import data from "../../../../assets/json/blocks/redstoneLamp.json";
  */
 class RedstoneLamp extends FullBlock {
   constructor(options) {
-    super({ type: BlockType.RedstoneLamp, blockName: data.name, ...options });
+    super({ type: BlockType.RedstoneLamp, blockName: '紅石燈', ...options });
 
-    this.outline = data.outline;
-    this.texture = data.texture;
+    this.outline = redstone_lamp.map(({outline}) => outline);
+    this.texture = redstone_lamp.map(({texture}) => texture);
 
     /**
      * 此紅石燈的狀態

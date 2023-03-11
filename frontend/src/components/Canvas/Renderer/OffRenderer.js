@@ -40,6 +40,8 @@ class OffRenderer extends Renderer {
         }
       ).flat()
     );
+
+    console.log(this._getBlockVertices())
     
     let vertices;
     const draw = () => {
@@ -107,7 +109,7 @@ class OffRenderer extends Renderer {
           const y = j - this.dimensions[1] / 2;
           const z = k - this.dimensions[2] / 2;
 
-          result.push(...block.outline.map((v, n) => n % 6 < 3 ? v + [x, y, z][n % 3] : (([i, j, k][n % 3] << 3) | ((v + 1) << 1)) + 128));
+          result.push(...block.outline[0].map((v, n) => n % 6 < 3 ? v + [x, y, z][n % 3] : (([i, j, k][n % 3] << 3) | ((v + 1) << 1)) + 128));
         }
       }  
     }
