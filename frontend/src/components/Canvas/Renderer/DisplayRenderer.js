@@ -126,24 +126,25 @@ class DisplayRenderer extends Renderer {
       for (let j = 0; j < this.dimensions[1]; j++) {
         for (let k = 0; k < this.dimensions[2]; k++) {
           const block = this.engine.block(i, j, k);
-          if (!block?.texture) continue;
+          if (!block?.textures) continue;
 
           const x = i - this.dimensions[0] / 2;
           const y = j - this.dimensions[1] / 2;
           const z = k - this.dimensions[2] / 2;
 
-          for (const [dirName, data] of Object.entries(block.texture[0])) {
-            if (!this._shouldRender(block, dirName)) continue;
-
-            let storage = map.get(data.source);
-            if (!storage) {
-              storage = { vertices: [], indices: [], counter: 0 };
-              map.set(data.source, storage);
+          block.textures.forEach(texture => {
+            for (const [dirName, data] of Object.entries(texture)) {
+              if (!this._shouldRender(block, dirName)) continue;
+  
+              let storage = map.get(data.source);
+              if (!storage) {
+                storage = { vertices: [], counter: 0 };
+                map.set(data.source, storage);
+              }
+              storage.vertices.push(...data.vertices.map((v, n) => (n % 8) < 3 ? v + [x, y, z][n % 8] : v));
+              storage.counter++;
             }
-            storage.vertices.push(...data.vertices.map((v, n) => (n % 8) < 3 ? v + [x, y, z][n % 8] : v));
-            storage.indices.push(...[0, 1, 2, 0, 2, 3].map(v => v + (storage.counter << 2)));
-            storage.counter++;
-          }
+          });
         }
       }  
     }

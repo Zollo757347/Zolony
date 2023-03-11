@@ -52,7 +52,7 @@ function getElements({ textures, elements }) {
 }
 
 function getVerticesData(elements) {
-  return elements.map(({ from, to, faces }) => {
+  const data = elements.map(({ from, to, faces }) => {
     const f = [from[0] / 16, from[1] / 16, from[2] / 16];
     const t = [to[0] / 16, to[1] / 16, to[2] / 16];
 
@@ -146,6 +146,11 @@ function getVerticesData(elements) {
       ]
     }
   });
+
+  return {
+    textures: data.map(({ texture }) => texture), 
+    outlines: data.map(({ outline }) => outline), 
+  };
 }
 
 function flatten(blockData, data) {

@@ -9,8 +9,8 @@ class GlassBlock extends FullBlock {
   constructor(options) {
     super({ type: BlockType.GlassBlock, blockName: '玻璃', transparent: true, ...options });
 
-    this.outline = glass.map(({outline}) => outline);
-    this.texture = glass.map(({texture}) => texture);
+    this.outlines = glass.outlines;
+    this.textures = glass.textures;
   }
 
   PPUpdate() {}

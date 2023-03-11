@@ -17,8 +17,8 @@ class RedstoneLamp extends FullBlock {
   constructor(options) {
     super({ type: BlockType.RedstoneLamp, blockName: '紅石燈', ...options });
 
-    this.outline = redstone_lamp.map(({outline}) => outline);
-    this.texture = redstone_lamp.map(({texture}) => texture);
+    this.outlines = redstone_lamp.outlines;
+    this.textures = redstone_lamp.textures;
 
     /**
      * 此紅石燈的狀態

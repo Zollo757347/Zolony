@@ -9,8 +9,8 @@ class IronBlock extends FullBlock {
   constructor(options) {
     super({ type: BlockType.IronBlock, blockName: '鐵方塊', ...options });
 
-    this.outline = iron_block.map(({outline}) => outline);
-    this.texture = iron_block.map(({texture}) => texture);
+    this.outlines = iron_block.outlines;
+    this.textures = iron_block.textures;
   }
 }
 
