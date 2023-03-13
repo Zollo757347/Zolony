@@ -27,6 +27,10 @@ class DisplayRenderer extends Renderer {
     this.images.set("redstone_lamp", image);
 
     image = new Image();
+    image.src = "/assets/minecraft/redstone_lamp_on.png";
+    this.images.set("redstone_lamp_on", image);
+
+    image = new Image();
     image.src = "/assets/minecraft/glass.png";
     this.images.set("glass", image);
 
