@@ -41,8 +41,13 @@ function getElements({ textures, elements }) {
       if (!faces[key].texture.startsWith('#')) {
         throw new Error('The value string does not starts with "#".');
       }
-      result[key] = textures[faces[key].texture.substr(1)];
-      if (!result[key]) {
+
+      result[key] = {
+        texture: textures[faces[key].texture.substr(1)], 
+        uv: faces[key].uv
+      };
+
+      if (!result[key].texture) {
         throw new Error(`Texture ${key} does not exist.`);
       }
     }
@@ -55,63 +60,67 @@ function getVerticesData(elements) {
   const data = elements.map(({ from, to, faces }) => {
     const f = [from[0] / 16, from[1] / 16, from[2] / 16];
     const t = [to[0] / 16, to[1] / 16, to[2] / 16];
+    const uv = {};
+    for (const dir in faces) {
+      uv[dir[0]] = faces[dir].uv?.map(v => v / 16) ?? [0, 0, 1, 1];
+    }
 
     return {
       texture: {
-        up: {
-          source: faces.up,
+        up: faces.up ? {
+          source: faces.up.texture,
           vertices: [
-            f[0], t[1], f[2],   0, 0,   0.0, 1.0, 0.0,
-            f[0], t[1], t[2],   0, 1,   0.0, 1.0, 0.0,
-            t[0], t[1], t[2],   1, 1,   0.0, 1.0, 0.0,
-            t[0], t[1], f[2],   1, 0,   0.0, 1.0, 0.0
+            f[0], t[1], f[2],   uv.u[0], uv.u[1],   0.0, 1.0, 0.0,
+            f[0], t[1], t[2],   uv.u[0], uv.u[3],   0.0, 1.0, 0.0,
+            t[0], t[1], t[2],   uv.u[2], uv.u[3],   0.0, 1.0, 0.0,
+            t[0], t[1], f[2],   uv.u[2], uv.u[1],   0.0, 1.0, 0.0
           ]
-        },
-        west: {
-          source: faces.west,
+        } : undefined,
+        west: faces.west ? {
+          source: faces.west.texture,
           vertices: [
-            f[0], t[1], f[2],   0, 0,   -1.0, 0.0, 0.0,
-            f[0], f[1], f[2],   0, 1,   -1.0, 0.0, 0.0,
-            f[0], f[1], t[2],   1, 1,   -1.0, 0.0, 0.0,
-            f[0], t[1], t[2],   1, 0,   -1.0, 0.0, 0.0
+            f[0], t[1], f[2],   uv.w[0], uv.w[1],   -1.0, 0.0, 0.0,
+            f[0], f[1], f[2],   uv.w[0], uv.w[3],   -1.0, 0.0, 0.0,
+            f[0], f[1], t[2],   uv.w[2], uv.w[3],   -1.0, 0.0, 0.0,
+            f[0], t[1], t[2],   uv.w[2], uv.w[1],   -1.0, 0.0, 0.0
           ]
-        },
-        east: {
-          source: faces.east,
+        } : undefined,
+        east: faces.east ? {
+          source: faces.east.texture,
           vertices: [
-            t[0], t[1], t[2],   0, 0,   1.0, 0.0, 0.0,
-            t[0], f[1], t[2],   0, 1,   1.0, 0.0, 0.0,
-            t[0], f[1], f[2],   1, 1,   1.0, 0.0, 0.0,
-            t[0], t[1], f[2],   1, 0,   1.0, 0.0, 0.0
+            t[0], t[1], t[2],   uv.e[0], uv.e[1],   1.0, 0.0, 0.0,
+            t[0], f[1], t[2],   uv.e[0], uv.e[3],   1.0, 0.0, 0.0,
+            t[0], f[1], f[2],   uv.e[2], uv.e[3],   1.0, 0.0, 0.0,
+            t[0], t[1], f[2],   uv.e[2], uv.e[1],   1.0, 0.0, 0.0
           ]
-        },
-        south: {
-          source: faces.south,
+        } : undefined,
+        south: faces.south ? {
+          source: faces.south.texture,
           vertices: [
-            f[0], t[1], t[2],   0, 0,   0.0, 0.0, 1.0,
-            f[0], f[1], t[2],   0, 1,   0.0, 0.0, 1.0,
-            t[0], f[1], t[2],   1, 1,   0.0, 0.0, 1.0,
-            t[0], t[1], t[2],   1, 0,   0.0, 0.0, 1.0
+            f[0], t[1], t[2],   uv.s[0], uv.s[1],   0.0, 0.0, 1.0,
+            f[0], f[1], t[2],   uv.s[0], uv.s[3],   0.0, 0.0, 1.0,
+            t[0], f[1], t[2],   uv.s[2], uv.s[3],   0.0, 0.0, 1.0,
+            t[0], t[1], t[2],   uv.s[2], uv.s[1],   0.0, 0.0, 1.0
           ]
-        },
-        north: {
-          source: faces.north,
+        } : undefined,
+        north: faces.north ? {
+          source: faces.north.texture,
           vertices: [
-            t[0], t[1], f[2],   0, 0,   0.0, 0.0, -1.0,
-            t[0], f[1], f[2],   0, 1,   0.0, 0.0, -1.0,
-            f[0], f[1], f[2],   1, 1,   0.0, 0.0, -1.0,
-            f[0], t[1], f[2],   1, 0,   0.0, 0.0, -1.0
+            t[0], t[1], f[2],   uv.n[0], uv.n[1],   0.0, 0.0, -1.0,
+            t[0], f[1], f[2],   uv.n[0], uv.n[3],   0.0, 0.0, -1.0,
+            f[0], f[1], f[2],   uv.n[2], uv.n[3],   0.0, 0.0, -1.0,
+            f[0], t[1], f[2],   uv.n[2], uv.n[1],   0.0, 0.0, -1.0
           ]
-        },
-        down: {
-          source: faces.down,
+        } : undefined,
+        down: faces.down ? {
+          source: faces.down.texture,
           vertices: [
-            f[0], f[1], t[2],   0, 0,   0.0, -1.0, 0.0,
-            f[0], f[1], f[2],   0, 1,   0.0, -1.0, 0.0,
-            t[0], f[1], f[2],   1, 1,   0.0, -1.0, 0.0,
-            t[0], f[1], t[2],   1, 0,   0.0, -1.0, 0.0
+            f[0], f[1], t[2],   uv.d[0], uv.d[1],   0.0, -1.0, 0.0,
+            f[0], f[1], f[2],   uv.d[0], uv.d[3],   0.0, -1.0, 0.0,
+            t[0], f[1], f[2],   uv.d[2], uv.d[3],   0.0, -1.0, 0.0,
+            t[0], f[1], t[2],   uv.d[2], uv.d[1],   0.0, -1.0, 0.0
           ]
-        }
+        } : undefined
       }, 
       outline: [
         f[0], t[1], f[2],   0.0, 1.0, 0.0,

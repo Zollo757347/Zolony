@@ -18,21 +18,11 @@ class DisplayRenderer extends Renderer {
   }
 
   initialize(canvas) {
-    let image = new Image();
-    image.src = "/assets/minecraft/iron_block.png";
-    this.images.set("iron_block", image);
-
-    image = new Image();
-    image.src = "/assets/minecraft/redstone_lamp.png";
-    this.images.set("redstone_lamp", image);
-
-    image = new Image();
-    image.src = "/assets/minecraft/redstone_lamp_on.png";
-    this.images.set("redstone_lamp_on", image);
-
-    image = new Image();
-    image.src = "/assets/minecraft/glass.png";
-    this.images.set("glass", image);
+    ['iron_block', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater', 'redstone_torch_off'].forEach(src => {
+      const image = new Image();
+      image.src = `/assets/minecraft/${src}.png`;
+      this.images.set(src, image);
+    });
 
     if (this._devMode) {
       super.initialize(new OffscreenCanvas(canvas.width, canvas.height));
@@ -139,7 +129,7 @@ class DisplayRenderer extends Renderer {
           block.textures.forEach(texture => {
             for (const [dirName, data] of Object.entries(texture)) {
               if (!this._shouldRender(block, dirName)) continue;
-  
+              
               let storage = map.get(data.source);
               if (!storage) {
                 storage = { vertices: [], counter: 0 };
