@@ -1,5 +1,5 @@
 import { sleep, strictEqual } from "../../utils";
-import { AirBlock, Axis, Block, BlockType, IronBlock } from "./core";
+import { AirBlock, Block, BlockType, IronBlock } from "./core";
 
 /**
  * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], lampUnlit: [number, number, number] }} TaskParams
@@ -337,7 +337,7 @@ class Engine {
     if (!block || block.type !== 0) return;
 
     const newBlock = new B({ x, y, z, engine: this });
-    newBlock.setFacing?.(Axis.PX, facingDir);
+    newBlock.setFacing?.(normDir, facingDir);
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 
     this._pg[x][y][z] = newBlock;

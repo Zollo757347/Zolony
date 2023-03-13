@@ -1,5 +1,10 @@
-import { repeater_1tick } from "../../../../assets/json/blocks";
-import { Axis, BlockType } from "../utils";
+import {
+  repeater_1tick_locked, repeater_1tick_on_locked, repeater_1tick_on, repeater_1tick, 
+  repeater_2tick_locked, repeater_2tick_on_locked, repeater_2tick_on, repeater_2tick, 
+  repeater_3tick_locked, repeater_3tick_on_locked, repeater_3tick_on, repeater_3tick, 
+  repeater_4tick_locked, repeater_4tick_on_locked, repeater_4tick_on, repeater_4tick
+ } from "../../../../assets/json/blocks";
+import { BlockType } from "../utils";
 import Block from "./Block";
 
 /**
@@ -27,11 +32,24 @@ class RedstoneRepeater extends Block {
     this.states = { ...(this.states ?? {}), delay: 1, facing: 'north', locked: false, powered: false };
 
     this.outlines = repeater_1tick.outlines;
-    this.textures = repeater_1tick.textures;
+    this._textures = [
+      repeater_1tick.textures,           repeater_2tick.textures,           repeater_3tick.textures,           repeater_4tick.textures, 
+      repeater_1tick_locked.textures,    repeater_2tick_locked.textures,    repeater_3tick_locked.textures,    repeater_4tick_locked.textures, 
+      repeater_1tick_on.textures,        repeater_2tick_on.textures,        repeater_3tick_on.textures,        repeater_4tick_on.textures, 
+      repeater_1tick_on_locked.textures, repeater_2tick_on_locked.textures, repeater_3tick_on_locked.textures, repeater_4tick_on_locked.textures
+    ];
   }
 
   get power() {
     return 0;
+  }
+
+  get textures() {
+    const index = 
+      (this.states.on ? 8 : 0) +
+      (this.states.locked ? 4 : 0) +
+      this.states.delay - 1;
+    return this._textures[index];
   }
 
   /**
@@ -40,27 +58,7 @@ class RedstoneRepeater extends Block {
    * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
    */
   setFacing(normDir, facingDir) {
-    switch (facingDir) {
-      case Axis.PX:
-        this.states.facing = 'east';
-        return;
-
-      case Axis.NX:
-        this.states.facing = 'west';
-        return;
-
-      case Axis.PZ:
-        this.states.facing = 'south';
-        return;
-
-      case Axis.NZ:
-        this.states.facing = 'north';
-        return;
-
-      default:
-        this.states.facing = 'north';
-        return;
-    }
+    this.states.facing = facingDir ?? 'north';
   }
 
   /**

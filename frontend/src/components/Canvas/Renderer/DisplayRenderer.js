@@ -18,7 +18,7 @@ class DisplayRenderer extends Renderer {
   }
 
   initialize(canvas) {
-    ['iron_block', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater', 'redstone_torch_off'].forEach(src => {
+    ['iron_block', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater_on', 'redstone_torch', 'redstone_torch_off', 'bedrock'].forEach(src => {
       const image = new Image();
       image.src = `/assets/minecraft/${src}.png`;
       this.images.set(src, image);
@@ -126,16 +126,34 @@ class DisplayRenderer extends Renderer {
           const y = j - this.dimensions[1] / 2;
           const z = k - this.dimensions[2] / 2;
 
+          const [a, b, c, d] = !block.states.facing ? [1, 0, 0, 1] :
+            block.states.facing === 'west' ? [0, 1, -1, 0] :
+            block.states.facing === 'south' ? [-1, 0, 0, -1] :
+            block.states.facing === 'east' ? [0, -1, 1, 0] : [1, 0, 0, 1];
+          const [e, f] = [(1-a-b)/2, (1-c-d)/2];
+
           block.textures.forEach(texture => {
             for (const [dirName, data] of Object.entries(texture)) {
-              if (!this._shouldRender(block, dirName)) continue;
+              if (!data || !this._shouldRender(block, dirName)) continue;
               
               let storage = map.get(data.source);
               if (!storage) {
                 storage = { vertices: [], counter: 0 };
                 map.set(data.source, storage);
               }
-              storage.vertices.push(...data.vertices.map((v, n) => (n % 8) < 3 ? v + [x, y, z][n % 8] : v));
+
+              for (let i = 0; i < data.vertices.length; i += 8) {
+                storage.vertices.push(
+                  data.vertices[i] * a + data.vertices[i+2] * b + e + x, 
+                  data.vertices[i+1] + y, 
+                  data.vertices[i] * c + data.vertices[i+2] * d + f + z, 
+                  data.vertices[i+3], 
+                  data.vertices[i+4], 
+                  data.vertices[i+5], 
+                  data.vertices[i+6], 
+                  data.vertices[i+7]
+                );
+              }
               storage.counter++;
             }
           });
@@ -144,6 +162,27 @@ class DisplayRenderer extends Renderer {
     }
     return map;
   }
+/**
+ * | 1        0.5 | |        1    | | 1        -0.5 |
+ * |    1     0.5 | |     1       | |    1     -0.5 |
+ * |       1  0.5 | | -1          | |       1  -0.5 |
+ * |           1  | |           1 | |            1  |
+ * 
+ * | 1        0.5 | | a     b   | | 1        -0.5 |
+ * |    1     0.5 | |    1      | |    1     -0.5 |
+ * |       1  0.5 | | c     d   | |       1  -0.5 |
+ * |           1  | |         1 | |            1  |
+ * 
+ * | 1        0.5 | | a     b  -(a+b)/2 |
+ * |    1     0.5 | |    1       -1/2   |
+ * |       1  0.5 | | c     d  -(c+d)/2 |
+ * |           1  | |              1    |
+ * 
+ * | 1        0.5 | | a     b  -(a+b)/2 + 0.5 |
+ * |    1     0.5 | |    1            0       |
+ * |       1  0.5 | | c     d  -(c+d)/2 + 0.5 |
+ * |           1  | |                 1       |
+ */
 
   _shouldRender(block, dirName) {
     if (block.type !== BlockType.IronBlock && block.type !== BlockType.GlassBlock) return true;

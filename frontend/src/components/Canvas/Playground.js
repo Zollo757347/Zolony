@@ -1,4 +1,4 @@
-import { AirBlock, Axis, IronBlock, GlassBlock, Lever, NewBlock, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "./core";
+import { AirBlock, IronBlock, GlassBlock, Lever, NewBlock, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "./core";
 import Engine from "./Engine";
 import Renderer from "./Renderer";
 
@@ -99,6 +99,12 @@ class Playground {
         theta: this.angles.theta + (this._prevRefX - cursorX) * 0.0087, 
         phi: Math.max(Math.min(this.angles.phi + (this._prevRefY - cursorY) * 0.0087, Math.PI / 2), -(Math.PI / 2))
       };
+      if (this.angles.theta < 0) {
+        this.angles.theta += Math.PI * 2;
+      }
+      if (Math.PI * 2 < this.angles.theta) {
+        this.angles.theta -= Math.PI * 2;
+      }
     }
 
     this._prevRefX = cursorX;
@@ -144,8 +150,9 @@ class Playground {
     if (!target) return;
 
     const [x, y, z, ...normDir] = target;
+    const facing = ['north', 'west', 'south', 'east', 'north'][Math.round(this.angles.theta * 2 / Math.PI)];
     
-    this.engine.addTask('rightClick', [x, y, z, shiftDown, normDir, Axis.PX, this.hotbar[this.hotbarTarget] ?? AirBlock]);
+    this.engine.addTask('rightClick', [x, y, z, shiftDown, normDir, facing, this.hotbar[this.hotbarTarget] ?? AirBlock]);
     this._updated = true;
   }
 

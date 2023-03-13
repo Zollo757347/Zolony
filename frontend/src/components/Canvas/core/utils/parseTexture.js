@@ -34,7 +34,7 @@ function getFullData(blockData, path) {
 }
 
 function getElements({ textures, elements }) {
-  return elements.map(({ from, to, faces }) => {
+  return elements.map(({ faces, ...props }) => {
     const result = {};
 
     for (const key in faces) {
@@ -43,8 +43,8 @@ function getElements({ textures, elements }) {
       }
 
       result[key] = {
-        texture: textures[faces[key].texture.substr(1)], 
-        uv: faces[key].uv
+        ...faces[key], 
+        texture: textures[faces[key].texture.substr(1)]
       };
 
       if (!result[key].texture) {
@@ -52,7 +52,7 @@ function getElements({ textures, elements }) {
       }
     }
 
-    return { from, to, faces: result };
+    return { faces: result, ...props };
   })
 }
 
@@ -62,7 +62,20 @@ function getVerticesData(elements) {
     const t = [to[0] / 16, to[1] / 16, to[2] / 16];
     const uv = {};
     for (const dir in faces) {
-      uv[dir[0]] = faces[dir].uv?.map(v => v / 16) ?? [0, 0, 1, 1];
+      let r = faces[dir].uv?.map(v => v / 16) ?? [0, 0, 1, 1];
+      r = [r[0], r[1], r[0], r[3], r[2], r[3], r[2], r[1]];
+
+      if (faces[dir].rotation) {
+        if (faces[dir].rotation % 90 !== 0) {
+          throw new Error('Cannot rotate an image with an angle that is not the multiple of 90.');
+        }
+
+        let count = (faces[dir].rotation / 90) & 3;
+        while (count--) {
+          r = [r[2], r[3], r[4], r[5], r[6], r[7], r[0], r[1]];
+        }
+      }
+      uv[dir[0]] = r;
     }
 
     return {
@@ -71,18 +84,18 @@ function getVerticesData(elements) {
           source: faces.up.texture,
           vertices: [
             f[0], t[1], f[2],   uv.u[0], uv.u[1],   0.0, 1.0, 0.0,
-            f[0], t[1], t[2],   uv.u[0], uv.u[3],   0.0, 1.0, 0.0,
-            t[0], t[1], t[2],   uv.u[2], uv.u[3],   0.0, 1.0, 0.0,
-            t[0], t[1], f[2],   uv.u[2], uv.u[1],   0.0, 1.0, 0.0
+            f[0], t[1], t[2],   uv.u[2], uv.u[3],   0.0, 1.0, 0.0,
+            t[0], t[1], t[2],   uv.u[4], uv.u[5],   0.0, 1.0, 0.0,
+            t[0], t[1], f[2],   uv.u[6], uv.u[7],   0.0, 1.0, 0.0
           ]
         } : undefined,
         west: faces.west ? {
           source: faces.west.texture,
           vertices: [
             f[0], t[1], f[2],   uv.w[0], uv.w[1],   -1.0, 0.0, 0.0,
-            f[0], f[1], f[2],   uv.w[0], uv.w[3],   -1.0, 0.0, 0.0,
-            f[0], f[1], t[2],   uv.w[2], uv.w[3],   -1.0, 0.0, 0.0,
-            f[0], t[1], t[2],   uv.w[2], uv.w[1],   -1.0, 0.0, 0.0
+            f[0], f[1], f[2],   uv.w[2], uv.w[3],   -1.0, 0.0, 0.0,
+            f[0], f[1], t[2],   uv.w[4], uv.w[5],   -1.0, 0.0, 0.0,
+            f[0], t[1], t[2],   uv.w[6], uv.w[7],   -1.0, 0.0, 0.0
           ]
         } : undefined,
         east: faces.east ? {
@@ -90,8 +103,8 @@ function getVerticesData(elements) {
           vertices: [
             t[0], t[1], t[2],   uv.e[0], uv.e[1],   1.0, 0.0, 0.0,
             t[0], f[1], t[2],   uv.e[0], uv.e[3],   1.0, 0.0, 0.0,
-            t[0], f[1], f[2],   uv.e[2], uv.e[3],   1.0, 0.0, 0.0,
-            t[0], t[1], f[2],   uv.e[2], uv.e[1],   1.0, 0.0, 0.0
+            t[0], f[1], f[2],   uv.e[4], uv.e[5],   1.0, 0.0, 0.0,
+            t[0], t[1], f[2],   uv.e[6], uv.e[7],   1.0, 0.0, 0.0
           ]
         } : undefined,
         south: faces.south ? {
@@ -99,8 +112,8 @@ function getVerticesData(elements) {
           vertices: [
             f[0], t[1], t[2],   uv.s[0], uv.s[1],   0.0, 0.0, 1.0,
             f[0], f[1], t[2],   uv.s[0], uv.s[3],   0.0, 0.0, 1.0,
-            t[0], f[1], t[2],   uv.s[2], uv.s[3],   0.0, 0.0, 1.0,
-            t[0], t[1], t[2],   uv.s[2], uv.s[1],   0.0, 0.0, 1.0
+            t[0], f[1], t[2],   uv.s[4], uv.s[5],   0.0, 0.0, 1.0,
+            t[0], t[1], t[2],   uv.s[6], uv.s[7],   0.0, 0.0, 1.0
           ]
         } : undefined,
         north: faces.north ? {
@@ -108,17 +121,17 @@ function getVerticesData(elements) {
           vertices: [
             t[0], t[1], f[2],   uv.n[0], uv.n[1],   0.0, 0.0, -1.0,
             t[0], f[1], f[2],   uv.n[0], uv.n[3],   0.0, 0.0, -1.0,
-            f[0], f[1], f[2],   uv.n[2], uv.n[3],   0.0, 0.0, -1.0,
-            f[0], t[1], f[2],   uv.n[2], uv.n[1],   0.0, 0.0, -1.0
+            f[0], f[1], f[2],   uv.n[4], uv.n[5],   0.0, 0.0, -1.0,
+            f[0], t[1], f[2],   uv.n[6], uv.n[7],   0.0, 0.0, -1.0
           ]
         } : undefined,
         down: faces.down ? {
           source: faces.down.texture,
           vertices: [
             f[0], f[1], t[2],   uv.d[0], uv.d[1],   0.0, -1.0, 0.0,
-            f[0], f[1], f[2],   uv.d[0], uv.d[3],   0.0, -1.0, 0.0,
-            t[0], f[1], f[2],   uv.d[2], uv.d[3],   0.0, -1.0, 0.0,
-            t[0], f[1], t[2],   uv.d[2], uv.d[1],   0.0, -1.0, 0.0
+            f[0], f[1], f[2],   uv.d[2], uv.d[3],   0.0, -1.0, 0.0,
+            t[0], f[1], f[2],   uv.d[4], uv.d[5],   0.0, -1.0, 0.0,
+            t[0], f[1], t[2],   uv.d[6], uv.d[7],   0.0, -1.0, 0.0
           ]
         } : undefined
       }, 
