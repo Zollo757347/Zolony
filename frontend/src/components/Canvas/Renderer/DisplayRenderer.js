@@ -149,9 +149,9 @@ class DisplayRenderer extends Renderer {
                   data.vertices[i] * c + data.vertices[i+2] * d + f + z, 
                   data.vertices[i+3], 
                   data.vertices[i+4], 
-                  data.vertices[i+5], 
+                  data.vertices[i+5] * a + data.vertices[i+7] * b, 
                   data.vertices[i+6], 
-                  data.vertices[i+7]
+                  data.vertices[i+5] * c + data.vertices[i+7] * d
                 );
               }
               storage.counter++;
@@ -162,27 +162,6 @@ class DisplayRenderer extends Renderer {
     }
     return map;
   }
-/**
- * | 1        0.5 | |        1    | | 1        -0.5 |
- * |    1     0.5 | |     1       | |    1     -0.5 |
- * |       1  0.5 | | -1          | |       1  -0.5 |
- * |           1  | |           1 | |            1  |
- * 
- * | 1        0.5 | | a     b   | | 1        -0.5 |
- * |    1     0.5 | |    1      | |    1     -0.5 |
- * |       1  0.5 | | c     d   | |       1  -0.5 |
- * |           1  | |         1 | |            1  |
- * 
- * | 1        0.5 | | a     b  -(a+b)/2 |
- * |    1     0.5 | |    1       -1/2   |
- * |       1  0.5 | | c     d  -(c+d)/2 |
- * |           1  | |              1    |
- * 
- * | 1        0.5 | | a     b  -(a+b)/2 + 0.5 |
- * |    1     0.5 | |    1            0       |
- * |       1  0.5 | | c     d  -(c+d)/2 + 0.5 |
- * |           1  | |                 1       |
- */
 
   _shouldRender(block, dirName) {
     if (block.type !== BlockType.IronBlock && block.type !== BlockType.GlassBlock) return true;
