@@ -1,4 +1,5 @@
-import { Axis, BlockType, Vector3 } from "../utils";
+import { lever, lever_on } from "../../../../assets/json/blocks";
+import { Axis, BlockType } from "../utils";
 import Block from "./Block";
 
 /**
@@ -18,11 +19,21 @@ class Lever extends Block {
   constructor(options) {
     super({ type: BlockType.Lever, blockName: 'Lever', transparent: true, needSupport: true, interactable: true, redstoneAutoConnect: 'full', ...options });
 
+    this.outlines = lever.outlines;
+    this._textures = {
+      powered: lever_on.textures, 
+      unpowered: lever.textures
+    };
+
     /**
      * 此控制桿的狀態
      * @type {LeverStates}
      */
     this.states = { ...(this.states ?? {}), face: 'wall', facing: 'north', powered: false };
+  }
+
+  get textures() {
+    return this.states.powered ? this._textures.powered : this._textures.unpowered;
   }
 
   get power() {
@@ -77,20 +88,6 @@ class Lever extends Block {
         this.states.facing = 'north';
         break;
     }
-  }
-
-  surfaces() {
-    return [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].map(dir => {
-      return { points: this._surfaceOf(dir), color: this.surfaceColor(dir), dir, cords: new Vector3(this.x, this.y, this.z) };
-    });
-  }
-
-  /**
-   * 取得此方塊的顏色
-   * @returns {[number, number, number]}
-   */
-  surfaceColor() {
-    return this.states.powered ? [240, 120, 120] : [150, 150, 150];
   }
 
   PPUpdate() {
@@ -152,86 +149,6 @@ class Lever extends Block {
       this.engine._leftClick(this.x, this.y, this.z);
       return;
     }
-  }
-
-
-  /**
-   *       y
-   *       |
-   *       2---3
-   *     6---7 |
-   *     | 0-|-1--x
-   *     4---5
-   *    /
-   *   z
-   */
-  /***/
-  _vertices = [
-    [this.x       , this.y       , this.z], 
-    [this.x + 0.25, this.y       , this.z], 
-    [this.x       , this.y + 0.25, this.z], 
-    [this.x + 0.25, this.y + 0.25, this.z], 
-    [this.x       , this.y       , this.z + 0.25], 
-    [this.x + 0.25, this.y       , this.z + 0.25], 
-    [this.x       , this.y + 0.25, this.z + 0.25], 
-    [this.x + 0.25, this.y + 0.25, this.z + 0.25]
-  ];
-  _surfaces = {
-    [Axis.PX]: [1, 3, 7, 5], 
-    [Axis.PY]: [2, 3, 7, 6], 
-    [Axis.PZ]: [4, 5, 7, 6], 
-    [Axis.NX]: [0, 2, 6, 4], 
-    [Axis.NY]: [0, 1, 5, 4], 
-    [Axis.NZ]: [0, 1, 3, 2]
-  };
-
-  get _surfaceOffset() {
-    switch (this.states.face) {
-      case 'ceiling':
-        return [0.375, 0.75, 0.375];
-
-      case 'floor':
-        return [0.375, 0, 0.375];
-
-      case 'wall':
-        switch (this.states.facing) {
-          case 'east':
-            return [0, 0.375, 0.375];
-
-          case 'west':
-            return [0.75, 0.375, 0.375];
-
-          case 'south':
-            return [0.375, 0.375, 0];
-
-          case 'north':
-            return [0.375, 0.375, 0.75];
-
-          default: break;
-        }
-        break;
-
-      default: break;
-    }
-    return [0, 0, 0];
-  }
-
-  /**
-   * 取得指定平面的頂點座標
-   * @param {symbol} dir 指定平面的法向量方向
-   * @returns {Vector3[]}
-   * @private
-   */
-  _surfaceOf(dir) {
-    return this._surfaces[dir].map(i => {
-      let [x, y, z] = this._vertices[i];
-      const [ox, oy, oz] = this._surfaceOffset;
-      x += ox;
-      y += oy;
-      z += oz;
-
-      return new Vector3(x, y, z);
-    });
   }
 }
 

@@ -4,6 +4,8 @@ import _cube from "./cube.json";
 import _cube_all from "./cube_all.json";
 import _glass from "./glass.json";
 import _iron_block from "./iron_block.json";
+import _lever_on from "./lever_on.json";
+import _lever from "./lever.json";
 import _redstone_lamp from "./redstone_lamp.json";
 import _redstone_lamp_on from "./redstone_lamp_on.json";
 import _repeater_1tick_locked from "./repeater_1tick_locked.json";
@@ -29,6 +31,8 @@ const _blockData = {
   cube_all: _cube_all, 
   glass: _glass, 
   iron_block: _iron_block, 
+  lever_on: _lever_on, 
+  lever: _lever, 
   redstone_lamp: _redstone_lamp, 
   redstone_lamp_on: _redstone_lamp_on, 
   repeater_1tick_locked: _repeater_1tick_locked, 
@@ -51,8 +55,10 @@ const _blockData = {
 
 export const glass = parseTexture(_blockData, 'glass');
 export const iron_block = parseTexture(_blockData, 'iron_block');
-export const redstone_lamp = parseTexture(_blockData, 'redstone_lamp');
+export const lever_on = parseTexture(_blockData, 'lever_on');
+export const lever = parseTexture(_blockData, 'lever');
 export const redstone_lamp_on = parseTexture(_blockData, 'redstone_lamp_on');
+export const redstone_lamp = parseTexture(_blockData, 'redstone_lamp');
 export const repeater_1tick_locked = parseTexture(_blockData, 'repeater_1tick_locked');
 export const repeater_1tick_on_locked = parseTexture(_blockData, 'repeater_1tick_on_locked');
 export const repeater_1tick_on = parseTexture(_blockData, 'repeater_1tick_on');

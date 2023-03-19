@@ -57,12 +57,12 @@ function getElements({ textures, elements }) {
 }
 
 function getVerticesData(elements) {
-  const data = elements.map(({ from, to, faces }) => {
+  const data = elements.map(({ from, to, faces, rotation }) => {
     const f = [from[0] / 16, from[1] / 16, from[2] / 16];
     const t = [to[0] / 16, to[1] / 16, to[2] / 16];
     const uv = {}, a = { e: 0, s: 1, w: 2, n: 3 };
 
-    const n = [[1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [-1.0, 0.0, 0.0], [0.0, 0.0, -1.0]];
+    const rotate = getRotationMatrix(rotation);
 
     for (const dir in faces) {
       let r = faces[dir].uv?.map(v => v / 16) ?? [0, 0, 1, 1];
@@ -81,60 +81,62 @@ function getVerticesData(elements) {
       uv[dir[0]] = r;
     }
 
+    const n = [rotate(1, 0, 0), rotate(0, 0, 1), rotate(-1, 0, 0), rotate(0, 0, -1), rotate(0, 1, 0), rotate(0, -1, 0)];
+
     return {
       texture: {
         up: faces.up ? {
           source: faces.up.texture,
           vertices: [
-            f[0], t[1], f[2],   uv.u[0], uv.u[1],   0.0, 1.0, 0.0,
-            f[0], t[1], t[2],   uv.u[2], uv.u[3],   0.0, 1.0, 0.0,
-            t[0], t[1], t[2],   uv.u[4], uv.u[5],   0.0, 1.0, 0.0,
-            t[0], t[1], f[2],   uv.u[6], uv.u[7],   0.0, 1.0, 0.0
+            ...rotate(f[0], t[1], f[2]),   uv.u[0], uv.u[1],   n[4][0], n[4][1], n[4][2], 
+            ...rotate(f[0], t[1], t[2]),   uv.u[2], uv.u[3],   n[4][0], n[4][1], n[4][2], 
+            ...rotate(t[0], t[1], t[2]),   uv.u[4], uv.u[5],   n[4][0], n[4][1], n[4][2], 
+            ...rotate(t[0], t[1], f[2]),   uv.u[6], uv.u[7],   n[4][0], n[4][1], n[4][2]
           ]
         } : undefined,
         west: faces.west ? {
           source: faces.west.texture,
           vertices: [
-            f[0], t[1], f[2],   uv.w[0], uv.w[1],   n[a.w][0], n[a.w][1], n[a.w][2],
-            f[0], f[1], f[2],   uv.w[2], uv.w[3],   n[a.w][0], n[a.w][1], n[a.w][2],
-            f[0], f[1], t[2],   uv.w[4], uv.w[5],   n[a.w][0], n[a.w][1], n[a.w][2],
-            f[0], t[1], t[2],   uv.w[6], uv.w[7],   n[a.w][0], n[a.w][1], n[a.w][2]
+            ...rotate(f[0], t[1], f[2]),   uv.w[0], uv.w[1],   n[a.w][0], n[a.w][1], n[a.w][2],
+            ...rotate(f[0], f[1], f[2]),   uv.w[2], uv.w[3],   n[a.w][0], n[a.w][1], n[a.w][2],
+            ...rotate(f[0], f[1], t[2]),   uv.w[4], uv.w[5],   n[a.w][0], n[a.w][1], n[a.w][2],
+            ...rotate(f[0], t[1], t[2]),   uv.w[6], uv.w[7],   n[a.w][0], n[a.w][1], n[a.w][2]
           ]
         } : undefined,
         east: faces.east ? {
           source: faces.east.texture,
           vertices: [
-            t[0], t[1], t[2],   uv.e[0], uv.e[1],   n[a.e][0], n[a.e][1], n[a.e][2],
-            t[0], f[1], t[2],   uv.e[0], uv.e[3],   n[a.e][0], n[a.e][1], n[a.e][2],
-            t[0], f[1], f[2],   uv.e[4], uv.e[5],   n[a.e][0], n[a.e][1], n[a.e][2],
-            t[0], t[1], f[2],   uv.e[6], uv.e[7],   n[a.e][0], n[a.e][1], n[a.e][2]
+            ...rotate(t[0], t[1], t[2]),   uv.e[0], uv.e[1],   n[a.e][0], n[a.e][1], n[a.e][2],
+            ...rotate(t[0], f[1], t[2]),   uv.e[0], uv.e[3],   n[a.e][0], n[a.e][1], n[a.e][2],
+            ...rotate(t[0], f[1], f[2]),   uv.e[4], uv.e[5],   n[a.e][0], n[a.e][1], n[a.e][2],
+            ...rotate(t[0], t[1], f[2]),   uv.e[6], uv.e[7],   n[a.e][0], n[a.e][1], n[a.e][2]
           ]
         } : undefined,
         south: faces.south ? {
           source: faces.south.texture,
           vertices: [
-            f[0], t[1], t[2],   uv.s[0], uv.s[1],   n[a.s][0], n[a.s][1], n[a.s][2],
-            f[0], f[1], t[2],   uv.s[0], uv.s[3],   n[a.s][0], n[a.s][1], n[a.s][2],
-            t[0], f[1], t[2],   uv.s[4], uv.s[5],   n[a.s][0], n[a.s][1], n[a.s][2],
-            t[0], t[1], t[2],   uv.s[6], uv.s[7],   n[a.s][0], n[a.s][1], n[a.s][2]
+            ...rotate(f[0], t[1], t[2]),   uv.s[0], uv.s[1],   n[a.s][0], n[a.s][1], n[a.s][2],
+            ...rotate(f[0], f[1], t[2]),   uv.s[0], uv.s[3],   n[a.s][0], n[a.s][1], n[a.s][2],
+            ...rotate(t[0], f[1], t[2]),   uv.s[4], uv.s[5],   n[a.s][0], n[a.s][1], n[a.s][2],
+            ...rotate(t[0], t[1], t[2]),   uv.s[6], uv.s[7],   n[a.s][0], n[a.s][1], n[a.s][2]
           ]
         } : undefined,
         north: faces.north ? {
           source: faces.north.texture,
           vertices: [
-            t[0], t[1], f[2],   uv.n[0], uv.n[1],   n[a.n][0], n[a.n][1], n[a.n][2],
-            t[0], f[1], f[2],   uv.n[0], uv.n[3],   n[a.n][0], n[a.n][1], n[a.n][2],
-            f[0], f[1], f[2],   uv.n[4], uv.n[5],   n[a.n][0], n[a.n][1], n[a.n][2],
-            f[0], t[1], f[2],   uv.n[6], uv.n[7],   n[a.n][0], n[a.n][1], n[a.n][2]
+            ...rotate(t[0], t[1], f[2]),   uv.n[0], uv.n[1],   n[a.n][0], n[a.n][1], n[a.n][2],
+            ...rotate(t[0], f[1], f[2]),   uv.n[0], uv.n[3],   n[a.n][0], n[a.n][1], n[a.n][2],
+            ...rotate(f[0], f[1], f[2]),   uv.n[4], uv.n[5],   n[a.n][0], n[a.n][1], n[a.n][2],
+            ...rotate(f[0], t[1], f[2]),   uv.n[6], uv.n[7],   n[a.n][0], n[a.n][1], n[a.n][2]
           ]
         } : undefined,
         down: faces.down ? {
           source: faces.down.texture,
           vertices: [
-            f[0], f[1], t[2],   uv.d[0], uv.d[1],   0.0, -1.0, 0.0,
-            f[0], f[1], f[2],   uv.d[2], uv.d[3],   0.0, -1.0, 0.0,
-            t[0], f[1], f[2],   uv.d[4], uv.d[5],   0.0, -1.0, 0.0,
-            t[0], f[1], t[2],   uv.d[6], uv.d[7],   0.0, -1.0, 0.0
+            ...rotate(f[0], f[1], t[2]),   uv.d[0], uv.d[1],   n[5][0], n[5][1], n[5][2], 
+            ...rotate(f[0], f[1], f[2]),   uv.d[2], uv.d[3],   n[5][0], n[5][1], n[5][2], 
+            ...rotate(t[0], f[1], f[2]),   uv.d[4], uv.d[5],   n[5][0], n[5][1], n[5][2], 
+            ...rotate(t[0], f[1], t[2]),   uv.d[6], uv.d[7],   n[5][0], n[5][1], n[5][2], 
           ]
         } : undefined
       }, 
@@ -207,6 +209,52 @@ function parsePath(path) {
     path = path.substr(6);
   }
   return path;
+}
+
+function getRotationMatrix(rotation) {
+  if (!rotation) {
+    return function (x, y, z) {
+      return [x, y, z];
+    }
+  }
+
+  let { origin: [p, q, r], axis, angle } = rotation;
+
+  const c = Math.cos(angle / 180 * Math.PI);
+  const s = Math.sin(angle / 180 * Math.PI);
+  const m = axis === 'x' ? [
+    1, 0, 0, 
+    0, c,-s, 
+    0, s, c
+  ] : axis === 'y' ? [
+     c, 0, s, 
+     0, 1, 0, 
+    -s, 0, c
+  ] : axis === 'z' ? [
+    c,-s, 0, 
+    s, c, 0, 
+    0, 0, 1
+  ] : null;
+
+  if (!m) {
+    throw new Error(`Unable to parse axis "${axis}".`);
+  }
+
+  p /= 16;
+  q /= 16;
+  r /= 16;
+
+  return function (x, y, z) {
+    x -= p;
+    y -= q;
+    z -= r;
+
+    return [
+      m[0]*x + m[1]*y + m[2]*z + p, 
+      m[3]*x + m[4]*y + m[5]*z + q, 
+      m[6]*x + m[7]*y + m[8]*z + r
+    ];
+  }
 }
 
 export default parseTexture;
