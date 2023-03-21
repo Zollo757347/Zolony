@@ -130,7 +130,15 @@ class DisplayRenderer extends Renderer {
             block.states.facing === 'west' ? [0, 1, -1, 0] :
             block.states.facing === 'south' ? [-1, 0, 0, -1] :
             block.states.facing === 'east' ? [0, -1, 1, 0] : [1, 0, 0, 1];
-          const [e, f] = [(1-a-b)/2, (1-c-d)/2];
+
+          const [n, p, q, r, s] = !block.states.face ? [1, 1, 0, 0, 1] :
+            block.states.face === 'wall' ? [-1, 0, -1, -1, 0] :
+            block.states.face === 'ceiling' ? [-1, -1, 0, 0, 1] : [1, 1, 0, 0, 1];
+
+          const an = a * n, cn = c * n;
+          const br = b * r, dr = d * r;
+          const bs = b * s, ds = d * s;
+          const [e, f, g] = [(1-an-br-bs)/2, (1-p-q)/2, (1-cn-dr-ds)/2];
 
           block.textures.forEach(texture => {
             for (const [dirName, data] of Object.entries(texture)) {
@@ -142,16 +150,17 @@ class DisplayRenderer extends Renderer {
                 map.set(data.source, storage);
               }
 
-              for (let i = 0; i < data.vertices.length; i += 8) {
+              const v = data.vertices;
+              for (let i = 0; i < v.length; i += 8) {
                 storage.vertices.push(
-                  data.vertices[i] * a + data.vertices[i+2] * b + e + x, 
-                  data.vertices[i+1] + y, 
-                  data.vertices[i] * c + data.vertices[i+2] * d + f + z, 
-                  data.vertices[i+3], 
-                  data.vertices[i+4], 
-                  data.vertices[i+5] * a + data.vertices[i+7] * b, 
-                  data.vertices[i+6], 
-                  data.vertices[i+5] * c + data.vertices[i+7] * d
+                  v[i] * an + v[i+1] * br + v[i+2] * bs + e + x, 
+                              v[i+1] * p  + v[i+2] * q  + f + y, 
+                  v[i] * cn + v[i+1] * dr + v[i+2] * ds + g + z, 
+                  v[i+3], 
+                  v[i+4], 
+                  v[i+5] * an + v[i+6] * br + v[i+7] * bs, 
+                              + v[i+6] * p  + v[i+7] * q, 
+                  v[i+5] * cn + v[i+6] * dr + v[i+7] * ds
                 );
               }
               storage.counter++;

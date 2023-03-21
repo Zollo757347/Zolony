@@ -1,5 +1,5 @@
 import { lever, lever_on } from "../../../../assets/json/blocks";
-import { Axis, BlockType } from "../utils";
+import { BlockType } from "../utils";
 import Block from "./Block";
 
 /**
@@ -52,41 +52,24 @@ class Lever extends Block {
    * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
    */
   setFacing(normDir, facingDir) {
-    switch (normDir) {
-      case Axis.PX: 
-        this.states.face = 'wall';
-        this.states.facing = 'east';
-        break;
+    const table = {
+      east: 'west', 
+      west: 'east', 
+      south: 'north', 
+      north: 'south'
+    };
 
-      case Axis.NX:
-        this.states.face = 'wall';
-        this.states.facing = 'west';
-        break;
-
-      case Axis.PY:
-        this.states.face = 'floor';
-        this.states.facing = 'north';
-        break;
-
-      case Axis.NY:
-        this.states.face = 'ceiling';
-        this.states.facing = 'north';
-        break;
-
-      case Axis.PZ:
-        this.states.face = 'wall';
-        this.states.facing = 'south';
-        break;
-
-      case Axis.NZ:
-        this.states.face = 'wall';
-        this.states.facing = 'north';
-        break;
-
-      default:
-        this.states.face = 'wall';
-        this.states.facing = 'north';
-        break;
+    if (normDir === 'up') {
+      this.states.face = 'floor';
+      this.states.facing = table[facingDir];
+    }
+    else if (normDir === 'down') {
+      this.states.face = 'ceiling';
+      this.states.facing = table[facingDir];
+    }
+    else {
+      this.states.face = 'wall';
+      this.states.facing = normDir;
     }
   }
 

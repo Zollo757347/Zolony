@@ -312,12 +312,12 @@ class Engine {
    * @param {number} y 
    * @param {number} z 
    * @param {boolean} shiftDown 
-   * @param {symbol} normDir 指定面的法向量方向
-   * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
+   * @param {string} normDir 指定面的法向量
+   * @param {string} facing 與觀察視角最接近的軸向量方向
    * @param {new () => Block} B 在不觸發互動時所放下的方塊
    * @private
    */
-  _rightClick(x, y, z, shiftDown, normDir, facingDir, B) {
+  _rightClick(x, y, z, shiftDown, normDir, facing, B) {
     let block = this.block(x, y, z);
     if (!block) return;
 
@@ -337,7 +337,13 @@ class Engine {
     if (!block || block.type !== 0) return;
 
     const newBlock = new B({ x, y, z, engine: this });
-    newBlock.setFacing?.(normDir, facingDir);
+
+    const face =
+      normDir[0] ? (normDir[0] === 1 ? 'east' : 'west') :
+      normDir[1] ? (normDir[1] === 1 ? 'up' : 'down') :
+      (normDir[2] === 1 ? 'south' : 'north');
+    newBlock.setFacing?.(face, facing);
+
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 
     this._pg[x][y][z] = newBlock;
