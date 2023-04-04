@@ -1,4 +1,6 @@
 {
+    "facing": true,
+
     "ambientocclusion": false,
     "textures": {
         "particle": "block/repeater",

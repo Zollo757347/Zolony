@@ -1,4 +1,7 @@
 {
+    "face": true,
+    "facing": true,
+
     "ambientocclusion": false,
     "textures": {
         "particle": "block/cobblestone",

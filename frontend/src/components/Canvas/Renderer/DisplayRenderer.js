@@ -126,20 +126,6 @@ class DisplayRenderer extends Renderer {
           const y = j - this.dimensions[1] / 2;
           const z = k - this.dimensions[2] / 2;
 
-          const [a, b, c, d] = !block.states.facing ? [1, 0, 0, 1] :
-            block.states.facing === 'west' ? [0, 1, -1, 0] :
-            block.states.facing === 'south' ? [-1, 0, 0, -1] :
-            block.states.facing === 'east' ? [0, -1, 1, 0] : [1, 0, 0, 1];
-
-          const [n, p, q, r, s] = !block.states.face ? [1, 1, 0, 0, 1] :
-            block.states.face === 'wall' ? [-1, 0, -1, -1, 0] :
-            block.states.face === 'ceiling' ? [-1, -1, 0, 0, 1] : [1, 1, 0, 0, 1];
-
-          const an = a * n, cn = c * n;
-          const br = b * r, dr = d * r;
-          const bs = b * s, ds = d * s;
-          const [e, f, g] = [(1-an-br-bs)/2, (1-p-q)/2, (1-cn-dr-ds)/2];
-
           block.textures.forEach(texture => {
             for (const [dirName, data] of Object.entries(texture)) {
               if (!data || !this._shouldRender(block, dirName)) continue;
@@ -153,14 +139,14 @@ class DisplayRenderer extends Renderer {
               const v = data.vertices;
               for (let i = 0; i < v.length; i += 8) {
                 storage.vertices.push(
-                  v[i] * an + v[i+1] * br + v[i+2] * bs + e + x, 
-                              v[i+1] * p  + v[i+2] * q  + f + y, 
-                  v[i] * cn + v[i+1] * dr + v[i+2] * ds + g + z, 
+                  v[i] + x, 
+                  v[i+1] + y, 
+                  v[i+2] + z, 
                   v[i+3], 
                   v[i+4], 
-                  v[i+5] * an + v[i+6] * br + v[i+7] * bs, 
-                              + v[i+6] * p  + v[i+7] * q, 
-                  v[i+5] * cn + v[i+6] * dr + v[i+7] * ds
+                  v[i+5], 
+                  v[i+6], 
+                  v[i+7]
                 );
               }
               storage.counter++;

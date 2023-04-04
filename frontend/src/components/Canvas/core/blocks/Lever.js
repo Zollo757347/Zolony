@@ -19,10 +19,10 @@ class Lever extends Block {
   constructor(options) {
     super({ type: BlockType.Lever, blockName: 'Lever', transparent: true, needSupport: true, interactable: true, redstoneAutoConnect: 'full', ...options });
 
-    this.outlines = lever.outlines;
+    this.outlines = lever.floor.north.outlines;
     this._textures = {
-      powered: lever_on.textures, 
-      unpowered: lever.textures
+      powered: lever_on, 
+      unpowered: lever
     };
 
     /**
@@ -33,7 +33,7 @@ class Lever extends Block {
   }
 
   get textures() {
-    return this.states.powered ? this._textures.powered : this._textures.unpowered;
+    return (this.states.powered ? this._textures.powered : this._textures.unpowered)[this.states.face][this.states.facing].textures;
   }
 
   get power() {
