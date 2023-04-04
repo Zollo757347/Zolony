@@ -84,12 +84,17 @@ function getComponents(data) {
     return { vertices, normals, faces };
   });
 
-  return { elements, face: data.face ?? false, facing: data.facing ?? false };
+  return {
+    elements, 
+    outlines: data.outlines?.map(({ from, to }) => getVertices(from, to, (x, y, z) => [x, y, z]).original) ?? undefined, 
+    face: data.face ?? false, 
+    facing: data.facing ?? false
+  };
 }
 
-function parseComponents({ elements, face, facing }) {
+function parseComponents({ elements, outlines, face, facing }) {
   if (!facing) {
-    return getVerticesData(elements);
+    return getVerticesData(elements, outlines);
   }
 
   const faces = face ? [
@@ -100,14 +105,18 @@ function parseComponents({ elements, face, facing }) {
   let data = {};
 
   faces.forEach(([f, rotates]) => {
-    rotates.forEach(r => rotateComponents(elements, r));
+    rotates.forEach(r => {
+      rotateElements(elements, r);
+      rotateOutlines(outlines, r);
+    });
 
     const rotate = getRotationMatrix({ origin: [8, 8, 8], axis: "y", angle: 90 });
     const result = {};
 
     ['north', 'west', 'south', 'east'].forEach(dir => {
-      result[dir] = getVerticesData(elements);
-      rotateComponents(elements, rotate);
+      result[dir] = getVerticesData(elements, outlines);
+      rotateElements(elements, rotate);
+      rotateOutlines(outlines, rotate);
     });
 
     if (f) data[f] = result;
@@ -117,7 +126,7 @@ function parseComponents({ elements, face, facing }) {
   return data;
 }
 
-function rotateComponents(elements, rotate) {
+function rotateElements(elements, rotate) {
   for (const { vertices: { rotated }, normals } of elements) {
     for (let i = 0; i < rotated.length; i++) {
       rotated[i] = rotate(...rotated[i], 1);
@@ -128,21 +137,23 @@ function rotateComponents(elements, rotate) {
   }
 }
 
-function getVerticesData(elements) {
+function rotateOutlines(outlines, rotate) {
+  if (!outlines) return;
+
+  outlines.forEach(outline => {
+    for (let i = 0; i < outline.length; i++) {
+      outline[i] = rotate(...outline[i], 1);
+    }
+  });
+}
+
+function getVerticesData(elements, outlinesParam) {
   const textures = [];
   const outlines = [];
   elements.forEach(({ vertices: { original, rotated }, normals, faces }) => {
     const texture = {};
-    const outline = [];
     
-    [
-      ['up', [2, 3, 7, 6], [0, 1, 0]], 
-      ['west', [2, 0, 1, 3], [-1, 0, 0]], 
-      ['east', [7, 5, 4, 6], [1, 0, 0]], 
-      ['south', [3, 1, 5, 7], [0, 0, 1]], 
-      ['north', [6, 4, 0, 2], [0, 0, -1]], 
-      ['down', [1, 0, 4, 5], [0, -1, 0]]
-    ].forEach(([dir, v, n]) => {
+    sixSides.forEach(([dir, v, n]) => {
       texture[dir] = faces[dir] ? {
         source: faces[dir].texture, 
         vertices: [
@@ -152,17 +163,29 @@ function getVerticesData(elements) {
           ...rotated[v[3]], ...faces[dir].texCoord[3], ...normals[dir]
         ]
       } : undefined;
-  
-      outline.push(
-        ...original[v[0]], ...n, 
-        ...original[v[1]], ...n, 
-        ...original[v[2]], ...n, 
-        ...original[v[3]], ...n
-      );
+
+      if (!outlinesParam) {
+        outlines.push(
+          ...original[v[0]], ...n, 
+          ...original[v[1]], ...n, 
+          ...original[v[2]], ...n, 
+          ...original[v[3]], ...n
+        );
+      }
+    });
+
+    outlinesParam?.forEach(vertices => {
+      sixSides.forEach(([_, v, n]) => {
+        outlines.push(
+          ...vertices[v[0]], ...n, 
+          ...vertices[v[1]], ...n, 
+          ...vertices[v[2]], ...n, 
+          ...vertices[v[3]], ...n
+        );
+      });
     });
 
     textures.push(texture);
-    outlines.push(outline);
   });
 
   return { textures, outlines };
@@ -283,5 +306,14 @@ function getNormals(rotate) {
     north: rotate(0, 0, -1, 0)
   };
 }
+
+const sixSides = [
+  ['up', [2, 3, 7, 6], [0, 1, 0]], 
+  ['west', [2, 0, 1, 3], [-1, 0, 0]], 
+  ['east', [7, 5, 4, 6], [1, 0, 0]], 
+  ['south', [3, 1, 5, 7], [0, 0, 1]], 
+  ['north', [6, 4, 0, 2], [0, 0, -1]], 
+  ['down', [1, 0, 4, 5], [0, -1, 0]]
+];
 
 export default parseTexture;

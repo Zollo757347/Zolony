@@ -19,11 +19,10 @@ class Lever extends Block {
   constructor(options) {
     super({ type: BlockType.Lever, blockName: 'Lever', transparent: true, needSupport: true, interactable: true, redstoneAutoConnect: 'full', ...options });
 
-    this.outlines = lever.floor.north.outlines;
-    this._textures = {
+    this._model = {
       powered: lever_on, 
       unpowered: lever
-    };
+    }
 
     /**
      * 此控制桿的狀態
@@ -33,7 +32,11 @@ class Lever extends Block {
   }
 
   get textures() {
-    return (this.states.powered ? this._textures.powered : this._textures.unpowered)[this.states.face][this.states.facing].textures;
+    return (this.states.powered ? this._model.powered : this._model.unpowered)[this.states.face][this.states.facing].textures;
+  }
+
+  get outlines() {
+    return (this.states.powered ? this._model.powered : this._model.unpowered)[this.states.face][this.states.facing].outlines;
   }
 
   get power() {

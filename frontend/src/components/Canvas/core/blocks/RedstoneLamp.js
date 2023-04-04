@@ -17,10 +17,9 @@ class RedstoneLamp extends FullBlock {
   constructor(options) {
     super({ type: BlockType.RedstoneLamp, blockName: '紅石燈', ...options });
 
-    this.outlines = redstone_lamp.outlines;
-    this._textures = {
-      lit: redstone_lamp_on.textures, 
-      unlit: redstone_lamp.textures
+    this._model = {
+      lit: redstone_lamp_on, 
+      unlit: redstone_lamp
     };
 
     /**
@@ -31,7 +30,11 @@ class RedstoneLamp extends FullBlock {
   }
 
   get textures() {
-    return this.states.lit ? this._textures.lit : this._textures.unlit;
+    return this.states.lit ? this._model.lit.textures : this._model.unlit.textures;
+  }
+
+  get outlines() {
+    return this.states.lit ? this._model.lit.outlines : this._model.unlit.outlines;
   }
 
   PPUpdate() {

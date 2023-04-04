@@ -31,8 +31,7 @@ class RedstoneRepeater extends Block {
      */
     this.states = { ...(this.states ?? {}), delay: 1, facing: 'north', locked: false, powered: false };
 
-    this.outlines = repeater_1tick.north.outlines;
-    this._textures = [
+    this._model = [
       repeater_1tick,           repeater_2tick,           repeater_3tick,           repeater_4tick, 
       repeater_1tick_locked,    repeater_2tick_locked,    repeater_3tick_locked,    repeater_4tick_locked, 
       repeater_1tick_on,        repeater_2tick_on,        repeater_3tick_on,        repeater_4tick_on, 
@@ -49,7 +48,15 @@ class RedstoneRepeater extends Block {
       (this.states.powered ? 8 : 0) +
       (this.states.locked ? 4 : 0) +
       this.states.delay - 1;
-    return this._textures[index][this.states.facing].textures;
+    return this._model[index][this.states.facing].textures;
+  }
+
+  get outlines() {
+    const index = 
+      (this.states.powered ? 8 : 0) +
+      (this.states.locked ? 4 : 0) +
+      this.states.delay - 1;
+    return this._model[index][this.states.facing].outlines;
   }
 
   /**
