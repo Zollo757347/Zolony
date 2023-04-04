@@ -8,7 +8,6 @@ function parseTexture(blockData, blockName) {
   const fullRawData = getFullData(blockData, blockName);
   const modelComponents = getComponents(fullRawData);
   const data = parseComponents(modelComponents);
-  console.log(data);
   return data;
 }
 
@@ -88,11 +87,12 @@ function getComponents(data) {
     elements, 
     outlines: data.outlines?.map(({ from, to }) => getVertices(from, to, (x, y, z) => [x, y, z]).original) ?? undefined, 
     face: data.face ?? false, 
-    facing: data.facing ?? false
+    facing: data.facing ?? false,
+    prerotation: data.prerotation ?? undefined
   };
 }
 
-function parseComponents({ elements, outlines, face, facing }) {
+function parseComponents({ elements, outlines, face, facing, prerotation }) {
   if (!facing) {
     return getVerticesData(elements, outlines);
   }
@@ -112,6 +112,11 @@ function parseComponents({ elements, outlines, face, facing }) {
 
     const rotate = getRotationMatrix({ origin: [8, 8, 8], axis: "y", angle: 90 });
     const result = {};
+
+    for (let i = 0; i < prerotation; i++) {
+      rotateElements(elements, rotate);
+      rotateOutlines(outlines, rotate);
+    }
 
     ['north', 'west', 'south', 'east'].forEach(dir => {
       result[dir] = getVerticesData(elements, outlines);
@@ -211,6 +216,18 @@ function flatten(blockData, data) {
     }
     if (parentData.elements) {
       data.elements = parentData.elements;
+    }
+    if (parentData.outlines) {
+      data.outlines = parentData.outlines;
+    }
+    if (parentData.face) {
+      data.face = parentData.face;
+    }
+    if (parentData.facing) {
+      data.facing = parentData.facing;
+    }
+    if (parentData.prerotation) {
+      data.prerotation = parentData.prerotation;
     }
 
     parent = parentData.parent;

@@ -3,7 +3,7 @@ import {
   repeater_2tick_locked, repeater_2tick_on_locked, repeater_2tick_on, repeater_2tick, 
   repeater_3tick_locked, repeater_3tick_on_locked, repeater_3tick_on, repeater_3tick, 
   repeater_4tick_locked, repeater_4tick_on_locked, repeater_4tick_on, repeater_4tick
- } from "../../../../assets/json/blocks";
+} from "../../../../assets/json/blocks";
 import { BlockType } from "../utils";
 import Block from "./Block";
 
