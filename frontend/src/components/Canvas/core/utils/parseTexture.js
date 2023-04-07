@@ -1,8 +1,8 @@
 /**
  * 將指定方塊的模型資料解析成方便使用的形式
- * @param {object} blockData 所有方塊的資料
+ * @param {{ [name: string]: RawBlockData }} blockData 所有方塊的資料
  * @param {string} blockName 指定方塊的名稱
- * @returns 
+ * @returns {WebGLData | Record<FourFacings, WebGLData> | Record<ThreeFaces, Record<FourFacings, WebGLData>>}
  */
 function parseTexture(blockData, blockName) {
   const fullRawData = getFullData(blockData, blockName);
@@ -13,9 +13,9 @@ function parseTexture(blockData, blockName) {
 
 /**
  * 從所有方塊的資料中抓取指定方塊的模型資料
- * @param {object} blockData 所有方塊的資料
+ * @param {{ [name: string]: RawBlockData }} blockData 所有方塊的資料
  * @param {string} blockName 指定方塊的名稱
- * @returns 
+ * @returns {FullBlockData}
  */
 function getFullData(blockData, blockName) {
   const _data = blockData[parsePath(blockName)];
@@ -24,10 +24,11 @@ function getFullData(blockData, blockName) {
   }
   const data = flatten(blockData, _data);
 
+  // 把 `#textures` 的值都改成檔名
   for (let [key, value] of Object.entries(data.textures)) {
     const keys = [key];
     while (value.startsWith("#")) {
-      value = value.substr(1);
+      value = value.substring(1);
       keys.push(value);
 
       key = value;
@@ -40,19 +41,25 @@ function getFullData(blockData, blockName) {
     });
   }
 
+  // 把 `#elements#faces#*#texture` 的值都根據 `#textures` 改成檔名
   for (const { faces } of data.elements) {
     for (const key in faces) {
       const face = faces[key];
       if (!face.texture.startsWith('#')) {
         throw new Error(`The texture string ${face.texture} does not starts with "#".`);
       }
-      face.texture = data.textures[face.texture.substr(1)];
+      face.texture = data.textures[face.texture.substring(1)];
     }
   }
 
   return data;
 }
 
+/**
+ * 把資料轉換為繪圖所需的各種元件
+ * @param {FullBlockData} data 
+ * @returns {Components}
+ */
 function getComponents(data) {
   const elements = data.elements.map(({ from, to, faces, rotation }) => {
     const rotate = getRotationMatrix(rotation);
@@ -85,23 +92,31 @@ function getComponents(data) {
 
   return {
     elements, 
-    outlines: data.outlines?.map(({ from, to }) => getVertices(from, to, (x, y, z) => [x, y, z]).original) ?? undefined, 
+    outlines: data.outlines?.map(({ from, to }) => getVertices(from, to, getRotationMatrix()).original) ?? [], 
     face: data.face ?? false, 
     facing: data.facing ?? false,
-    prerotation: data.prerotation ?? undefined
+    prerotation: data.prerotation ?? 0
   };
 }
 
+/**
+ * 將所有元件轉換為 WebGL 所需的資料
+ * @param {Components} components
+ * @returns {WebGLData | Record<FourFacings, WebGLData> | Record<ThreeFaces, Record<FourFacings, WebGLData>>}
+ */
 function parseComponents({ elements, outlines, face, facing, prerotation }) {
   if (!facing) {
     return getVerticesData(elements, outlines);
   }
 
+  /**
+   * @type {[string, Rotation[]][]}
+   */
   const faces = face ? [
     ['floor', []], 
     ['wall', [getRotationMatrix({ origin: [8, 8, 8], axis: "x", angle: -90 }), getRotationMatrix({ origin: [8, 8, 8], axis: "z", angle: 180 })]], 
     ['ceiling', [getRotationMatrix({ origin: [8, 8, 8], axis: "x", angle: -90 })]]
-  ] : [[undefined, []]];
+  ] : [['', []]];
   let data = {};
 
   faces.forEach(([f, rotates]) => {
@@ -131,27 +146,41 @@ function parseComponents({ elements, outlines, face, facing, prerotation }) {
   return data;
 }
 
+/**
+ * 把模型箱的所有座標都旋轉一次
+ * @param {ComponentsElement[]} elements 
+ * @param {Rotation} rotate 
+ */
 function rotateElements(elements, rotate) {
   for (const { vertices: { rotated }, normals } of elements) {
     for (let i = 0; i < rotated.length; i++) {
-      rotated[i] = rotate(...rotated[i], 1);
+      rotated[i] = rotate([...rotated[i], 1]);
     }
     for (const key in normals) {
-      normals[key] = rotate(...normals[key], 0);
+      normals[key] = rotate([...normals[key], 0]);
     }
   }
 }
 
+/**
+ * 把互動箱的所有座標都旋轉一次
+ * @param {Vector3[][]} outlines 
+ * @param {Rotation} rotate 
+ */
 function rotateOutlines(outlines, rotate) {
-  if (!outlines) return;
-
-  outlines.forEach(outline => {
+  outlines?.forEach(outline => {
     for (let i = 0; i < outline.length; i++) {
-      outline[i] = rotate(...outline[i], 1);
+      outline[i] = rotate([...outline[i], 1]);
     }
   });
 }
 
+/**
+ * 把模型箱與互動箱資料轉成可以直接餵給 WebGL 的資料
+ * @param {ComponentsElement[]} elements 
+ * @param {Vector3[][]} outlinesParam 
+ * @returns {WebGLData}
+ */
 function getVerticesData(elements, outlinesParam) {
   const textures = [];
   const outlines = [];
@@ -169,7 +198,7 @@ function getVerticesData(elements, outlinesParam) {
         ]
       } : undefined;
 
-      if (!outlinesParam) {
+      if (!outlinesParam.length) {
         outlines.push(
           ...original[v[0]], ...n, 
           ...original[v[1]], ...n, 
@@ -179,7 +208,7 @@ function getVerticesData(elements, outlinesParam) {
       }
     });
 
-    outlinesParam?.forEach(vertices => {
+    outlinesParam.forEach(vertices => {
       sixSides.forEach(([_, v, n]) => {
         outlines.push(
           ...vertices[v[0]], ...n, 
@@ -198,9 +227,9 @@ function getVerticesData(elements, outlinesParam) {
 
 /**
  * 把 data 根據 #parent 展開
- * @param {object} blockData 所有方塊的資料
- * @param {string} data 待處理的資料
- * @returns 
+ * @param {{ [name: string]: RawBlockData }} blockData 所有方塊的資料
+ * @param {RawBlockData} data 待處理的資料
+ * @returns {Omit<RawBlockData, "parent">}
  */
 function flatten(blockData, data) {
   let parent = data.parent;
@@ -236,19 +265,29 @@ function flatten(blockData, data) {
   return JSON.parse(JSON.stringify(data));
 }
 
+/**
+ * 將原始資料中的方塊路徑轉換為名稱
+ * @param {string} path 
+ * @returns {string}
+ */
 function parsePath(path) {
   if (path.startsWith("minecraft:")) {
-    path = path.substr(10);
+    path = path.substring(10);
   }
   if (path.startsWith("block/")) {
-    path = path.substr(6);
+    path = path.substring(6);
   }
   return path;
 }
 
+/**
+ * 產生一個旋轉矩陣的函數
+ * @param {RawRotationData?} rotation 
+ * @returns {Rotation}
+ */
 function getRotationMatrix(rotation) {
   if (!rotation) {
-    return function (x, y, z) {
+    return function ([x, y, z]) {
       return [x, y, z];
     }
   }
@@ -279,7 +318,7 @@ function getRotationMatrix(rotation) {
   q /= 16;
   r /= 16;
 
-  return function (x, y, z, w) {
+  return function ([x, y, z, w]) {
     x -= (w ? p : 0);
     y -= (w ? q : 0);
     z -= (w ? r : 0);
@@ -292,6 +331,13 @@ function getRotationMatrix(rotation) {
   }
 }
 
+/**
+ * 回傳 from 到 to 展開的長方體的原座標與旋轉後的座標
+ * @param {Vector3} from 
+ * @param {Vector3} to 
+ * @param {Rotation} rotate 
+ * @returns {{ original: Vector3[], rotated: Vector3[] }}
+ */
 function getVertices(from, to, rotate) {
   const f = [from[0] / 16, from[1] / 16, from[2] / 16];
   const t = [to[0] / 16, to[1] / 16, to[2] / 16];
@@ -309,18 +355,23 @@ function getVertices(from, to, rotate) {
 
   return {
     original, 
-    rotated: original.map(v => rotate(...v, 1))
+    rotated: original.map(v => rotate([...v, 1]))
   };
 }
 
+/**
+ * 回傳旋轉後的三軸單位向量
+ * @param {Rotation} rotate 
+ * @returns {Record<SixSides, Vector3>}
+ */
 function getNormals(rotate) {
   return {
-    east: rotate(1, 0, 0, 0), 
-    west: rotate(-1, 0, 0, 0), 
-    up: rotate(0, 1, 0, 0), 
-    down: rotate(0, -1, 0, 0), 
-    south: rotate(0, 0, 1, 0), 
-    north: rotate(0, 0, -1, 0)
+    east: rotate([1, 0, 0, 0]), 
+    west: rotate([-1, 0, 0, 0]), 
+    up: rotate([0, 1, 0, 0]), 
+    down: rotate([0, -1, 0, 0]), 
+    south: rotate([0, 0, 1, 0]), 
+    north: rotate([0, 0, -1, 0])
   };
 }
 
@@ -332,5 +383,131 @@ const sixSides = [
   ['north', [6, 4, 0, 2], [0, 0, -1]], 
   ['down', [1, 0, 4, 5], [0, -1, 0]]
 ];
+
+/**
+ * @typedef RawBlockData 方塊的原始資料
+ * @type {object}
+ * @property {string?} parent 此方塊需參考的母模型的名稱
+ * @property {{ [name: string]: string }} textures 此方塊的材質列表
+ * @property {RawBlockElementData[]} elements 所有模型箱的資訊
+ * @property {RawBlockOutlineData[]?} outlines 所有特殊互動箱的資訊
+ * @property {boolean?} face 此方塊是否能夠三面附著
+ * @property {boolean?} facing 此方塊是否為四向方塊
+ * @property {number?} prerotation 預設要先沿 y 軸旋轉 90 度的次數
+ */
+
+/**
+ * @typedef FullBlockData 被展開後的方塊資料
+ * @type {Omit<RawBlockData, "parent"|"textures">}
+ */
+
+/**
+ * @typedef RawBlockElementData 方塊的模型箱資料
+ * @type {object}
+ * @property {Vector3} from 互動箱的西/下/北側座標
+ * @property {Vector3} to 互動箱的東/上/南側座標
+ * @property {RawRotationData} rotation 實際繪出前需要的旋轉
+ * @property {Partial<Record<SixSides, RawFaceData>>} faces 每個面的材質
+ */
+
+/**
+ * @typedef RawBlockOutlineData 方塊的互動箱資料
+ * @type {object}
+ * @property {Vector3} from 互動箱的西/下/北側座標
+ * @property {Vector3} to 互動箱的東/上/南側座標
+ */
+
+/**
+ * @typedef RawRotationData 用來描述沿著座標軸方向的旋轉
+ * @type {object}
+ * @property {Vector3} origin 旋轉的中心點
+ * @property {ThreeAxes} axis 旋轉座標軸
+ * @property {number} angle 逆時針旋轉角度
+ */
+
+/**
+ * @typedef RawFaceData 用來描述一個長方形面的材質
+ * @type {object}
+ * @property {Vector4} uv 指定材質上的左/上/右/下側座標
+ * @property {string} texture 要套用的材質
+ * @property {number?} rotation 在套用材質前要先將其順時針旋轉的角度
+ */
+
+/**
+ * @typedef Components 方塊中所有的繪圖必要元件
+ * @type {object}
+ * @property {ComponentsElement[]} elements 處理後的所有模型箱的資訊
+ * @property {Vector3[][]} outlines 處理後的所有特殊互動箱的資訊
+ * @property {boolean} face 此方塊是否能夠三面附著
+ * @property {boolean} facing 此方塊是否為四向方塊
+ * @property {number} prerotation 預設要先沿 y 軸旋轉 90 度的次數
+ */
+
+/**
+ * @typedef ComponentsElement 模型箱的資訊
+ * @type {object}
+ * @property {{ original: Vector3[], rotated: Vector3[] }} vertices 此模型箱八個頂點的資訊
+ * @property {Record<SixSides, Vector3>} normals 旋轉後的三軸單位向量
+ * @property {Partial<Record<SixSides, FaceData>>} faces 每個面的材質
+ */
+
+/**
+ * @typedef FaceData 用來描述一個長方形面的材質
+ * @type {object}
+ * @property {Vector2[]} texCoord 四個頂點對應在圖片上的像素座標
+ * @property {string} texture 要套用的材質
+ */
+
+/**
+ * @typedef WebGLData
+ * @type {object}
+ * @property {WebGLTextureData[]} textures 
+ * @property {number[]} outlines 
+ */
+
+/**
+ * @typedef WebGLTextureData
+ * @type {Record<SixSides, { source: string, vertices: number[] }>}
+ */
+
+/**
+ * @typedef Rotation 一個旋轉矩陣
+ * @type {(vec: Vector4) => Vector3}
+ */
+
+/**
+ * @typedef Vector2
+ * @type {[number, number]}
+ */
+
+/**
+ * @typedef Vector3
+ * @type {[number, number, number]}
+ */
+
+/**
+ * @typedef Vector4
+ * @type {[number, number, number, number]}
+ */
+
+/**
+ * @typedef SixSides
+ * @type {"east"|"west"|"up"|"down"|"south"|"north"}
+ */
+
+/**
+ * @typedef FourFacings
+ * @type {"east"|"west"|"south"|"north"}
+ */
+
+/**
+ * @typedef ThreeFaces
+ * @type {"ceiling"|"wall"|"floor"}
+ */
+
+/**
+ * @typedef ThreeAxes
+ * @type {"x"|"y"|"z"}
+ */
 
 export default parseTexture;
