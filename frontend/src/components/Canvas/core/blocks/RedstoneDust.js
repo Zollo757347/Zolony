@@ -1,8 +1,9 @@
-import { Axis, BlockType, Vector3 } from "../utils";
+import {
+  redstone_dust_dot, redstone_dust_side0, redstone_dust_side1, redstone_dust_side_alt0, redstone_dust_side_alt1, redstone_dust_up
+} from "../../../../assets/json/blocks";
+import { Axis, BlockType } from "../utils";
 import Block from "./Block";
 import { strictEqual } from "../../../../utils";
-
-const d = 0.001;
 
 /**
  * @typedef _RedstoneDustStates
@@ -33,39 +34,84 @@ class RedstoneDust extends Block {
      * @type {boolean}
      */
     this.crossMode = true;
+
+    this._textureModel = {
+      dot: redstone_dust_dot.textures, 
+      north: [
+        [], 
+        redstone_dust_side0.textures, 
+        redstone_dust_side0.textures.concat(redstone_dust_up.north.textures)
+      ], 
+      west: [
+        [], 
+        redstone_dust_side1.textures, 
+        redstone_dust_side1.textures.concat(redstone_dust_up.west.textures)
+      ], 
+      south: [
+        [], 
+        redstone_dust_side_alt0.textures, 
+        redstone_dust_side_alt0.textures.concat(redstone_dust_up.south.textures)
+      ], 
+      east: [
+        [], 
+        redstone_dust_side_alt1.textures, 
+        redstone_dust_side_alt1.textures.concat(redstone_dust_up.east.textures)
+      ]
+    };
+
+    this._outlineModel = {
+      dot: redstone_dust_dot.outlines, 
+      north: [
+        [], 
+        redstone_dust_side0.outlines, 
+        redstone_dust_side0.outlines.concat(redstone_dust_up.north.outlines)
+      ], 
+      west: [
+        [], 
+        redstone_dust_side1.outlines, 
+        redstone_dust_side1.outlines.concat(redstone_dust_up.west.outlines)
+      ], 
+      south: [
+        [], 
+        redstone_dust_side_alt0.outlines, 
+        redstone_dust_side_alt0.outlines.concat(redstone_dust_up.south.outlines)
+      ], 
+      east: [
+        [], 
+        redstone_dust_side_alt1.outlines, 
+        redstone_dust_side_alt1.outlines.concat(redstone_dust_up.east.outlines)
+      ]
+    };
   }
 
   get power() {
     return this.states.power;
   }
 
-  /**
-   * 取得此方塊所有平面的資訊
-   * @returns {import("../../Playground").Surface[]}
-   */
-  surfaces() {
-    const result = [{ points: this._surfaces.middle.map(i => new Vector3(...this._vertices[i])), color: this.surfaceColor(), dir: Axis.PY, cords: new Vector3(this.x, this.y, this.z) }];
-    result.push(...this._otherSurfacesOf('east'));
-    result.push(...this._otherSurfacesOf('south'));
-    result.push(...this._otherSurfacesOf('west'));
-    result.push(...this._otherSurfacesOf('north'));
-
-    return result;
+  get textures() {
+    const { east: e, west: w, south: s, north: n } = this.states;
+    return [
+      ...this._textureModel.north[n], 
+      ...this._textureModel.west[w], 
+      ...this._textureModel.south[s], 
+      ...this._textureModel.east[e], 
+      ...(!s === !e || !n === !w || !n !== !s ? this._textureModel.dot : [])
+    ];
   }
 
-  /**
-   * 取得此方塊指定平面的顏色
-   * @returns 
-   */
-  surfaceColor() {
-    const brightness = this.power * 8 + 100;
-    return [brightness, brightness >> 1, brightness >> 1];
+  get color() {
+    return [105 + 10 * this.states.power, 0, 0];
   }
 
-  interactionSurfaces() {
-    return [Axis.PX, Axis.PY, Axis.PZ, Axis.NX, Axis.NY, Axis.NZ].map(dir => {
-      return { points: this._interactionSurfaceOf(dir), dir, cords: new Vector3(this.x, this.y, this.z) };
-    });
+  get outlines() {
+    const { east: e, west: w, south: s, north: n } = this.states;
+    return [
+      ...this._outlineModel.north[n], 
+      ...this._outlineModel.west[w], 
+      ...this._outlineModel.south[s], 
+      ...this._outlineModel.east[e], 
+      ...(!s === !e || !n === !w || !n !== !s ? this._outlineModel.dot : [])
+    ];
   }
 
   /**
@@ -217,114 +263,6 @@ class RedstoneDust extends Block {
       default:
         return false;
     }
-  }
-
-  /**
-   *       12-----13
-   *        \     /
-   *  19     0---1     14
-   *  | \    |   |    / |
-   *  |  10-11   2---3  |
-   *  |  |           |  | --x
-   *  |  9---8   5---4  |
-   *  | /    |   |    \ |
-   *  18     7---6     15
-   *        /     \
-   *       17-----16
-   *           |         ⊙y
-   *           z
-   */
-  /***/
-  _vertices = [
-    [this.x + 0.375, this.y + d, this.z], 
-    [this.x + 0.625, this.y + d, this.z], 
-    [this.x + 0.625, this.y + d, this.z + 0.375], 
-    [this.x + 1    , this.y + d, this.z + 0.375], 
-    [this.x + 1    , this.y + d, this.z + 0.625], 
-    [this.x + 0.625, this.y + d, this.z + 0.625], 
-    [this.x + 0.625, this.y + d, this.z + 1], 
-    [this.x + 0.375, this.y + d, this.z + 1], 
-    [this.x + 0.375, this.y + d, this.z + 0.625], 
-    [this.x        , this.y + d, this.z + 0.625], 
-    [this.x        , this.y + d, this.z + 0.375], 
-    [this.x + 0.375, this.y + d, this.z + 0.375], 
-
-    [this.x + 0.375, this.y + 1, this.z + d], 
-    [this.x + 0.625, this.y + 1, this.z + d], 
-    [this.x + 1 - d, this.y + 1, this.z + 0.375], 
-    [this.x + 1 - d, this.y + 1, this.z + 0.625], 
-    [this.x + 0.625, this.y + 1, this.z + 1 - d], 
-    [this.x + 0.375, this.y + 1, this.z + 1 - d], 
-    [this.x + d    , this.y + 1, this.z + 0.625], 
-    [this.x + d    , this.y + 1, this.z + 0.375], 
-  ];
-  _surfaces = {
-    middle: [2, 5, 8, 11], 
-    east: [[2, 3, 4, 5], [3, 14, 15, 4]], 
-    south: [[5, 6, 7, 8], [6, 16, 17, 7]], 
-    west: [[8, 9, 10, 11], [9, 18, 19, 10]], 
-    north: [[0, 1, 2, 11], [0, 1, 13, 12]]
-  };
-
-  /**
-   * 取得此紅石粉指定方向所應渲染的所有平面
-   * @param {symbol} dir 指定的法向量方向
-   * @returns {import("../../Playground").Surface[]}
-   * @private
-   */
-  _otherSurfacesOf(dirName) {
-    if (!this.states[dirName]) return [];
-
-    const result = [];
-
-    result.push({
-      points: this._surfaces[dirName][0].map(i => new Vector3(...this._vertices[i])), 
-      color: this.surfaceColor(), 
-      dir: Axis.PY, 
-      cords: new Vector3(this.x, this.y, this.z)
-    });
-
-    if (this.states[dirName] === 2) {
-      let dir;
-      switch (dirName) {
-        case 'east': dir = Axis.NX; break;
-        case 'south': dir = Axis.NZ; break;
-        case 'west': dir = Axis.PX; break;
-        case 'north': dir = Axis.PZ; break;
-        default: break;
-      }
-      result.push({
-        points: this._surfaces[dirName][1].map(i => new Vector3(...this._vertices[i])), 
-        color: this.surfaceColor(), 
-        dir, 
-        cords: new Vector3(this.x, this.y, this.z)
-      });
-    }
-
-    return result;
-  }
-
-  _interactionBoxVertices = [
-    [this.x    , this.y         , this.z], 
-    [this.x + 1, this.y         , this.z], 
-    [this.x    , this.y + 0.0625, this.z], 
-    [this.x + 1, this.y + 0.0625, this.z], 
-    [this.x    , this.y         , this.z + 1], 
-    [this.x + 1, this.y         , this.z + 1], 
-    [this.x    , this.y + 0.0625, this.z + 1], 
-    [this.x + 1, this.y + 0.0625, this.z + 1]
-  ];
-  _interactionBoxSurfaces = {
-    [Axis.PX]: [1, 3, 7, 5], 
-    [Axis.PY]: [2, 3, 7, 6], 
-    [Axis.PZ]: [4, 5, 7, 6], 
-    [Axis.NX]: [0, 2, 6, 4], 
-    [Axis.NY]: [0, 1, 5, 4], 
-    [Axis.NZ]: [0, 1, 3, 2]
-  };
-
-  _interactionSurfaceOf(dir) {
-    return this._interactionBoxSurfaces[dir].map(i => new Vector3(...this._interactionBoxVertices[i]));
   }
 }
 

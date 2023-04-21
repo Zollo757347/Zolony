@@ -105,6 +105,14 @@ function getComponents(data) {
  * @returns {WebGLData | Record<FourFacings, WebGLData> | Record<ThreeFaces, Record<FourFacings, WebGLData>>}
  */
 function parseComponents({ elements, outlines, face, facing, prerotation }) {
+  const yRotate = getRotationMatrix({ origin: [8, 8, 8], axis: "y", angle: 90 });
+  if (prerotation) {
+    for (let i = 0; i < prerotation; i++) {
+      rotateElements(elements, yRotate);
+      rotateOutlines(outlines, yRotate);
+    }
+  }
+
   if (!facing) {
     return getVerticesData(elements, outlines);
   }
@@ -125,18 +133,12 @@ function parseComponents({ elements, outlines, face, facing, prerotation }) {
       rotateOutlines(outlines, r);
     });
 
-    const rotate = getRotationMatrix({ origin: [8, 8, 8], axis: "y", angle: 90 });
     const result = {};
-
-    for (let i = 0; i < prerotation; i++) {
-      rotateElements(elements, rotate);
-      rotateOutlines(outlines, rotate);
-    }
 
     ['north', 'west', 'south', 'east'].forEach(dir => {
       result[dir] = getVerticesData(elements, outlines);
-      rotateElements(elements, rotate);
-      rotateOutlines(outlines, rotate);
+      rotateElements(elements, yRotate);
+      rotateOutlines(outlines, yRotate);
     });
 
     if (f) data[f] = result;

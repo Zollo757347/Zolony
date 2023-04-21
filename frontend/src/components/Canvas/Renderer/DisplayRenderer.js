@@ -18,7 +18,7 @@ class DisplayRenderer extends Renderer {
   }
 
   initialize(canvas) {
-    ['iron_block', 'cobblestone', 'lever_on', 'lever', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater_on', 'redstone_torch', 'redstone_torch_off', 'bedrock'].forEach(src => {
+    ['iron_block', 'cobblestone', 'lever_on', 'lever', 'redstone_dust_dot', 'redstone_dust_line0', 'redstone_dust_line1', 'redstone_dust_overlay', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater_on', 'redstone_torch', 'redstone_torch_off', 'bedrock'].forEach(src => {
       const image = new Image();
       image.src = `/assets/minecraft/${src}.png`;
       this.images.set(src, image);
@@ -70,10 +70,12 @@ class DisplayRenderer extends Renderer {
     const positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
     const texCoordAttribLocation = gl.getAttribLocation(program, 'vertTexCoord');
     const normalAttribLocation = gl.getAttribLocation(program, 'vertNormal');
+    const colorMaskAttribLocation = gl.getAttribLocation(program, 'vertColorMask');
       
     gl.enableVertexAttribArray(positionAttribLocation);
     gl.enableVertexAttribArray(texCoordAttribLocation);
     gl.enableVertexAttribArray(normalAttribLocation);
+    gl.enableVertexAttribArray(colorMaskAttribLocation);
 
     const indices = new Uint16Array(
       Array.from(
@@ -94,9 +96,10 @@ class DisplayRenderer extends Renderer {
       for (const [image, { vertices }] of this._getBlockVertices()) {
         this._setupBuffer(gl, vertices, indices);
     
-        gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 8 * Float32Array.BYTES_PER_ELEMENT, 0);
-        gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 8 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-        gl.vertexAttribPointer(normalAttribLocation, 3, gl.FLOAT, gl.TRUE, 8 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+        gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+        gl.vertexAttribPointer(normalAttribLocation, 3, gl.FLOAT, gl.TRUE, 11 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+        gl.vertexAttribPointer(colorMaskAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 8 * Float32Array.BYTES_PER_ELEMENT);
   
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images.get(image));
         gl.drawElements(gl.TRIANGLES, (vertices.length * 3) >> 4, gl.UNSIGNED_SHORT, 0);
@@ -125,6 +128,7 @@ class DisplayRenderer extends Renderer {
           const x = i - this.dimensions[0] / 2;
           const y = j - this.dimensions[1] / 2;
           const z = k - this.dimensions[2] / 2;
+          const color = (block.color ?? [255, 255, 255]).map(a => a / 255);
 
           block.textures.forEach(texture => {
             for (const [dirName, data] of Object.entries(texture)) {
@@ -146,7 +150,8 @@ class DisplayRenderer extends Renderer {
                   v[i+4], 
                   v[i+5], 
                   v[i+6], 
-                  v[i+7]
+                  v[i+7], 
+                  ...color
                 );
               }
               storage.counter++;
@@ -183,14 +188,17 @@ class DisplayRenderer extends Renderer {
     attribute vec3 vertPosition;
     attribute vec2 vertTexCoord;
     attribute vec3 vertNormal;
+    attribute vec3 vertColorMask;
     uniform mat4 mWorld;
     uniform mat4 mView;
     uniform mat4 mProj;
     varying vec2 fragTexCoord;
     varying vec3 fragNormal;
+    varying vec3 fragColorMask;
 
     void main() {
       fragTexCoord = vertTexCoord;
+      fragColorMask = vertColorMask;
       fragNormal = (mWorld * vec4(vertNormal, 0.0)).xyz;
       gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
     }
@@ -205,12 +213,13 @@ class DisplayRenderer extends Renderer {
     uniform vec3 lightDirection;
     varying vec2 fragTexCoord;
     varying vec3 fragNormal;
+    varying vec3 fragColorMask;
 
     void main() {
       vec4 texel = texture2D(sampler, fragTexCoord);
       vec3 lightIntensity = ambientIntensity + lightColor * max(dot(normalize(fragNormal), normalize(lightDirection)), 0.0);
 
-      gl_FragColor = vec4(texel.rgb * lightIntensity, texel.a);
+      gl_FragColor = vec4(texel.rgb * fragColorMask * lightIntensity, texel.a);
       if (gl_FragColor.a < 0.1) discard;
     }
   `;
