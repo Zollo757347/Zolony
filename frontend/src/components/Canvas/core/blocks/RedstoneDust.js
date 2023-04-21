@@ -1,7 +1,7 @@
 import {
   redstone_dust_dot, redstone_dust_side0, redstone_dust_side1, redstone_dust_side_alt0, redstone_dust_side_alt1, redstone_dust_up
 } from "../../../../assets/json/blocks";
-import { Axis, BlockType } from "../utils";
+import { BlockType } from "../utils";
 import Block from "./Block";
 import { strictEqual } from "../../../../utils";
 
@@ -126,15 +126,21 @@ class RedstoneDust extends Block {
     this.engine.needRender = true;
     
     this.PPUpdate();
-    [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach((dir, i) => {
-      const norm = Axis.VECTOR[dir];
-      const target = this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z);
-      target?.PPUpdate(Axis.ReverseTable[dir]);
+    [
+      ['north', [0, 0, -1]], 
+      ['south', [0, 0, 1]], 
+      ['west', [-1, 0, 0]], 
+      ['east', [1, 0, 0]], 
+      ['down', [0, -1, 0]], 
+      ['up', [0, 1, 0]]
+    ].forEach(([dir, [x, y, z]]) => {
+      const target = this.engine.block(this.x + x, this.y + y, this.z + z);
+      target?.PPUpdate();
 
       // 如果有指向側邊，側邊的上下兩個方塊也要更新
-      if (i <= 3 && this.doPointTo(dir) && target?.type !== BlockType.RedstoneDust) {
-        this.engine.block(this.x + norm.x, this.y + norm.y - 1, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
-        this.engine.block(this.x + norm.x, this.y + norm.y + 1, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
+      if (this.states[dir] && target?.type !== BlockType.RedstoneDust) {
+        this.engine.block(this.x + x, this.y + y - 1, this.z + z)?.PPUpdate();
+        this.engine.block(this.x + x, this.y + y + 1, this.z + z)?.PPUpdate();
       }
     });
   }
@@ -211,9 +217,15 @@ class RedstoneDust extends Block {
   _changePower() {
     const oldPower = this.states.power;
     let newPower = 1;
-    [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach(dir => {
-      const norm = Axis.VECTOR[dir];
-      const block = this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z);
+    [
+      [0, 0, -1], 
+      [0, 0, 1], 
+      [-1, 0, 0], 
+      [1, 0, 0], 
+      [0, -1, 0], 
+      [0, 1, 0]
+    ].forEach(([x, y, z]) => {
+      const block = this.engine.block(this.x + x, this.y + y, this.z + z);
       newPower = Math.max(newPower, block?.states.source ? block?.power ?? 1 : 1);
     });
 
@@ -238,30 +250,6 @@ class RedstoneDust extends Block {
     this.states.power = newPower - 1;
     if (oldPower !== newPower - 1) {
       this.sendPPUpdate();
-    }
-  }
-
-  /**
-   * 檢查紅石粉有沒有指向某一個方向
-   * @param {symbol} dir 
-   * @returns {boolean}
-   */
-  doPointTo(dir) {
-    switch (dir) {
-      case Axis.NX:
-        return !!this.states.west;
-      
-      case Axis.PX:
-        return !!this.states.east;
-
-      case Axis.NZ:
-        return !!this.states.north;
-      
-      case Axis.PZ:
-        return !!this.states.south;
-
-      default:
-        return false;
     }
   }
 }

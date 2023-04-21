@@ -302,7 +302,7 @@ class Engine {
     if (!block?.breakable) return null;
 
     this._pg[x][y][z] = new AirBlock({ x, y, z, engine: this });
-    this._pg[x][y][z].sendPPUpdate();
+    block.sendPPUpdate();
     return block;
   }
 

@@ -1,4 +1,4 @@
-import { Axis, BlockType } from "../utils";
+import { BlockType } from "../utils";
 import FullBlock from "./FullBlock";
 import { redstone_lamp, redstone_lamp_on } from "../../../../assets/json/blocks";
 
@@ -63,13 +63,19 @@ class RedstoneLamp extends FullBlock {
   _shouldLit() {
     if (this.power) return true;
 
-    const litByPower = [[Axis.PX, 'east'], [Axis.NX, 'west'], [Axis.PY, 'up'], [Axis.NY, ''], [Axis.PZ, 'south'], [Axis.NZ, 'north']].some(([dir, facing]) => {
-      const norm = Axis.VECTOR[dir];
-      const block = this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z);
+    const litByPower = [
+      ['north', [0, 0, -1]], 
+      ['south', [0, 0, 1]], 
+      ['west', [-1, 0, 0]], 
+      ['east', [1, 0, 0]], 
+      ['', [0, -1, 0]], 
+      ['up', [0, 1, 0]]
+    ].some(([dir, [x, y, z]]) => {
+      const block = this.engine.block(this.x + x, this.y + y, this.z + z);
 
       if (!block) return false;
-      if (block.type === BlockType.RedstoneDust) return block.power && block.doPointTo(Axis.ReverseTable[dir]);
-      if (block.type === BlockType.RedstoneTorch) return block.states.lit && block.states.facing !== facing;
+      if (block.type === BlockType.RedstoneDust) return block.power && block.states[dir];
+      if (block.type === BlockType.RedstoneTorch) return block.states.lit && block.states.facing !== dir;
       return block.states.source || !!block?.power;
     });
     if (litByPower) return true;
