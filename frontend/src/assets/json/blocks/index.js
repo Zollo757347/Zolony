@@ -6,6 +6,14 @@ import _glass from "./glass.json";
 import _iron_block from "./iron_block.json";
 import _lever_on from "./lever_on.json";
 import _lever from "./lever.json";
+import _redstone_dust_dot from "./redstone_dust_dot.json";
+import _redstone_dust_side_alt from "./redstone_dust_side_alt.json";
+import _redstone_dust_side_alt0 from "./redstone_dust_side_alt0.json";
+import _redstone_dust_side_alt1 from "./redstone_dust_side_alt1.json";
+import _redstone_dust_side from "./redstone_dust_side.json";
+import _redstone_dust_side0 from "./redstone_dust_side0.json";
+import _redstone_dust_side1 from "./redstone_dust_side1.json";
+import _redstone_dust_up from "./redstone_dust_up.json";
 import _redstone_lamp from "./redstone_lamp.json";
 import _redstone_lamp_on from "./redstone_lamp_on.json";
 import _redstone_torch_off from "./redstone_torch_off.json";
@@ -39,6 +47,14 @@ const _blockData = {
   iron_block: _iron_block, 
   lever_on: _lever_on, 
   lever: _lever, 
+  redstone_dust_dot: _redstone_dust_dot, 
+  redstone_dust_side_alt: _redstone_dust_side_alt,
+  redstone_dust_side_alt0: _redstone_dust_side_alt0, 
+  redstone_dust_side_alt1: _redstone_dust_side_alt1, 
+  redstone_dust_side: _redstone_dust_side, 
+  redstone_dust_side0: _redstone_dust_side0, 
+  redstone_dust_side1: _redstone_dust_side1, 
+  redstone_dust_up: _redstone_dust_up, 
   redstone_lamp: _redstone_lamp, 
   redstone_lamp_on: _redstone_lamp_on, 
   redstone_torch_off: _redstone_torch_off, 
@@ -69,6 +85,12 @@ export const glass = parseTexture(_blockData, 'glass');
 export const iron_block = parseTexture(_blockData, 'iron_block');
 export const lever_on = parseTexture(_blockData, 'lever_on');
 export const lever = parseTexture(_blockData, 'lever');
+export const redstone_dust_dot = parseTexture(_blockData, 'redstone_dust_dot');
+export const redstone_dust_side_alt0 = parseTexture(_blockData, 'redstone_dust_side_alt0');
+export const redstone_dust_side_alt1 = parseTexture(_blockData, 'redstone_dust_side_alt1');
+export const redstone_dust_side0 = parseTexture(_blockData, 'redstone_dust_side0');
+export const redstone_dust_side1 = parseTexture(_blockData, 'redstone_dust_side1');
+export const redstone_dust_up = parseTexture(_blockData, 'redstone_dust_up');
 export const redstone_lamp_on = parseTexture(_blockData, 'redstone_lamp_on');
 export const redstone_lamp = parseTexture(_blockData, 'redstone_lamp');
 export const redstone_torch_off = parseTexture(_blockData, 'redstone_torch_off');
