@@ -5,6 +5,8 @@ import { BlockType } from "../utils";
 import Block from "./Block";
 import { strictEqual } from "../../../../utils";
 
+console.log(redstone_dust_up);
+
 /**
  * @typedef _RedstoneDustStates
  * @type {object}

@@ -33,7 +33,7 @@ class OffRenderer extends Renderer {
     const pixels = new Uint8Array(4);
     const indices = new Uint16Array(
       Array.from(
-        { length: 1000 }, 
+        { length: 2048 }, 
         (_, i) => {
           i <<= 2;
           return [i, i + 1, i + 2, i, i + 2, i + 3];
@@ -51,10 +51,11 @@ class OffRenderer extends Renderer {
       vertices = this._getBlockVertices();
       this._setupBuffer(gl, vertices, indices);
 
+
       gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
       gl.vertexAttribPointer(surfaceAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 
-      gl.drawElements(gl.TRIANGLES, vertices.length / 3, gl.UNSIGNED_SHORT, 0);
+      gl.drawElements(gl.TRIANGLES, vertices.length >> 2, gl.UNSIGNED_SHORT, 0);
 
       if (this.print) {
         gl.readPixels(this.print[0], 500-this.print[1], 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);

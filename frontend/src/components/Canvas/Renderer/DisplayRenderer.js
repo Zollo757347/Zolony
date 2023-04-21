@@ -79,7 +79,7 @@ class DisplayRenderer extends Renderer {
 
     const indices = new Uint16Array(
       Array.from(
-        { length: 1000 }, 
+        { length: 2048 }, 
         (_, i) => {
           i <<= 2;
           return [i, i + 1, i + 2, i, i + 2, i + 3];
@@ -102,7 +102,7 @@ class DisplayRenderer extends Renderer {
         gl.vertexAttribPointer(colorMaskAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 8 * Float32Array.BYTES_PER_ELEMENT);
   
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images.get(image));
-        gl.drawElements(gl.TRIANGLES, (vertices.length * 3) >> 4, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, vertices.length / 22 * 3, gl.UNSIGNED_SHORT, 0);
       }
 
       if (this.playground.alive) {
