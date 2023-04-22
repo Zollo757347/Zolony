@@ -9,10 +9,10 @@
 <img src="./frontend/src/assets/pictures/readme/readme-1.png" alt="範例教學文章" width="80%" />
 
 
-## 渲染的時候有點問題的低配版 Minecraft
-不過勉強堪用。
+## 內建 Minecraft 紅石模擬系統
+花在這東西身上的精力甚至比教學文還多。
 
-<img src="./frontend/src/assets/pictures/readme/readme-2.png" alt="範例教學文章" width="60%" />
+<img src="./frontend/src/assets/pictures/readme/readme-2.png" alt="範例教學文章" width="40%" />
 
 
 ## 看不到別人帳號的帳號系統
