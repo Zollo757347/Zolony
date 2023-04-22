@@ -1,12 +1,12 @@
-import Axis from "./Axis";
 import BlockType from "./BlockType";
+import Maps from "./Maps";
 import NewBlock from "./NewBlock";
 import Vector3 from "./Vector3";
 import parseTexture from "./parseTexture";
 
 export {
-  Axis, 
   BlockType, 
+  Maps, 
   NewBlock, 
   Vector3, 
   parseTexture

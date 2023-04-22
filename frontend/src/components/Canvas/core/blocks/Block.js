@@ -1,4 +1,4 @@
-import { Axis, NewBlock } from "../utils";
+import { NewBlock, Maps } from "../utils";
 
 /**
  * @typedef Surface 代表一個有限大小的有向表面
@@ -178,9 +178,8 @@ class Block {
     this.engine.needRender = true;
     
     this.PPUpdate();
-    [Axis.NX, Axis.PX, Axis.NZ, Axis.PZ, Axis.NY, Axis.PY].forEach(dir => {
-      const norm = Axis.VECTOR[dir];
-      this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z)?.PPUpdate(Axis.ReverseTable[dir]);
+    Maps.P6DArray.forEach(([dir, [x, y, z]]) => {
+      this.engine.block(this.x + x, this.y + y, this.z + z)?.PPUpdate(dir);
     });
   }
 

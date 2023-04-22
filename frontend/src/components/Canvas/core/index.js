@@ -13,7 +13,6 @@ import {
 } from "./blocks";
 
 import {
-  Axis, 
   NewBlock, 
   Vector3
 } from "./utils";
@@ -31,7 +30,6 @@ export {
   RedstoneRepeater, 
   RedstoneTorch, 
   
-  Axis, 
   NewBlock, 
   Vector3
 };

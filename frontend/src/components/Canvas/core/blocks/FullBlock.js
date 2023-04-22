@@ -1,4 +1,4 @@
-import { Axis, BlockType } from "../utils";
+import { BlockType, Maps } from "../utils";
 import Block from "./Block";
 
 /**
@@ -27,17 +27,10 @@ class FullBlock extends Block {
     }
 
     else {
-      const poweredByLever = [
-        [Axis.PX, 'wall', 'east'], 
-        [Axis.PY, 'floor', 'north'], 
-        [Axis.PZ, 'wall', 'south'], 
-        [Axis.NX, 'wall', 'west'], 
-        [Axis.NY, 'ceiling', 'north'], 
-        [Axis.NZ, 'wall', 'north']
-      ].some(([dir, face, facing]) => {
-        const norm = Axis.VECTOR[dir];
-        block = this.engine.block(this.x + norm.x, this.y + norm.y, this.z + norm.z);
-        return block?.type === BlockType.Lever && block.states.face === face && block.states.facing === facing && block.states.powered;
+      const poweredByLever = Maps.P6DArray.some(([dir, [x, y, z]]) => {
+        block = this.engine.block(this.x + x, this.y + y, this.z + z);
+        return block?.type === BlockType.Lever && block.states.powered 
+          && (block.states.facing === dir || (dir === 'down' && block.states.face === 'ceiling') || (dir === 'up' && block.states.face === 'floor'));
       });
       if (poweredByLever) {
         power = 15;
