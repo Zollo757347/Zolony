@@ -46,16 +46,16 @@ class FullBlock extends Block {
         }
   
         // 判斷側邊的方塊
-        [[1, 0, 'west'], [-1, 0, 'east'], [0, 1, 'north'], [0, -1, 'south']].forEach(([dx, dz, dir]) => {
-          block = this.engine.block(this.x + dx, this.y, this.z + dz);
+        Maps.P4DArray.forEach(([dir, [x, _, z]]) => {
+          block = this.engine.block(this.x + x, this.y, this.z + z);
   
           // 側邊方塊是指向自己的紅石粉，弱充能至相同等級
-          if (block?.type === BlockType.RedstoneDust && block.states[dir]) {
+          if (block?.type === BlockType.RedstoneDust && block.states[Maps.ReverseDir[dir]]) {
             power = Math.max(power, block.power);
           }
   
           // 側邊方塊是指向自己的紅石中繼器，強充能至 15
-          else if (block?.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === dir) {
+          else if (block?.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === Maps.ReverseDir[dir]) {
             power = 15;
             source = true;
           }

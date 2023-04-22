@@ -1,11 +1,9 @@
 import {
   redstone_dust_dot, redstone_dust_side0, redstone_dust_side1, redstone_dust_side_alt0, redstone_dust_side_alt1, redstone_dust_up
 } from "../../../../assets/json/blocks";
-import { BlockType } from "../utils";
+import { BlockType, Maps } from "../utils";
 import Block from "./Block";
 import { strictEqual } from "../../../../utils";
-
-console.log(redstone_dust_up);
 
 /**
  * @typedef _RedstoneDustStates
@@ -128,14 +126,7 @@ class RedstoneDust extends Block {
     this.engine.needRender = true;
     
     this.PPUpdate();
-    [
-      ['north', [0, 0, -1]], 
-      ['south', [0, 0, 1]], 
-      ['west', [-1, 0, 0]], 
-      ['east', [1, 0, 0]], 
-      ['down', [0, -1, 0]], 
-      ['up', [0, 1, 0]]
-    ].forEach(([dir, [x, y, z]]) => {
+    Maps.P6DArray.forEach(([dir, [x, y, z]]) => {
       const target = this.engine.block(this.x + x, this.y + y, this.z + z);
       target?.PPUpdate();
 
@@ -166,7 +157,8 @@ class RedstoneDust extends Block {
       return;
     }
 
-    [[1, 0, 'east', 'west'], [0, 1, 'south', 'north'], [-1, 0, 'west', 'east'], [0, -1, 'north', 'south']].forEach(([dx, dz, dir, rdir]) => {
+    Maps.P4DArray.forEach(([dir, [dx, _, dz]]) => {
+      const rdir = Maps.ReverseDir[dir];
       this.states[dir] = 0;
       const x = this.x + dx, z = this.z + dz;
       const block = this.engine.block(x, this.y, z);
@@ -197,13 +189,11 @@ class RedstoneDust extends Block {
     else {
       this.crossMode = true;
       if (explicitDir.length === 1) {
-        switch (explicitDir[0]) {
-          case 'east': this.states.west = 1; break;
-          case 'south': this.states.north = 1; break;
-          case 'west': this.states.east = 1; break;
-          case 'north': this.states.south = 1; break;
-          default: break;
+        const rdir = Maps.ReverseDir[explicitDir[0]];
+        if (!rdir) {
+          throw new Error(`${explicitDir[0]} is not a valid direction.`);
         }
+        this.states[rdir] = 1;
       }
     }
 
@@ -219,28 +209,22 @@ class RedstoneDust extends Block {
   _changePower() {
     const oldPower = this.states.power;
     let newPower = 1;
-    [
-      [0, 0, -1], 
-      [0, 0, 1], 
-      [-1, 0, 0], 
-      [1, 0, 0], 
-      [0, -1, 0], 
-      [0, 1, 0]
-    ].forEach(([x, y, z]) => {
+
+    Maps.P6DArray.forEach(([_, [x, y, z]]) => {
       const block = this.engine.block(this.x + x, this.y + y, this.z + z);
       newPower = Math.max(newPower, block?.states.source ? block?.power ?? 1 : 1);
     });
 
-    [[1, 0, 'west'], [0, 1, 'north'], [-1, 0, 'east'], [0, -1, 'south']].forEach(([dx, dz, dir]) => {
-      const sideDown = this.engine.block(this.x + dx, this.y - 1, this.z + dz);
-      const sideHori = this.engine.block(this.x + dx, this.y, this.z + dz);
-      const sideUp = this.engine.block(this.x + dx, this.y + 1, this.z + dz);
+    Maps.P4DArray.forEach(([dir, [x, _, z]]) => {
+      const sideDown = this.engine.block(this.x + x, this.y - 1, this.z + z);
+      const sideHori = this.engine.block(this.x + x, this.y, this.z + z);
+      const sideUp = this.engine.block(this.x + x, this.y + 1, this.z + z);
       const above = this.engine.block(this.x, this.y + 1, this.z);
 
       if (sideHori?.transparent && sideDown?.type === BlockType.RedstoneDust) {
         newPower = Math.max(newPower, sideDown.power);
       }
-      else if (sideHori?.type === BlockType.RedstoneRepeater && sideHori.states.powered && sideHori.states.facing === dir) {
+      else if (sideHori?.type === BlockType.RedstoneRepeater && sideHori.states.powered && sideHori.states.facing === Maps.ReverseDir[dir]) {
         newPower = 16; // 之後會被減 1
       }
 

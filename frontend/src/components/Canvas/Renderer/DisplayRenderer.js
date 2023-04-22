@@ -1,4 +1,5 @@
 import { BlockType } from "../core";
+import { Maps } from "../core/utils";
 import OffRenderer from "./OffRenderer";
 import Renderer from "./Renderer";
 
@@ -163,19 +164,11 @@ class DisplayRenderer extends Renderer {
     return map;
   }
 
-  _shouldRender(block, dirName) {
+  _shouldRender(block, dir) {
     if (block.type !== BlockType.IronBlock && block.type !== BlockType.GlassBlock) return true;
 
-    const [dx, dy, dz] = {
-      'up': [0, 1, 0], 
-      'west': [-1, 0, 0], 
-      'east': [1, 0, 0], 
-      'south': [0, 0, 1], 
-      'north': [0, 0, -1], 
-      'down': [0, -1, 0]
-    }[dirName];
-
-    const adjacentBlock = this.engine.block(block.x + dx, block.y + dy, block.z + dz);
+    const [x, y, z] = Maps.P6DMap.get(dir);
+    const adjacentBlock = this.engine.block(block.x + x, block.y + y, block.z + z);
     if (!adjacentBlock) return true;
 
     if (block.type === BlockType.GlassBlock) return !adjacentBlock.fullBlock;
