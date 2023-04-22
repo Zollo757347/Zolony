@@ -15,7 +15,7 @@ import Block from "./Block";
 
 class RedstoneTorch extends Block {
   constructor(options) {
-    super({ type: BlockType.RedstoneTorch, blockName: 'Redstone Torch', needSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
+    super({ type: BlockType.RedstoneTorch, blockName: '紅石火把', needSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
 
     /**
      * 此紅石火把的狀態

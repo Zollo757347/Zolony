@@ -36,7 +36,7 @@ class Playground {
      * 快捷欄上的方塊
      * @type {(new () => import("./Playground/Blocks/Block").Block)[]}
      */
-    this.hotbar = preLoadData?.availableBlocks?.length ? preLoadData?.availableBlocks?.map(t => NewBlock(t)) : [IronBlock, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, Lever];
+    this.hotbar = preLoadData?.availableBlocks?.map(t => NewBlock(t)) ?? [IronBlock, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, Lever];
 
     /**
      * 快捷欄上方塊的名稱
@@ -72,6 +72,10 @@ class Playground {
      * @type {boolean}
      */
     this.alive = true;
+  }
+
+  get currentBlockName() {
+    return this.hotbarName[this.hotbarTarget];
   }
 
   /**

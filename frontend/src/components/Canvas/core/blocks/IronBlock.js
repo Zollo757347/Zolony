@@ -3,7 +3,7 @@ import FullBlock from "./FullBlock";
 import { iron_block } from "../../../../assets/json/blocks";
 
 /**
- * 代表一個混凝土方塊，即不透明的單位方塊
+ * 代表一個鐵方塊，即不透明的單位方塊
  */
 class IronBlock extends FullBlock {
   constructor(options) {

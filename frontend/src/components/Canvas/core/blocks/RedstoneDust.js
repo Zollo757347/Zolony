@@ -21,7 +21,7 @@ import { strictEqual } from "../../../../utils";
  */
 class RedstoneDust extends Block {
   constructor(options) {
-    super({ type: BlockType.RedstoneDust, blockName: 'Redstone Dust', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
+    super({ type: BlockType.RedstoneDust, blockName: '紅石粉', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
     
     /**
      * 此紅石粉的狀態

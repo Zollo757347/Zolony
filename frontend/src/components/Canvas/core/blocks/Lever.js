@@ -17,7 +17,7 @@ import Block from "./Block";
  */
 class Lever extends Block {
   constructor(options) {
-    super({ type: BlockType.Lever, blockName: 'Lever', transparent: true, needSupport: true, interactable: true, redstoneAutoConnect: 'full', ...options });
+    super({ type: BlockType.Lever, blockName: '控制桿', transparent: true, needSupport: true, interactable: true, redstoneAutoConnect: 'full', ...options });
 
     this._model = {
       powered: lever_on, 

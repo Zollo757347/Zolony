@@ -12,6 +12,7 @@ import { useHook } from "../../hooks/useHook";
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkable, preLoadData }) => {
   const [shiftDown, setShiftDown] = useState(false);
   const [playground, setPlayground] = useState();
+  const [currentBlock, setCurrentBlock] = useState('');
 
   const canvasRef = useRef();
   const spanRef = useRef();
@@ -22,6 +23,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
     const pg = new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData });
     pg.initialize(canvasRef.current);
     setPlayground(pg);
+    setCurrentBlock(pg.currentBlockName ?? '');
     
     return () => pg.destroy();
   }, [canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData]);
@@ -75,6 +77,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
 
   function handleScroll(e) {
     playground?.scrollHotbar(e.deltaY);
+    setCurrentBlock(playground?.currentBlockName ?? '');
   }
 
   async function handleSaveMap() {
@@ -143,6 +146,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
         />
         <span ref={spanRef} style={{ display: 'none' }} />
       </UpperCanvasWrapper>
+      <MiddleCanvasWrapper>{currentBlock}</MiddleCanvasWrapper>
       {
         storable || (checkable && playground?.engine.validation) ? 
           <LowerCanvasWrapper>
@@ -174,6 +178,10 @@ const CanvasWrapper = styled.div`
 `;
 
 const UpperCanvasWrapper = styled.div`
+  text-align: center;
+`;
+
+const MiddleCanvasWrapper = styled.div`
   text-align: center;
 `;
 

@@ -33,7 +33,7 @@ class OffRenderer extends Renderer {
     const pixels = new Uint8Array(4);
     const indices = new Uint16Array(
       Array.from(
-        { length: 2048 }, 
+        { length: 3072 }, 
         (_, i) => {
           i <<= 2;
           return [i, i + 1, i + 2, i, i + 2, i + 3];
