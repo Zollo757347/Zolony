@@ -61,6 +61,7 @@ function getFullData(blockData, blockName) {
  * @returns {Components}
  */
 function getComponents(data) {
+  const outlines = [];
   const elements = data.elements.map(({ from, to, faces, rotation }) => {
     const rotate = getRotationMatrix(rotation);
     const vertices = getVertices(from, to, rotate);
@@ -87,12 +88,16 @@ function getComponents(data) {
       face.texCoord = texCoord;
     }
 
-    return { vertices, normals, faces };
+    if (!data.outlines?.length) {
+      outlines.push(vertices.original);
+    }
+
+    return { vertices: vertices.rotated, normals, faces };
   });
 
   return {
     elements, 
-    outlines: data.outlines?.map(({ from, to }) => getVertices(from, to, getRotationMatrix()).original) ?? [], 
+    outlines: data.outlines?.map(({ from, to }) => getVertices(from, to, getRotationMatrix()).original) ?? outlines, 
     face: data.face ?? false, 
     facing: data.facing ?? false,
     prerotation: data.prerotation ?? 0
@@ -154,9 +159,9 @@ function parseComponents({ elements, outlines, face, facing, prerotation }) {
  * @param {Rotation} rotate 
  */
 function rotateElements(elements, rotate) {
-  for (const { vertices: { rotated }, normals } of elements) {
-    for (let i = 0; i < rotated.length; i++) {
-      rotated[i] = rotate([...rotated[i], 1]);
+  for (const { vertices, normals } of elements) {
+    for (let i = 0; i < vertices.length; i++) {
+      vertices[i] = rotate([...vertices[i], 1]);
     }
     for (const key in normals) {
       normals[key] = rotate([...normals[key], 0]);
@@ -170,7 +175,7 @@ function rotateElements(elements, rotate) {
  * @param {Rotation} rotate 
  */
 function rotateOutlines(outlines, rotate) {
-  outlines?.forEach(outline => {
+  outlines.forEach(outline => {
     for (let i = 0; i < outline.length; i++) {
       outline[i] = rotate([...outline[i], 1]);
     }
@@ -186,28 +191,19 @@ function rotateOutlines(outlines, rotate) {
 function getVerticesData(elements, outlinesParam) {
   const textures = [];
   const outlines = [];
-  elements.forEach(({ vertices: { original, rotated }, normals, faces }) => {
+  elements.forEach(({ vertices, normals, faces }) => {
     const texture = {};
     
-    sixSides.forEach(([dir, v, n]) => {
+    sixSides.forEach(([dir, v]) => {
       texture[dir] = faces[dir] ? {
         source: faces[dir].texture, 
         vertices: [
-          ...rotated[v[0]], ...faces[dir].texCoord[0], ...normals[dir], 
-          ...rotated[v[1]], ...faces[dir].texCoord[1], ...normals[dir], 
-          ...rotated[v[2]], ...faces[dir].texCoord[2], ...normals[dir], 
-          ...rotated[v[3]], ...faces[dir].texCoord[3], ...normals[dir]
+          ...vertices[v[0]], ...faces[dir].texCoord[0], ...normals[dir], 
+          ...vertices[v[1]], ...faces[dir].texCoord[1], ...normals[dir], 
+          ...vertices[v[2]], ...faces[dir].texCoord[2], ...normals[dir], 
+          ...vertices[v[3]], ...faces[dir].texCoord[3], ...normals[dir]
         ]
       } : undefined;
-
-      if (!outlinesParam.length) {
-        outlines.push(
-          ...original[v[0]], ...n, 
-          ...original[v[1]], ...n, 
-          ...original[v[2]], ...n, 
-          ...original[v[3]], ...n
-        );
-      }
     });
 
     outlinesParam.forEach(vertices => {
@@ -448,7 +444,7 @@ const sixSides = [
 /**
  * @typedef ComponentsElement 模型箱的資訊
  * @type {object}
- * @property {{ original: Vector3[], rotated: Vector3[] }} vertices 此模型箱八個頂點的資訊
+ * @property {Vector3[]} vertices 此模型箱八個頂點的資訊
  * @property {Record<SixSides, Vector3>} normals 旋轉後的三軸單位向量
  * @property {Partial<Record<SixSides, FaceData>>} faces 每個面的材質
  */

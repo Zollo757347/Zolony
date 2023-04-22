@@ -8,7 +8,7 @@ class DisplayRenderer extends Renderer {
 
     this.images = new Map();
 
-    this._devMode = false;
+    this._devMode = 1;
 
     /**
      * @type {OffRenderer}
