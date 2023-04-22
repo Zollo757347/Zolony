@@ -144,16 +144,23 @@ class Renderer {
        c1,  s1 * s2,  c2 * s1, 0, 
         0,       c2,      -s2, 0, 
       -s1,  c1 * s2,  c1 * c2, 0, 
-        0,        0,        0, 0.8
+        0,        0,        0, 1
     ]);
   }
 
-  _viewMatrix = new Float32Array([
-    1, 0,   0, 0, 
-    0, 1,   0, 0, 
-    0, 0,   1, 0, 
-    0, 0, -15, 1
-  ]);
+  __viewMatrix = null;
+  get _viewMatrix() {
+    if (this.__viewMatrix) return this.__viewMatrix;
+
+    const a = 2.5 / Math.sqrt(Math.max(...this.dimensions));
+    this.__viewMatrix = new Float32Array([
+      a, 0, 0, 0, 
+      0, a, 0, 0, 
+      0, 0, a, 0, 
+      0, 0, -15, 1
+    ]);
+    return this.__viewMatrix;
+  }
 
   _projMatrix = new Float32Array([
     2.414,     0,    0,  0, 
