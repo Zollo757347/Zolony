@@ -1,10 +1,11 @@
 import Renderer from "./Renderer";
 
 class OffRenderer extends Renderer {
-  constructor(playground, dimensions) {
+  constructor(playground, dimensions, mainRenderer) {
     super(playground, dimensions);
 
-    this.print = null;
+    this.mainRenderer = mainRenderer;
+    this.gl = null;
   }
 
   startRendering() {
@@ -14,7 +15,6 @@ class OffRenderer extends Renderer {
 
     const gl = this._generateGl();
     const program = this._generateProgram(gl);
-
 
     const matViewUniformLocation = gl.getUniformLocation(program, 'mView');
     const matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
@@ -29,17 +29,6 @@ class OffRenderer extends Renderer {
     
     gl.enableVertexAttribArray(positionAttribLocation);
     gl.enableVertexAttribArray(surfaceAttribLocation);
-
-    const pixels = new Uint8Array(4);
-    const indices = new Uint16Array(
-      Array.from(
-        { length: 3072 }, 
-        (_, i) => {
-          i <<= 2;
-          return [i, i + 1, i + 2, i, i + 2, i + 3];
-        }
-      ).flat()
-    );
     
     let vertices;
     const draw = () => {
@@ -49,19 +38,12 @@ class OffRenderer extends Renderer {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       
       vertices = this._getBlockVertices();
-      this._setupBuffer(gl, vertices, indices);
-
+      this._setupBuffer(gl, vertices, this.mainRenderer.indices);
 
       gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
       gl.vertexAttribPointer(surfaceAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 
       gl.drawElements(gl.TRIANGLES, vertices.length >> 2, gl.UNSIGNED_SHORT, 0);
-
-      if (this.print) {
-        gl.readPixels(this.print[0], 500-this.print[1], 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-        this.print[2](pixels);
-        this.print = null;
-      }
 
       if (this.playground.alive) {
         requestAnimationFrame(draw);
@@ -71,14 +53,9 @@ class OffRenderer extends Renderer {
     requestAnimationFrame(draw);
   }
 
-  async getTarget(canvasX, canvasY) {
-    const repCode = await new Promise(resolve => {
-      this.print = [
-        canvasX, 
-        canvasY, 
-        (pixels) => resolve(pixels)
-      ];
-    });
+  getTarget(canvasX, canvasY) {
+    const repCode = new Uint8Array(4);
+    this.gl.readPixels(canvasX, 500-canvasY, 1, 1, this.gl.RGBA, this.gl.UNSIGNED_BYTE, repCode);
 
     if (!repCode[0] && !repCode[1] && !repCode[2]) return null;
 
@@ -109,7 +86,8 @@ class OffRenderer extends Renderer {
           const z = k - this.dimensions[2] / 2;
 
           result.push(...block.outlines.map((v, n) => {
-            return n % 6 < 3 ? v + [x, y, z][n % 3] : (([i, j, k][n % 3] << 3) | ((v + 1) << 1)) + 128;
+            n %= 6;
+            return n < 3 ? v + [x, y, z][n] : (([i, j, k][n - 3] << 3) | ((v + 1) << 1)) + 128;
           }));
         }
       }  

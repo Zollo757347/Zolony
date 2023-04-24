@@ -9,13 +9,23 @@ class DisplayRenderer extends Renderer {
 
     this.images = new Map();
 
+    this.indices = new Uint16Array(
+      Array.from(
+        { length: 3072 }, 
+        (_, i) => {
+          i <<= 2;
+          return [i, i + 1, i + 2, i, i + 2, i + 3];
+        }
+      ).flat()
+    );
+
     this._devMode = false;
 
     /**
      * @type {OffRenderer}
      * @private
      */
-    this._offRenderer = new OffRenderer(playground, dimensions);
+    this._offRenderer = new OffRenderer(playground, dimensions, this);
   }
 
   initialize(canvas) {
@@ -77,33 +87,27 @@ class DisplayRenderer extends Renderer {
     gl.enableVertexAttribArray(texCoordAttribLocation);
     gl.enableVertexAttribArray(normalAttribLocation);
     gl.enableVertexAttribArray(colorMaskAttribLocation);
-
-    const indices = new Uint16Array(
-      Array.from(
-        { length: 2048 }, 
-        (_, i) => {
-          i <<= 2;
-          return [i, i + 1, i + 2, i, i + 2, i + 3];
-        }
-      ).flat()
-    );
-
-    const draw = () => {
-      gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, this._worldMatrix);
-
-      gl.clearColor(1, 0.96, 0.66, 1);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-      for (const [image, { vertices }] of this._getBlockVertices()) {
-        this._setupBuffer(gl, vertices, indices);
     
-        gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 0);
-        gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-        gl.vertexAttribPointer(normalAttribLocation, 3, gl.FLOAT, gl.TRUE, 11 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
-        gl.vertexAttribPointer(colorMaskAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 8 * Float32Array.BYTES_PER_ELEMENT);
+    const draw = () => {
+      if (this._needRender) {
+        gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, this._worldMatrix);
+
+        gl.clearColor(1, 0.96, 0.66, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images.get(image));
-        gl.drawElements(gl.TRIANGLES, vertices.length / 22 * 3, gl.UNSIGNED_SHORT, 0);
+        for (const [image, { vertices }] of this._getBlockVertices()) {
+          this._setupBuffer(gl, vertices, this.indices);
+      
+          gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 0);
+          gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+          gl.vertexAttribPointer(normalAttribLocation, 3, gl.FLOAT, gl.TRUE, 11 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+          gl.vertexAttribPointer(colorMaskAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 8 * Float32Array.BYTES_PER_ELEMENT);
+    
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images.get(image));
+          gl.drawElements(gl.TRIANGLES, vertices.length / 22 * 3, gl.UNSIGNED_SHORT, 0);
+        }
+
+        this._resetNeedRender();
       }
 
       if (this.playground.alive) {
@@ -173,6 +177,15 @@ class DisplayRenderer extends Renderer {
 
     if (block.type === BlockType.GlassBlock) return !adjacentBlock.fullBlock;
     return !adjacentBlock.fullBlock || adjacentBlock.type === BlockType.AirBlock || adjacentBlock.type === BlockType.GlassBlock;
+  }
+
+  get _needRender() {
+    return this.playground.updated || this.engine.needRender;
+  }
+
+  _resetNeedRender() {
+    this.playground.updated = false;
+    this.engine.needRender = false;
   }
 
   _vertexShaderSource = `

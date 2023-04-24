@@ -64,8 +64,9 @@ class Playground {
 
     /**
      * 此畫布是否被更新過，需要重新渲染
+     * @type {boolean}
      */
-    this._updated = true;
+    this.updated = true;
 
     /**
      * 此畫布是否仍在運作中
@@ -113,7 +114,7 @@ class Playground {
 
     this._prevRefX = cursorX;
     this._prevRefY = cursorY;
-    this._updated = true;
+    this.updated = true;
   }
 
   /**
@@ -125,7 +126,7 @@ class Playground {
     if (!this.hotbar.length) return;
 
     this.hotbarTarget = (Math.trunc(this._prevRefWheel / 100) % this.hotbar.length + this.hotbar.length) % this.hotbar.length;
-    this._updated = true;
+    this.updated = true;
   }
 
   /**
@@ -140,7 +141,7 @@ class Playground {
     const [x, y, z] = target;
 
     this.engine.addTask('leftClick', [x, y, z]);
-    this._updated = true;
+    this.updated = true;
   }
 
   /**
@@ -157,7 +158,7 @@ class Playground {
     const facing = ['north', 'west', 'south', 'east', 'north'][Math.round(this.angles.theta * 2 / Math.PI)];
     
     this.engine.addTask('rightClick', [x, y, z, shiftDown, normDir, facing, this.hotbar[this.hotbarTarget] ?? AirBlock]);
-    this._updated = true;
+    this.updated = true;
   }
 
   /**
@@ -166,13 +167,6 @@ class Playground {
   destroy() {
     this.alive = false;
     this.engine.destroy();
-  }
-
-  /**
-   * 此畫布是否需要重新渲染
-   */
-  get _needRender() {
-    return this._updated || this.engine.needRender;
   }
 }
 

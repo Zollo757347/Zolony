@@ -19,6 +19,11 @@ class Renderer {
     this.canvas = null;
 
     /**
+     * @type {WebGLRenderingContext?}
+     */
+    this.gl = null;
+
+    /**
      * @type {[number, number, number]}
      */
     this.dimensions = dimensions;
@@ -47,7 +52,7 @@ class Renderer {
       throw new Error('The canvas has not been initialized.');
     }
 
-    const gl = this.canvas.getContext('webgl', { alpha: false });
+    const gl = this.gl = this.canvas.getContext('webgl', { alpha: false });
     if (!gl) {
       throw new Error('Your browser does not support webgl canvas.');
     }
