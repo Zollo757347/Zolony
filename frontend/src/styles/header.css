@@ -1,0 +1,67 @@
+.z-sidebar {
+  background-color: hsl(50, 91%, 55%);
+
+  box-shadow: 0 0 5px gray;
+  
+  margin-top: -100vh;
+  height: 100vh;
+  width: 80px;
+
+  position: sticky;
+  top: 0;
+  z-index: 20110;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  transition-duration: 300ms;
+}
+.z-sidebar:hover {
+  box-shadow: 0 0 15px hsl(50, 100%, 16%);
+}
+
+.z-sidebar-opened {
+  background-color: hsl(50, 100%, 98%);
+
+  width: 250px;
+}
+
+.z-sidebar-wordmark-wrapper {
+  background-color: hsl(50, 91%, 55%);
+
+  padding: 10px;
+  width: calc(100% - 20px);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.z-sidebar-wordmark {
+  background-color: white;
+
+  cursor: pointer;
+
+  border-radius: 50%;
+  height: 60px;
+
+  transition-duration: 200ms;
+}
+.z-sidebar-wordmark:hover {
+  box-shadow: 0 0 10px white;
+}
+
+.z-sidebar-user-wrapper {
+  background-color: hsl(50, 91%, 55%);
+
+  padding: 10px;
+  width: calc(100% - 20px);
+
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

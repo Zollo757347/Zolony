@@ -5,13 +5,13 @@ const Image = ({ onClick, ...props }) => {
   const imgRef = useRef();
 
   const [display, setDisplay] = useState(false);
-  const [clientWidth, setClientWidth] = useState(document.documentElement.clientWidth);
-  const [clientHeight, setClientHeight] = useState(document.documentElement.clientHeight - 80);
+  const [clientWidth, setClientWidth] = useState(document.documentElement.clientWidth - 80);
+  const [clientHeight, setClientHeight] = useState(document.documentElement.clientHeight);
 
   useLayoutEffect(() => {
     function setSize() {
-      setClientWidth(document.documentElement.clientWidth);
-      setClientHeight(document.documentElement.clientHeight - 80);
+      setClientWidth(document.documentElement.clientWidth - 80);
+      setClientHeight(document.documentElement.clientHeight);
     }
 
     window.addEventListener('resize', setSize);
@@ -24,7 +24,7 @@ const Image = ({ onClick, ...props }) => {
   let attributes = { style: { display: 'none' } };
 
   if (imgRef.current) {
-    let left = 0, top = 80;
+    let left = 80, top = 0;
     let width = undefined, height = undefined;
 
     const { naturalWidth, naturalHeight } = imgRef.current;
@@ -100,7 +100,7 @@ const BackgroundDiv = styled.div.attrs(props => ({
 }))`
   background-color: rgba(100, 100, 100, 0.7);
   position: fixed;
-  left: 0;
+  right: 0;
   bottom: 0;
   z-index: 9999;
 `;
@@ -110,7 +110,7 @@ const ExitDiv = styled.div`
   color: white;
   position: fixed;
   right: 10px;
-  top: 90px;
+  top: 10px;
   width: 30px;
   height: 30px;
   border-radius: 50%;

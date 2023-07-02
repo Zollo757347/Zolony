@@ -1,47 +1,53 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Dropdown from './Dropdown';
-import Sidebar from './Sidebar';
-import { useHook } from '../hooks/useHook';
-import Message from './Message';
-import Modal from './Modal';
+import Dropdown from '../Dropdown';
+import SidebarContent from './SidebarContent';
+import { useHook } from '../../hooks/useHook';
+import Message from '../Message';
+import Modal from '../Modal';
 
-import deleteUserData from '../assets/json/modals/deleteUser.json';
-import loginData from '../assets/json/modals/login.json';
-import signinData from '../assets/json/modals/signin.json';
+import deleteUserData from '../../assets/json/modals/deleteUser.json';
+import loginData from '../../assets/json/modals/login.json';
+import signinData from '../../assets/json/modals/signin.json';
 
-import createUserError from '../assets/json/errors/createUser.json';
-import deleteUserError from '../assets/json/errors/deleteUser.json';
-import loginError from '../assets/json/errors/login.json';
+import createUserError from '../../assets/json/errors/createUser.json';
+import deleteUserError from '../../assets/json/errors/deleteUser.json';
+import loginError from '../../assets/json/errors/login.json';
+
+import "../../styles/header.css";
 
 const Header = () => {
-  const [sidebarCollapsed, _setSidebarCollapsed] = useState(true);
+  const headerRef = useRef(<div></div>);
+
   const [dropdownCollapsed, _setDropdownCollapsed] = useState(true);
   const [modalCollapsed, _setModalCollapsed] = useState(true);
   const [modalData, setModalData] = useState({ action: '', title: '', items: [] });
+  const [opened, setOpened] = useState(false);
 
   const { user, createUser, deleteUser, login, logout } = useHook();
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  function setSidebarCollapsed(value) {
-    _setSidebarCollapsed(value);
-    _setDropdownCollapsed(true);
-    _setModalCollapsed(true);
-  }
-
   function setDropdownCollapsed(value) {
-    _setSidebarCollapsed(true);
     _setDropdownCollapsed(value);
     _setModalCollapsed(true);
   }
 
   function setModalCollapsed(value) {
-    _setSidebarCollapsed(true);
     _setDropdownCollapsed(true);
     _setModalCollapsed(value);
+  }
+
+  function handleEnter() {
+    headerRef.current.className = 'z-sidebar z-sidebar-opened';
+    setOpened(true);
+  }
+
+  function handleLeave() {
+    headerRef.current.className = 'z-sidebar';
+    setOpened(false);
   }
 
   async function handleConfirm(data) {
@@ -98,21 +104,23 @@ const Header = () => {
   }
 
   const sidebarItems = [
-    { name: '一切的開端．訊號', path: '/redstone/signal' },
-    { name: '明與暗的旅程．訊號傳遞', path: '/redstone/transmit' },
-    { name: '強棒接力．紅石中繼器', path: '/redstone/repeater' },
-    { name: '顛倒是非．紅石火把', path: '/redstone/torch' },
-    { name: '邏輯閘．非或與', path: '/concepts/notorand' },
-    { name: '計算機的第一步．加法器', path: '/redstone/adder' }
+    { name: '基礎紅石', path: null, childs: [
+      { name: '一切的開端．訊號', path: '/redstone/signal' },
+      { name: '明與暗的旅程．訊號傳遞', path: '/redstone/transmit' },
+      { name: '強棒接力．紅石中繼器', path: '/redstone/repeater' },
+      { name: '顛倒是非．紅石火把', path: '/redstone/torch'}
+    ] }, 
+    { name: '計算機概論', path: null, childs: [
+      { name: '邏輯閘．非或與', path: '/concepts/notorand' },
+      { name: '計算機的第一步．加法器', path: '/redstone/adder' }
+    ] }
   ];
 
   const dropdownItems = user.loggedIn ? [
     { name: '個人資料', path: '/profile', todo: () => {
-      setSidebarCollapsed(true);
       navigate('/profile');
     } }, 
     { name: '登出', todo: () => {
-      setSidebarCollapsed(true);
       logout();
       if (pathname === '/profile') {
         navigate('/');
@@ -136,85 +144,28 @@ const Header = () => {
 
   return (
     <>
-      <HeaderWrapper>
-        <LeftHeaderWrapper>
-          <SidbarImg collapsed={sidebarCollapsed} onClick={() => setSidebarCollapsed(!sidebarCollapsed)} src={require("../assets/pictures/header/sidebar.png")} />
-          <Link to='/'>
-            <StyledWordmark src={require("../assets/pictures/header/wordmark.png")} />
+      <div ref={headerRef} className='z-sidebar' onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+        <div className='z-sidebar-wordmark-wrapper'>
+          <Link to='/' style={{ marginBottom: -4 }}>
+            <img className='z-sidebar-wordmark' src={require("../../assets/pictures/header/wordmark.png")} alt='zolony' />
           </Link>
-        </LeftHeaderWrapper>
-        <RightHeaderWrapper>
+        </div>
+        {opened ? <SidebarContent content={sidebarItems} /> : <></>}
+        <div className='z-sidebar-user-wrapper'>
           <AvatarWrapper collapsed={dropdownCollapsed}>
             <AvatarMask>
               <Avatar src={user.loggedIn ? user.avatar : 'https://i03piccdn.sogoucdn.com/aa852d73c1dbae45'} onClick={() => setDropdownCollapsed(!dropdownCollapsed)} />
             </AvatarMask>
           </AvatarWrapper>
-        </RightHeaderWrapper>
-      </HeaderWrapper>
-      <Sidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} items={sidebarItems} />
+        </div>
+      </div>
       <Dropdown collapsed={dropdownCollapsed} setCollapsed={setDropdownCollapsed} items={dropdownItems} />
       <Modal collapsed={modalCollapsed} setCollapsed={setModalCollapsed} onConfirm={handleConfirm} items={modalData.items} title={modalData.title} />
     </>
   );
 }
 
-const HeaderWrapper = styled.div`
-  background-color: rgb(245, 213, 37);
-  height: 80px;
-  position: sticky;
-  top: 0;
-  z-index: 20110;
 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const LeftHeaderWrapper = styled.div`
-  margin-left: 10px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  & > * {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-`;
-
-const RightHeaderWrapper = styled.div`
-  margin-right: 10px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-
-  & > * {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-`;
-
-const StyledWordmark = styled.img`
-  height: 70px;
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const SidbarImg = styled.img`
-  width: 35px;
-  height: 35px;
-
-  ${props => !props.collapsed ? "transform: rotate(180deg);" : ""};
-  transition: transform 0.3s;
-
-  &:hover {
-    cursor: pointer;
-  }
-`;
 
 const AvatarWrapper = styled.div`
   background-color: #E7CA22;

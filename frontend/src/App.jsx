@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Header from './components/Header';
+import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import Routes from './components/Routes';
 
@@ -25,7 +25,7 @@ const App = () => {
 
   return (
     <AppWrapper>
-      <Header />
+      <Sidebar />
       <MainWrapper>
         <Content>
           <div ref={divRef} style={{ transform: 'translateY(-100px)' }}></div>
