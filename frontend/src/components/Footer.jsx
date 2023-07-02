@@ -14,7 +14,7 @@ const Footer = () => {
 
 const FooterWrapper = styled.div`
   background-color: #F1D025;
-  width: 900px;
+  width: 60%;
   padding: 50px 15px 50px 15px;
 
   display: flex;

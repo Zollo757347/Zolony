@@ -45,7 +45,10 @@ const AppWrapper = styled.div`
 `;
 
 const MainWrapper = styled.div`
-  width: 100%;
+  background-color: #EEEEEE;
+
+  left: 80px;
+  width: calc(100% - 80px);
   height: 100%;
 
   position: relative;
@@ -54,27 +57,12 @@ const MainWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  &:before {
-    content: '';
-    background-image: url("/background.png");
-    background-size: 500px;
-    filter: opacity(0.2);
-
-    width: 100%;
-    height: 100%;
-
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: -1;
-  }
 `;
 
 const Content = styled.div`
-  background-color: #FBFAB7;
+  background-color: white;
   padding: 0 15px 100px 15px;
-  width: 900px;
+  width: 60%;
 
   display: flex;
   flex-direction: column;
