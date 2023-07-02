@@ -15,10 +15,10 @@ import createUserError from '../../assets/json/errors/createUser.json';
 import deleteUserError from '../../assets/json/errors/deleteUser.json';
 import loginError from '../../assets/json/errors/login.json';
 
-import "../../styles/header.css";
+import "../../styles/sidebar.css";
 
 const Header = () => {
-  const headerRef = useRef(<div></div>);
+  const sidebarRef = useRef(<div></div>);
 
   const [dropdownCollapsed, _setDropdownCollapsed] = useState(true);
   const [modalCollapsed, _setModalCollapsed] = useState(true);
@@ -41,12 +41,12 @@ const Header = () => {
   }
 
   function handleEnter() {
-    headerRef.current.className = 'z-sidebar z-sidebar-opened';
+    sidebarRef.current.className = 'z-sidebar z-sidebar-opened';
     setOpened(true);
   }
 
   function handleLeave() {
-    headerRef.current.className = 'z-sidebar';
+    sidebarRef.current.className = 'z-sidebar';
     setOpened(false);
   }
 
@@ -144,10 +144,10 @@ const Header = () => {
 
   return (
     <>
-      <div ref={headerRef} className='z-sidebar' onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+      <div ref={sidebarRef} className='z-sidebar' onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
         <div className='z-sidebar-wordmark-wrapper'>
           <Link to='/' style={{ marginBottom: -4 }}>
-            <img className='z-sidebar-wordmark' src={require("../../assets/pictures/header/wordmark.png")} alt='zolony' />
+            <img className='z-sidebar-wordmark' src={require("../../assets/pictures/sidebar/wordmark.png")} alt='zolony' />
           </Link>
         </div>
         {opened ? <SidebarContent content={sidebarItems} /> : <></>}
