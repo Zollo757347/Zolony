@@ -1,5 +1,7 @@
 node_modules
 
+note.txt
+
 *.mdp
 
 .DS_Store
