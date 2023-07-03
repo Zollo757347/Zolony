@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 /**
  * @typedef KeyTypes
- * @type {"break" | "interact" | "place" | "showEntities"}
+ * @type {"break" | "interact" | "place" | "showDebugScreen" | "showEntities"}
  */
 
 /**
@@ -29,6 +29,7 @@ const contentTable = Object.freeze({
   break: '破壞', 
   interact: '互動', 
   place: '放置', 
+  showDebugScreen: '開啟除錯介面', 
   showEntities: '顯示實體'
 });
 
@@ -36,6 +37,7 @@ const keybindTable = Object.freeze({
   break: '滑鼠左鍵', 
   interact: '滑鼠右鍵', 
   place: '滑鼠右鍵', 
+  showDebugScreen: ' F3', 
   showEntities: ' F3 + G'
 });
 

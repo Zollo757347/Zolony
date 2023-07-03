@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import "../styles/note.css";
 
-const Note = ({ type, children }) => {
+const Note = ({ type, children, ...props }) => {
   const { current: className } = useRef(
     type === 'danger' ? "z-note-danger" :
     type === 'success' ? "z-note-success" :
@@ -9,7 +9,7 @@ const Note = ({ type, children }) => {
   );
 
   return (
-    <div className={className}>{children}</div>
+    <div className={className} {...props}>{children}</div>
   );
 }
 
