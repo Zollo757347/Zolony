@@ -1,4 +1,4 @@
-import { AirBlock, IronBlock, GlassBlock, Lever, NewBlock, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "./core";
+import { AirBlock, IronBlock, GlassBlock, Lever, NewBlock, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "./core";
 import Engine from "./Engine";
 import Renderer from "./Renderer";
 
@@ -36,7 +36,7 @@ class Playground {
      * 快捷欄上的方塊
      * @type {(new () => import("./Playground/Blocks/Block").Block)[]}
      */
-    this.hotbar = preLoadData?.availableBlocks?.map(t => NewBlock(t)) ?? [IronBlock, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, Lever];
+    this.hotbar = preLoadData?.availableBlocks?.map(t => NewBlock(t)) ?? [IronBlock, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, RedstoneComparator, Lever];
 
     /**
      * 快捷欄上方塊的名稱

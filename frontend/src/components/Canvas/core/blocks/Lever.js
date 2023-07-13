@@ -31,6 +31,10 @@ class Lever extends Block {
     this.states = { ...(this.states ?? {}), face: 'wall', facing: 'north', powered: false };
   }
 
+  get power() {
+    return this.states.powered ? 15 : 0;
+  }
+
   get textures() {
     return (this.states.powered ? this._model.powered : this._model.unpowered)[this.states.face][this.states.facing].textures;
   }
@@ -39,8 +43,26 @@ class Lever extends Block {
     return (this.states.powered ? this._model.powered : this._model.unpowered)[this.states.face][this.states.facing].outlines;
   }
 
-  get power() {
-    return this.states.powered ? 15 : 0;
+  /**
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: boolean, power: number }}
+   */
+  powerTowardsBlock(direction) {
+    return (
+      (this.states.face === 'ceiling' && direction === 'up') ||
+      (this.states.face === 'floor' && direction === 'down') ||
+      (this.states.face === 'wall' && this.states.facing === direction)
+    ) ?
+    { strong: true, power: 15 } :
+    { strong: false, power: 0 };
+  }
+
+  /**
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: boolean, power: number }}
+   */
+  powerTowardsWire(direction) {
+    return { strong: this.states.powered, power: this.states.powered ? 15 : 0 };
   }
 
   interact() {
@@ -66,46 +88,6 @@ class Lever extends Block {
     else {
       this.states.face = 'wall';
       this.states.facing = normDir;
-    }
-  }
-
-  PPUpdate() {
-    let attachedBlock = null;
-    let broken = false;
-    switch (this.states.face) {
-      case 'ceiling':
-        attachedBlock = this.engine.block(this.x, this.y + 1, this.z);
-        if (!attachedBlock?.bottomSupport) {
-          broken = true;
-        }
-        break;
-
-      case 'floor':
-        attachedBlock = this.engine.block(this.x, this.y - 1, this.z);
-        if (!attachedBlock?.upperSupport) {
-          broken = true;
-        }
-        break;
-
-      case 'wall':
-        const dir = Maps.P4DMap.get(Maps.ReverseDir[this.states.facing]);
-        if (!dir) {
-          throw new Error(`${this.states.facing} is not a valid direction.`);
-        }
-
-        const [x, , z] = dir;
-        attachedBlock = this.engine.block(this.x + x, this.y, this.z + z);
-        if (!attachedBlock?.sideSupport) {
-          broken = true;
-        }
-        break;
-
-      default: break;
-    }
-
-    if (broken) {
-      this.engine._leftClick(this.x, this.y, this.z);
-      return;
     }
   }
 }

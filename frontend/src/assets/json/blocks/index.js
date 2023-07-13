@@ -1,5 +1,9 @@
 import { parseTexture } from "../../../components/Canvas/core/utils";
 import _block from "./block.json";
+import _comparator_on_subtract from "./comparator_on_subtract.json";
+import _comparator_on from "./comparator_on.json";
+import _comparator_subtract from "./comparator_subtract.json";
+import _comparator from "./comparator.json";
 import _cube from "./cube.json";
 import _cube_all from "./cube_all.json";
 import _glass from "./glass.json";
@@ -41,6 +45,10 @@ import _template_torch from "./template_torch.json";
 
 const _blockData = {
   block: _block,
+  comparator_on_subtract: _comparator_on_subtract,
+  comparator_on: _comparator_on,
+  comparator_subtract: _comparator_subtract,
+  comparator: _comparator,
   cube: _cube, 
   cube_all: _cube_all, 
   glass: _glass, 
@@ -81,6 +89,10 @@ const _blockData = {
   template_torch: _template_torch
 };
 
+export const comparator_on_subtract = parseTexture(_blockData, 'comparator_on_subtract');
+export const comparator_on = parseTexture(_blockData, 'comparator_on');
+export const comparator_subtract = parseTexture(_blockData, 'comparator_subtract');
+export const comparator = parseTexture(_blockData, 'comparator');
 export const glass = parseTexture(_blockData, 'glass');
 export const iron_block = parseTexture(_blockData, 'iron_block');
 export const lever_on = parseTexture(_blockData, 'lever_on');

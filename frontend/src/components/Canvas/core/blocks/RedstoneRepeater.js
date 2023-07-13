@@ -4,7 +4,7 @@ import {
   repeater_3tick_locked, repeater_3tick_on_locked, repeater_3tick_on, repeater_3tick, 
   repeater_4tick_locked, repeater_4tick_on_locked, repeater_4tick_on, repeater_4tick
 } from "../../../../assets/json/blocks";
-import { BlockType } from "../utils";
+import { BlockType, Maps } from "../utils";
 import Block from "./Block";
 
 /**
@@ -37,6 +37,13 @@ class RedstoneRepeater extends Block {
       repeater_1tick_on,        repeater_2tick_on,        repeater_3tick_on,        repeater_4tick_on, 
       repeater_1tick_on_locked, repeater_2tick_on_locked, repeater_3tick_on_locked, repeater_4tick_on_locked
     ];
+
+    /**
+     * 紅石中繼器一側的方向
+     * @type {import("../utils/parseTexture").FourFacings}
+     * @private
+     */
+    this._side = 'east';
   }
 
   get power() {
@@ -60,12 +67,33 @@ class RedstoneRepeater extends Block {
   }
 
   /**
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: boolean, power: number }}
+   */
+  powerTowardsBlock(direction) {
+    return this.states.powered && direction === this.states.facing ?
+      { strong: true, power: 15 } :
+      { strong: false, power: 0 };
+  }
+
+  /**
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: strong, power: number }}
+   */
+  powerTowardsWire(direction) {
+    return this.states.powered && direction === this.states.facing ?
+      { strong: true, power: 15 } :
+      { strong: false, power: 0 };
+  }
+
+  /**
    * 設定中繼器面向的方向
    * @param {symbol} normDir 指定面的法向量方向
    * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
    */
   setFacing(normDir, facingDir) {
     this.states.facing = facingDir ?? 'north';
+    this._sides = ['north', 'south'].includes(facingDir) ? 'east' : 'south';
   }
 
   /**
@@ -78,59 +106,35 @@ class RedstoneRepeater extends Block {
 
   // temprarily take PP and NC update as the same
   PPUpdate() {
-    if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
-      this.engine._leftClick(this.x, this.y, this.z);
-      return;
-    }
+    super.PPUpdate();
 
-    let x, y, z, sx, sy, sz, ds, dr;
-    switch (this.states.facing) {
-      case 'west':
-        [x, y, z] = [1, 0, 0];
-        [sx, sy, sz, ds, dr] = [0, 0, 1, 'north', 'south'];
-        break;
-      
-      case 'east':
-        [x, y, z] = [-1, 0, 0];
-        [sx, sy, sz, ds, dr] = [0, 0, 1, 'north', 'south'];
-        break;
+    const rear = Maps.P4DMap.get(Maps.ReverseDir[this.states.facing]);
+    const side = Maps.P4DMap.get(this._side);
+    if (!rear || !side) return;
 
-      case 'north':
-        [x, y, z] = [0, 0, 1];
-        [sx, sy, sz, ds, dr] = [1, 0, 0, 'west', 'east'];
-        break;
+    const [rearX, , rearZ] = rear;
+    const [sideX, , sideZ] = side;
 
-      case 'south':
-        [x, y, z] = [0, 0, -1];
-        [sx, sy, sz, ds, dr] = [1, 0, 0, 'west', 'east'];
-        break;
-
-      default:
-        throw new Error(`${this.states.facing} is not a valid direction.`);
-    }
-
-    const oldPowered = this.states.powered;
-    const oldLocked = this.states.locked;
     let newPowered = false, newLocked = false;
-    let block = this.engine.block(this.x + x, this.y + y, this.z + z);
-    if (block && (block.power || (block.type === BlockType.RedstoneRepeater && block.states.facing === this.states.facing && block.states.powered))) {
+    let block = this.engine.block(this.x + rearX, this.y, this.z + rearZ);
+    if (block?.powerTowardsWire(this.states.facing).power) {
       newPowered = true;
     }
 
-    block = this.engine.block(this.x + sx, this.y + sy, this.z + sz);
-    if (block && block.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === ds) {
+    block = this.engine.block(this.x + sideX, this.y, this.z + sideZ);
+    if (block?.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === Maps.ReverseDir[this._side]) {
       newLocked = true;
     }
 
-    block = this.engine.block(this.x - sx, this.y - sy, this.z - sz);
-    if (block && block.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === dr) {
+    block = this.engine.block(this.x - sideX, this.y, this.z - sideZ);
+    if (block?.type === BlockType.RedstoneRepeater && block.states.powered && block.states.facing === this._side) {
       newLocked = true;
     }
 
-    if (!newLocked && oldPowered !== newPowered) {
+    if (!newLocked && this.states.powered !== newPowered) {
       this.engine.addTask('repeaterUpdate', [this.x, this.y, this.z, newPowered], this.states.delay * 2);
     }
-    if (oldLocked !== newLocked) {
+    if (this.states.locked !== newLocked) {
       this.states.locked = newLocked;
       this.sendPPUpdate();
     }
@@ -142,30 +146,12 @@ class RedstoneRepeater extends Block {
    */
   repeaterUpdate(powered) {
     if (!powered) {
-      let x, y, z;
-      switch (this.states.facing) {
-        case 'west':
-          [x, y, z] = [1, 0, 0];
-          break;
-        
-        case 'east':
-          [x, y, z] = [-1, 0, 0];
-          break;
+      const rear = Maps.P4DMap.get(Maps.ReverseDir[this.states.facing]);
+      if (!rear) return;
   
-        case 'north':
-          [x, y, z] = [0, 0, 1];
-          break;
-  
-        case 'south':
-          [x, y, z] = [0, 0, -1];
-          break;
-  
-        default:
-          throw new Error(`${this.states.facing} is not a valid direction.`);
-      }
-      
-      const block = this.engine.block(this.x + x, this.y + y, this.z + z);
-      if (block && (block.power || (block.type === BlockType.RedstoneRepeater && block.states.facing === this.states.facing && block.states.powered))) {
+      const [rearX, , rearZ] = rear;
+      const block = this.engine.block(this.x + rearX, this.y, this.z + rearZ);
+      if (block?.powerTowardsWire(this.states.facing).power) {
         return;
       }
     }

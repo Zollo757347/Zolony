@@ -27,7 +27,7 @@ class RedstoneDust extends Block {
      * 此紅石粉的狀態
      * @type {RedstoneDustStates}
      */
-    this.states = { ...(this.states ?? {}), east: 1, south: 1, west: 1, north: 1, power: 0, source: true };
+    this.states = { ...(this.states ?? {}), east: 1, south: 1, west: 1, north: 1, power: 0 };
 
     /**
      * 此紅石粉閒置時是否處於向四周充能的狀態
@@ -115,6 +115,26 @@ class RedstoneDust extends Block {
   }
 
   /**
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: boolean, power: number }}
+   */
+  powerTowardsBlock(direction) {
+    return this.states[direction] ?
+      { strong: false, power: this.states.power } :
+      { strong: false, power: 0 };
+  }
+
+  /**
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: strong, power: number }}
+   */
+  powerTowardsWire(direction) {
+    return this.states[direction] ?
+      { strong: true, power: this.states.power } :
+      { strong: false, power: 0 };
+  }
+
+  /**
    * 與此紅石粉互動一次
    */
   interact() {
@@ -140,6 +160,8 @@ class RedstoneDust extends Block {
 
   // temprarily take PP and NC update as the same
   PPUpdate() {
+    super.PPUpdate();
+    
     this._changeShape();
     this._changePower();
   }
@@ -151,11 +173,6 @@ class RedstoneDust extends Block {
    */
   _changeShape() {
     const oldStates = JSON.parse(JSON.stringify(this.states));
-
-    if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
-      this.engine._leftClick(this.x, this.y, this.z);
-      return;
-    }
 
     Maps.P4DArray.forEach(([dir, [dx, _, dz]]) => {
       const rdir = Maps.ReverseDir[dir];
@@ -208,33 +225,38 @@ class RedstoneDust extends Block {
    */
   _changePower() {
     const oldPower = this.states.power;
-    let newPower = 1;
+    let newPower = 0;
 
-    Maps.P6DArray.forEach(([_, [x, y, z]]) => {
+    Maps.P6DArray.forEach(([dir, [x, y, z]]) => {
       const block = this.engine.block(this.x + x, this.y + y, this.z + z);
-      newPower = Math.max(newPower, block?.states.source ? block?.power ?? 1 : 1);
+      if (!block) return;
+
+      let { strong, power } = block.powerTowardsWire(Maps.ReverseDir[dir]);
+      if (!strong) return;
+
+      if (block.type === BlockType.RedstoneDust) {
+        power--;
+      }
+      newPower = Math.max(newPower, power);
     });
 
-    Maps.P4DArray.forEach(([dir, [x, _, z]]) => {
+    Maps.P4DArray.forEach(([_, [x, __, z]]) => {
       const sideDown = this.engine.block(this.x + x, this.y - 1, this.z + z);
       const sideHori = this.engine.block(this.x + x, this.y, this.z + z);
       const sideUp = this.engine.block(this.x + x, this.y + 1, this.z + z);
       const above = this.engine.block(this.x, this.y + 1, this.z);
 
       if (sideHori?.transparent && sideDown?.type === BlockType.RedstoneDust) {
-        newPower = Math.max(newPower, sideDown.power);
-      }
-      else if (sideHori?.type === BlockType.RedstoneRepeater && sideHori.states.powered && sideHori.states.facing === Maps.ReverseDir[dir]) {
-        newPower = 16; // 之後會被減 1
+        newPower = Math.max(newPower, sideDown.power - 1);
       }
 
       if (above?.transparent && sideUp?.type === BlockType.RedstoneDust) {
-        newPower = Math.max(newPower, sideUp.power);
+        newPower = Math.max(newPower, sideUp.power - 1);
       }
     });
 
-    this.states.power = newPower - 1;
-    if (oldPower !== newPower - 1) {
+    this.states.power = newPower;
+    if (oldPower !== newPower) {
       this.sendPPUpdate();
     }
   }

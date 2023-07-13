@@ -11,7 +11,7 @@ class DisplayRenderer extends Renderer {
 
     this.indices = new Uint16Array(
       Array.from(
-        { length: 3072 }, 
+        { length: 8192 }, 
         (_, i) => {
           i <<= 2;
           return [i, i + 1, i + 2, i, i + 2, i + 3];
@@ -29,7 +29,7 @@ class DisplayRenderer extends Renderer {
   }
 
   initialize(canvas) {
-    ['iron_block', 'cobblestone', 'lever_on', 'lever', 'redstone_dust_dot', 'redstone_dust_line0', 'redstone_dust_line1', 'redstone_dust_overlay', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater_on', 'redstone_torch', 'redstone_torch_off', 'bedrock'].forEach(src => {
+    ['iron_block', 'comparator', 'comparator_on', 'cobblestone', 'lever_on', 'lever', 'redstone_dust_dot', 'redstone_dust_line0', 'redstone_dust_line1', 'redstone_dust_overlay', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater_on', 'redstone_torch', 'redstone_torch_off', 'bedrock'].forEach(src => {
       const image = new Image();
       image.src = `/assets/minecraft/${src}.png`;
       this.images.set(src, image);

@@ -9,10 +9,6 @@ class AirBlock extends Block {
     super({ type: BlockType.AirBlock, blockName: '空氣', transparent: true, ...options });
   }
 
-  surfaces() {
-    return [];
-  }
-
   PPUpdate() {}
 }
 

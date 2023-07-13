@@ -5,7 +5,6 @@ class OffRenderer extends Renderer {
     super(playground, dimensions);
 
     this.mainRenderer = mainRenderer;
-    this.gl = null;
   }
 
   startRendering() {

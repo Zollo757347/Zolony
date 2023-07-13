@@ -2,7 +2,7 @@ import { sleep, strictEqual } from "../../utils";
 import { AirBlock, Block, BlockType, IronBlock } from "./core";
 
 /**
- * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], lampUnlit: [number, number, number] }} TaskParams
+ * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], comparatorUpdate: [number, number, number, number], lampUnlit: [number, number, number] }} TaskParams
  */
 
 /**
@@ -211,7 +211,7 @@ class Engine {
    * @param {number} x 
    * @param {number} y 
    * @param {number} z 
-   * @returns {import("./Blocks/Block").Block | null}
+   * @returns {import("./core/blocks/Block").default | null}
    */
   block(x, y, z) {
     return this._pg[x]?.[y]?.[z] ?? null;
@@ -273,6 +273,10 @@ class Engine {
 
           case 'repeaterUpdate':
             this._repeaterUpdate(...params);
+            break;
+
+          case 'comparatorUpdate':
+            this._comparatorUpdate(...params);
             break;
 
           case 'lampUnlit':
@@ -378,6 +382,21 @@ class Engine {
     if (block?.type !== BlockType.RedstoneRepeater) return;
 
     block.repeaterUpdate(powered);
+  }
+
+  /**
+   * 更新指定位置上的紅石比較器的觸發強度
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} z 
+   * @param {number} power 新的觸發強度
+   * @private
+   */
+  _comparatorUpdate(x, y, z, powered) {
+    const block = this.block(x, y, z);
+    if (block?.type !== BlockType.RedstoneComparator) return;
+
+    block.comparatorUpdate(powered);
   }
 
   /**

@@ -3,6 +3,7 @@ import Block from "./Block";
 import IronBlock from "./IronBlock";
 import GlassBlock from "./GlassBlock";
 import Lever from "./Lever";
+import RedstoneComparator from "./RedstoneComparator";
 import RedstoneDust from "./RedstoneDust";
 import RedstoneLamp from "./RedstoneLamp";
 import RedstoneRepeater from "./RedstoneRepeater";
@@ -14,6 +15,7 @@ export {
   IronBlock, 
   GlassBlock, 
   Lever, 
+  RedstoneComparator, 
   RedstoneDust, 
   RedstoneLamp, 
   RedstoneRepeater, 

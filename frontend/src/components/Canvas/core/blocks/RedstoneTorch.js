@@ -42,6 +42,24 @@ class RedstoneTorch extends Block {
   }
 
   /**
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: boolean, power: number }}
+   */
+  powerTowardsBlock(direction) {
+    return direction === 'up' && this.states.lit ?
+      { strong: true, power: 15 } :
+      { strong: false, power: 0 };
+  }
+
+  /**
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: boolean, power: number }}
+   */
+  powerTowardsWire(direction) {
+    return { strong: this.states.lit, power: this.states.lit ? 15 : 0 };
+  }
+
+  /**
    * 設定紅石火把面向的方向
    * @param {symbol} normDir 指定面的法向量方向
    * @param {symbol} facingDir 與觀察視角最接近的軸向量方向
@@ -55,13 +73,11 @@ class RedstoneTorch extends Block {
    * 根據 Post Placement Update 的來源方向更新自身狀態
    */
   PPUpdate() {
+    super.PPUpdate();
+    
     let attachedBlock = null;
-    let broken = false;
     if (this.states.facing === 'up') {
       attachedBlock = this.engine.block(this.x, this.y - 1, this.z);
-      if (!attachedBlock?.upperSupport) {
-        broken = true;
-      }
     }
     else {
       const dir = Maps.P4DMap.get(Maps.ReverseDir[this.states.facing]);
@@ -71,14 +87,6 @@ class RedstoneTorch extends Block {
 
       const [x, , z] = dir;
       attachedBlock = this.engine.block(this.x + x, this.y, this.z + z);
-      if (!attachedBlock?.sideSupport) {
-        broken = true;
-      }
-    }
-
-    if (broken) {
-      this.engine._leftClick(this.x, this.y, this.z);
-      return;
     }
 
     if (!attachedBlock?.states.power !== this.states.lit) {

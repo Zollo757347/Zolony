@@ -52,7 +52,7 @@ class Block {
 
     /**
      * 遊戲引擎
-     * @type {import("../Engine").Engine}
+     * @type {import("../../Engine").default}
      */
     this.engine = options.engine;
 
@@ -172,6 +172,24 @@ class Block {
   }
 
   /**
+   * 取得此方塊對指定方向導線元件外的方塊的能量輸出情形，只能被導線元件（紅石粉、紅石中繼器、紅石比較器）以外的方塊呼叫
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: boolean, power: number }}
+   */
+  powerTowardsBlock(direction) {
+    return { strong: false, power: 0 };
+  }
+
+  /**
+   * 取得此方塊對指定方向導線元件的能量輸出情形，只能被導線元件（紅石粉、紅石中繼器、紅石比較器）呼叫
+   * @param {import("../utils/parseTexture").SixSides} direction
+   * @returns {{ strong: boolean, power: number }}
+   */
+  powerTowardsWire(direction) {
+    return { strong: this.states.source, power: this.states.power };
+  }
+
+  /**
    * 發送 Post Placement Update 到相鄰的方塊
    */
   sendPPUpdate() {
@@ -188,7 +206,49 @@ class Block {
    * @abstract
    */
   PPUpdate() {
-    throw new Error('Not implemented yet.');
+    if (this.needBottomSupport) {
+      if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
+        this.engine._leftClick(this.x, this.y, this.z);
+        return;
+      }
+    }
+
+    if (this.needSupport) {
+      const face = this.states.face ?? (this.states.facing === 'up' ? 'floor' : 'wall');
+      let broken = false;
+      switch (face) {
+        case 'ceiling':
+          if (!this.engine.block(this.x, this.y + 1, this.z)?.bottomSupport) {
+            broken = true;
+          }
+          break;
+  
+        case 'floor':
+          if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
+            broken = true;
+          }
+          break;
+  
+        case 'wall':
+          const dir = Maps.P4DMap.get(Maps.ReverseDir[this.states.facing]);
+          if (!dir) {
+            throw new Error(`${this.states.facing} is not a valid direction.`);
+          }
+  
+          const [x, , z] = dir;
+          if (!this.engine.block(this.x + x, this.y, this.z + z)?.sideSupport) {
+            broken = true;
+          }
+          break;
+  
+        default: break;
+      }
+
+      if (broken) {
+        this.engine._leftClick(this.x, this.y, this.z);
+        return;
+      }
+    }
   }
 }
 
