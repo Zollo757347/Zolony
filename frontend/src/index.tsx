@@ -13,7 +13,7 @@ const LINK = process.env.NODE_ENV === "production" ? "/" : "http://localhost:400
 const httpLink = new HttpLink({ uri: LINK });
 const client = new ApolloClient({ link: httpLink, cache: new InMemoryCache() });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
