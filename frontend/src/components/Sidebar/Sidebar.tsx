@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import SidebarContent from './SidebarContent.tsx';
+import SidebarContent from './SidebarContent';
 
 import "../../styles/sidebar.css";
 

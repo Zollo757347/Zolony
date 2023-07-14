@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import Sidebar from './components/Sidebar/index.ts';
-import Footer from './components/Footer.tsx';
-import Routes from './components/Routes.tsx';
+import Sidebar from './components/Sidebar';
+import Footer from './components/Footer';
+import Routes from './components/Routes';
 
 import CourseMap from './assets/json/utils/courseMap.json';
 
