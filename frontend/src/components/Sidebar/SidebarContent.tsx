@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import "../../styles/sidebar_content.css";
 
-type SidebarContentProps = {
+interface SidebarContentProps {
   content: {
     name: string, 
     path: null, 
@@ -11,8 +11,8 @@ type SidebarContentProps = {
       name: string, 
       path: string
     }[]
-  }[]
-};
+  }[];
+}
 
 const SidebarContent = ({ content }: SidebarContentProps) => {
   const [openedIndex, setOpenedIndex] = useState(-1);

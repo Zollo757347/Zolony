@@ -1,0 +1,66 @@
+button.z-button {
+  color: "white";
+  padding: 8px;
+  margin: 5px;
+  border-radius: 0.5em; 
+  transition-duration: 300ms;
+}
+button.z-button:hover {
+  color: white;
+  cursor: pointer;
+}
+button.z-button:active {
+  cursor: pointer;
+}
+
+button.z-button-primary {
+  background-color: hsl(40, 100%, 50%);
+  border: 2px hsl(40, 100%, 62%) solid;
+
+}
+button.z-button-primary:hover {
+  background-color: hsl(40, 100%, 62%);
+  border: 2px hsl(40, 100%, 75%) solid;
+}
+button.z-button-primary:active {
+  background-color: hsl(40, 100%, 56%);
+}
+
+button.z-button-secondary {
+  background-color: hsl(0, 0%, 50%);
+  border: 2px hsl(0, 0%, 62%) solid;
+
+}
+button.z-button-secondary:hover {
+  background-color: hsl(0, 0%, 62%);
+  border: 2px hsl(0, 0%, 75%) solid;
+}
+button.z-button-secondary:active {
+  background-color: hsl(0, 0%, 56%);
+}
+
+button.z-button-success {
+  background-color: hsl(120, 100%, 50%);
+  border: 2px hsl(120, 100%, 62%) solid;
+
+}
+button.z-button-success:hover {
+  background-color: hsl(120, 100%, 62%);
+  border: 2px hsl(120, 100%, 75%) solid;
+}
+button.z-button-success:active {
+  background-color: hsl(120, 100%, 56%);
+}
+
+button.z-button-danger {
+  background-color: hsl(0, 100%, 50%);
+  border: 2px hsl(0, 100%, 62%) solid;
+
+}
+button.z-button-danger:hover {
+  background-color: hsl(0, 100%, 62%);
+  border: 2px hsl(0, 100%, 75%) solid;
+}
+button.z-button-danger:active {
+  background-color: hsl(0, 100%, 56%);
+}
