@@ -14,8 +14,7 @@ import {
 } from "./blocks";
 
 import {
-  NewBlock, 
-  Vector3
+  NewBlock
 } from "./utils";
 
 export {
@@ -32,6 +31,5 @@ export {
   RedstoneRepeater, 
   RedstoneTorch, 
   
-  NewBlock, 
-  Vector3
+  NewBlock
 };

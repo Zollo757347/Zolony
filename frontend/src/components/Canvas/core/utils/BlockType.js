@@ -7,7 +7,7 @@ const BlockType = Object.freeze({
   RedstoneRepeater: 102,
   RedstoneComparator: 103,
   RedstoneLamp: 104, 
-  Lever: 104
+  Lever: 105
 });
 
 export default BlockType;

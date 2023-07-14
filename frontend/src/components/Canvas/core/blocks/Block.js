@@ -1,17 +1,6 @@
 import { NewBlock, Maps } from "../utils";
 
 /**
- * @typedef Surface 代表一個有限大小的有向表面
- * @type {object}
- * @property {Vector3} cords 表面的所屬方塊在旋轉前的三維坐標
- * @property {symbol} dir 表面在旋轉前的法向量
- * @property {Vector3[]} points 表面的所有二維頂點座標
- * @property {string} color 表面的顏色
- * @property {number?} xAngle 在渲染前需要先沿著 x 軸旋轉的角度
- * @property {number?} zAngle 在渲染前需要先沿著 z 軸旋轉的角度
- */
-
-/**
  * @typedef BlockStates 此方塊的狀態
  * @type {object}
  * @property {number} power 此方塊的充能等級
