@@ -52,16 +52,3 @@
 .z-sidebar-wordmark:hover {
   box-shadow: 0 0 10px white;
 }
-
-.z-sidebar-user-wrapper {
-  background-color: hsl(50, 91%, 55%);
-
-  padding: 10px;
-  width: calc(100% - 20px);
-
-  cursor: pointer;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
