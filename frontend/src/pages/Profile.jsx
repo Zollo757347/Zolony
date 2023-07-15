@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useHook } from '../hooks/useHook';
 import { sleep } from '../utils';
 
-import Button, { ButtonTexture } from '../components/Button';
+import Button from '../components/Button';
 import Canvas from '../components/Canvas';
 import Message from "../components/Message"
 import Modal from '../components/Modal';
@@ -139,10 +139,10 @@ const Info = () => {
             onChange={handleChange}
             options={user.maps.map(name => ({ label: name, value: name }))}
           />
-          <Button texture={ButtonTexture.Danger} onClick={handleMapDelete} disabled={!displayCanvas}>
+          <Button type="danger" onClick={handleMapDelete} disabled={!displayCanvas}>
             刪除地圖
           </Button>
-          <Button texture={ButtonTexture.Success} onClick={() => setModalCollapsed(false)}> 
+          <Button type="success" onClick={() => setModalCollapsed(false)}> 
             建立地圖
           </Button>
         </div>

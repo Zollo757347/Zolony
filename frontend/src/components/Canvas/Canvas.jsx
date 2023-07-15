@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
 
-import Button, { ButtonTexture } from "../Button";
+import Button from "../Button";
 import Message from "../Message";
 
 import Engine from "./Engine";
@@ -155,8 +155,8 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
       {
         storable || (checkable && playground?.engine.validation) ? 
           <LowerCanvasWrapper>
-            {checkable && playground?.engine.validation ? <Button texture={ButtonTexture.Primary} onClick={handleCheckMap}>檢查地圖</Button> : <></>}
-            {storable ? <Button texture={ButtonTexture.Success} onClick={handleSaveMap}>儲存地圖</Button> : <></>}
+            {checkable && playground?.engine.validation ? <Button type="primary" onClick={handleCheckMap}>檢查地圖</Button> : <></>}
+            {storable ? <Button type="success" onClick={handleSaveMap}>儲存地圖</Button> : <></>}
           </LowerCanvasWrapper> :
           <></>
       }
