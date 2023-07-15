@@ -1,0 +1,34 @@
+.z-keybind {
+  position: relative;
+}
+.z-keybind:hover > span {
+  display: inline;
+}
+
+.z-keybind-span {
+  text-decoration: underline dotted;
+}
+.z-keybind-span:hover {
+  cursor: help;
+}
+
+.z-keybind-tooltip {
+  background-color: hsl(0, 0%, 100%);
+
+  position: absolute;
+  display: none;
+  width: 150px;
+  bottom: 1.5em;
+  left: 0;
+  padding: 3px;
+
+  text-align: center;
+
+  border: 2px outset hsl(64, 85%, 34%);
+  border-radius: 3px;
+
+  box-shadow: 0 0 10px gray;
+}
+.z-keybind-tooltip:hover {
+  display: inline;
+}

@@ -1,0 +1,10 @@
+.z-select {
+  padding: 8px;
+  margin: 5px;
+  border: 2px #666 solid;
+  border-radius: 0.5em; 
+  transition-duration: 300ms;
+}
+.z-select:hover {
+  cursor: pointer;
+}

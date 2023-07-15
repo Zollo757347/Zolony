@@ -1,7 +1,13 @@
 import { sleep } from "../utils";
 
+interface MessageSendProps {
+  content: string;
+  duration: number;
+  type: 'success' | 'error';
+}
+
 class Message extends null {
-  static async send({ content, duration, type }) {
+  static async send({ content, duration, type }: MessageSendProps) {
     const messageDiv = document.createElement('div');
 
     messageDiv.className = 'message message-animated-enter';
@@ -13,8 +19,6 @@ class Message extends null {
       case 'error':
         messageDiv.classList.add('message-error');
         break;
-      
-      default: break;
     }
 
     messageDiv.innerHTML = content;

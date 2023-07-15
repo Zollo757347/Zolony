@@ -1,11 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import Routes from './components/Routes';
-
-import CourseMap from './assets/json/utils/courseMap.json';
 
 import "./styles/app.css";
 
@@ -19,12 +17,6 @@ const App = () => {
     }
   }, [pathname]);
 
-  const Next = (pathname !== '/' && CourseMap[pathname]) ? 
-    <div className="next-page">{
-      CourseMap[pathname].next.map((path, i) => <Link to={path} key={i}>{CourseMap[path].name + ' ‧>'}</Link>)
-    }</div> : 
-    <></>;
-
   return (
     <div className="app">
       <Sidebar />
@@ -32,7 +24,6 @@ const App = () => {
         <div className="content">
           <div ref={divRef} style={{ transform: 'translateY(-100px)' }}></div>
           <Routes />
-          {Next}
         </div>
         <Footer />
       </div>

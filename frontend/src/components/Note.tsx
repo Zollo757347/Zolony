@@ -1,7 +1,13 @@
 import { useRef } from "react";
 import "../styles/note.css";
 
-const Note = ({ type, children, ...props }) => {
+interface NoteProps {
+  type: 'normal' | 'success' | 'danger';
+  children: React.ReactNode;
+  [key: string]: any;
+}
+
+const Note = ({ type, children, ...props }: NoteProps) => {
   const { current: className } = useRef(
     type === 'danger' ? "z-note-danger" :
     type === 'success' ? "z-note-success" :

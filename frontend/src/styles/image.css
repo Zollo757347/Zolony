@@ -1,0 +1,30 @@
+.z-image:hover {
+  cursor: pointer;
+}
+
+.z-image-ghostdiv {
+  background-color: rgba(100, 100, 100, 0.7);
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+
+.z-image-exitdiv {
+  background-color: rgba(50, 50, 50, 0.7);
+  color: white;
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  z-index: 10001;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.z-image-exitdiv:hover {
+  cursor: pointer;
+}

@@ -1,0 +1,21 @@
+.z-table {
+  margin: 2em 0.5em;
+  text-align: center;
+  border: 2px solid black;
+  border-collapse: collapse;
+  padding: 1px 5px;
+}
+
+.z-th {
+  background-color: hsl(56, 83%, 71%);
+  padding: 0.5em;
+  border: 2px solid black;
+  border-collapse: collapse;
+}
+
+.z-td {
+  background-color: hsl(56, 77%, 92%);
+  padding: 1px 5px;
+  border: 2px solid black;
+  border-collapse: collapse;
+}

@@ -1,0 +1,74 @@
+.z-modal-wrapper {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 20110;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  opacity: 1;
+  transition: transform 0.3s, opacity 0.3s ease-in;
+}
+
+.z-modal-wrapper-collapsed {
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.z-modal {
+  background-color: hsl(54, 100%, 83%);
+  width: 450px;
+  padding: 10px;
+  border-radius: 0.5em;
+  box-shadow: 0 0 15px hsla(0, 0%, 51%, 0.3);
+
+  position: relative;
+  bottom: 40px;
+  z-index: 1;
+}
+
+.z-modal-ghostdiv {
+  background-color: #888888;
+  opacity: 0.1;
+  height: 100%;
+  width: 100%;
+
+  position: fixed;
+}
+
+.z-modal-title {
+  padding: 5px;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+.z-modal-inputarea {
+  margin-bottom: 5px;
+  padding: 10px;
+}
+
+.z-modal-buttonarea {
+  margin-top: 5px;
+
+  display: flex;
+  justify-content: flex-end;
+}
+.z-modal-buttonarea > * {
+  width: 60px;
+}
+
+.z-modal-input {
+  width: 95%;
+  height: 1.5em;
+  padding: 0.3em 0.7em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+
+  border: 1px solid hsl(51, 91%, 55%);
+  border-radius: 3px;
+}
+.z-modal-input:focus {
+  outline: 2px solid hsl(54, 100%, 63%);
+}
