@@ -1,5 +1,7 @@
 import { useRef } from "react";
 
+import "../styles/button.css"
+
 interface ButtonProps {
   type: "primary" | "secondary" | "success" | "danger";
   disabled?: boolean;

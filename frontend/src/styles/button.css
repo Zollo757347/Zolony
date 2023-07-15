@@ -1,12 +1,11 @@
 button.z-button {
-  color: "white";
+  color: white;
   padding: 8px;
   margin: 5px;
   border-radius: 0.5em; 
   transition-duration: 300ms;
 }
 button.z-button:hover {
-  color: white;
   cursor: pointer;
 }
 button.z-button:active {

@@ -2,8 +2,8 @@ import { sleep } from "../utils";
 
 interface MessageSendProps {
   content: string;
-  duration: number;
   type: 'success' | 'error';
+  duration?: number;
 }
 
 class Message extends null {

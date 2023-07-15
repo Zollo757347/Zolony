@@ -21,7 +21,7 @@ const HookContext = createContext({
 
   getMap: async () => {},
   createMap: async () => {},
-  editMap: async () => {},
+  editMap: async (a, b) => ({ error: "" }),
   deleteMap: async () => {},
 
   user: {

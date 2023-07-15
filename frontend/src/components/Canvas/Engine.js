@@ -121,7 +121,8 @@ class Engine {
    * @param {number} timeout 每次對控制桿操作後要等待多久才判斷輸出的正確性
    * @returns {Promise<boolean>}
    */
-  static async validate(engine, { levers, lamps, boolFuncs, timeout }) {
+  static async validate(engine, ) {
+    const { levers, lamps, boolFuncs, timeout } = engine.validation;
     const leverBlocks = [];
     const lampBlocks = []
 

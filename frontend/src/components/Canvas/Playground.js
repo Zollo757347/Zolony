@@ -21,6 +21,10 @@ import Renderer from "./Renderer";
  * 3D 渲染的邏輯實作
  */
 class Playground {
+  /**
+   * 
+   * @param {any} param0 
+   */
   constructor({ xLen, yLen, zLen, preLoadData }) {
     xLen = xLen ?? preLoadData.xLen;
     yLen = yLen ?? preLoadData.yLen;

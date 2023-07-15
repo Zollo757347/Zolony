@@ -8,35 +8,43 @@ import Playground from "./Playground";
 
 import { useHook } from "../../hooks/useHook";
 
-/**
- * 
- * @param {any} param0 
- * @returns 
- */
-const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkable, preLoadData }) => {
+import "../../styles/canvas.css";
+
+interface CanvasProps {
+  canvasWidth: number;
+  canvasHeight: number;
+  storable?: boolean;
+  checkable?: boolean;
+  xLen?: number;
+  yLen?: number;
+  zLen?: number;
+  preLoadData?: any;
+}
+
+const Canvas = ({ canvasHeight, canvasWidth, storable, checkable, xLen, yLen, zLen, preLoadData }: CanvasProps) => {
   const [shiftDown, setShiftDown] = useState(false);
-  const [playground, setPlayground] = useState();
+  const [playground, setPlayground] = useState<Playground>();
   const [currentBlock, setCurrentBlock] = useState('');
 
-  const canvasRef = useRef();
-  const spanRef = useRef();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const spanRef = useRef<HTMLSpanElement>(null);
 
   const { editMap, user } = useHook();
 
   useEffect(() => {
-    const pg = new Playground({ canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData });
+    const pg = new Playground({ xLen, yLen, zLen, preLoadData });
     pg.initialize(canvasRef.current);
     setPlayground(pg);
-    setCurrentBlock(pg.currentBlockName ?? '');
+    setCurrentBlock(pg.currentBlockName);
     
     return () => pg.destroy();
-  }, [canvasWidth, canvasHeight, xLen, yLen, zLen, preLoadData]);
+  }, [xLen, yLen, zLen, preLoadData]);
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLCanvasElement>) {
     setShiftDown(e.shiftKey);
   }
 
-  function handleKeyUp(e) {
+  function handleKeyUp(e: React.KeyboardEvent<HTMLCanvasElement>) {
     setShiftDown(e.shiftKey);
   }
 
@@ -48,38 +56,40 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
     window.removeEventListener('wheel', preventDefault, false);
   }
 
-  function handleDrag(e) {
+  function handleDrag(e: React.DragEvent<HTMLCanvasElement>) {
     // 拖曳結束前的最後一個事件的座標會是 (0, 0)，因為會嚴重影響到畫面，所以直接擋掉
     if (e.clientX === 0 && e.clientY === 0) return;
 
     playground?.adjustAngles(e.clientX, e.clientY);
   }
   
-  function handleDragStart(e) {
+  function handleDragStart(e: React.DragEvent<HTMLCanvasElement>) {
     // 把拖曳的殘影改成看不見的元素
-    e.dataTransfer.setDragImage(spanRef.current, 0, 0);
+    if (spanRef.current) {
+      e.dataTransfer.setDragImage(spanRef.current, 0, 0);
+    }
 
     playground?.adjustAngles(e.clientX, e.clientY, true);
   }
 
-  function handleClick(e) {
-    const canvas = canvasRef.current;
-    const p = getPosition(canvas, e);
-    
-    playground?.leftClick(p.x, p.y);
+  function handleClick(e: React.MouseEvent<HTMLCanvasElement>) {
+    if (canvasRef.current) {
+      const p = getPosition(canvasRef.current, e);
+      playground?.leftClick(p.x, p.y);
+    }
   }
 
-  function handleContextMenu(e) {
+  function handleContextMenu(e: React.MouseEvent<HTMLCanvasElement>) {
     // 防止 Context Menu 真的跳出來
     e.preventDefault();
 
-    const canvas = canvasRef.current;
-    const p = getPosition(canvas, e);
-    
-    playground?.rightClick(p.x, p.y, shiftDown);
+    if (canvasRef.current) {
+      const p = getPosition(canvasRef.current, e);
+      playground?.rightClick(p.x, p.y, shiftDown);
+    }
   }
 
-  function handleScroll(e) {
+  function handleScroll(e: React.WheelEvent<HTMLCanvasElement>) {
     playground?.scrollHotbar(e.deltaY);
     setCurrentBlock(playground?.currentBlockName ?? '');
   }
@@ -116,7 +126,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
   async function handleCheckMap() {
     if (!playground) return;
 
-    if (await Engine.validate(playground.engine, playground.engine.validation)) {
+    if (await Engine.validate(playground.engine)) {
       Message.send({ content: '恭喜你通過檢查！', type: 'success' });
     }
     else {
@@ -163,7 +173,7 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
   );
 }
 
-function getPosition(canvas, event) {
+function getPosition(canvas: HTMLCanvasElement, event: React.MouseEvent<HTMLCanvasElement>) {
   const p = canvas.getBoundingClientRect();
   return {
     x: event.clientX - p.left, 
@@ -171,7 +181,7 @@ function getPosition(canvas, event) {
   };
 }
 
-function preventDefault(e) {
+function preventDefault(e: WheelEvent) {
   e.preventDefault();
 }
 
