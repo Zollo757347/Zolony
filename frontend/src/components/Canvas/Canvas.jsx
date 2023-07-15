@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
 
 import Button from "../Button";
@@ -126,9 +125,9 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
   }
   
   return (
-    <CanvasWrapper>
-      <UpperCanvasWrapper>
-        <StyledCanvas
+    <div className="z-canvas-wrapper">
+      <div className="z-canvas-wrapper-upper">
+        <canvas className="z-canvas"
           ref={canvasRef}
           width={canvasWidth}
           height={canvasHeight}
@@ -150,17 +149,17 @@ const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkab
           onWheelCapture={handleScroll}
         />
         <span ref={spanRef} style={{ display: 'none' }} />
-      </UpperCanvasWrapper>
-      <MiddleCanvasWrapper>{currentBlock}</MiddleCanvasWrapper>
+      </div>
+      <div className="z-canvas-wrapper-middle">{currentBlock}</div>
       {
         storable || (checkable && playground?.engine.validation) ? 
-          <LowerCanvasWrapper>
+          <div className="z-canvas-wrapper-lower">
             {checkable && playground?.engine.validation ? <Button type="primary" onClick={handleCheckMap}>檢查地圖</Button> : <></>}
             {storable ? <Button type="success" onClick={handleSaveMap}>儲存地圖</Button> : <></>}
-          </LowerCanvasWrapper> :
+          </div> :
           <></>
       }
-    </CanvasWrapper>
+    </div>
   );
 }
 
@@ -175,32 +174,5 @@ function getPosition(canvas, event) {
 function preventDefault(e) {
   e.preventDefault();
 }
-
-const CanvasWrapper = styled.div`
-  border: 3px #D2A46B solid;
-  border-radius: 0.3em;
-  width: max-content;
-`;
-
-const UpperCanvasWrapper = styled.div`
-  text-align: center;
-`;
-
-const MiddleCanvasWrapper = styled.div`
-  text-align: center;
-`;
-
-const LowerCanvasWrapper = styled.div`
-  padding-top: 5px;
-  padding-bottom: 10px;
-  text-align: center;
-`;
-
-const StyledCanvas = styled.canvas`
-  &:focus {
-    padding: 0;
-    outline: 0;
-  }
-`;
 
 export default Canvas;
