@@ -3,13 +3,13 @@ import "../styles/table.css"
 
 interface TableProps {
   content: {
-    head: [GridData];
+    head: GridData;
     body: GridData[];
   }
 }
 
 interface TheadProps {
-  data: [GridData];
+  data: GridData;
 }
 
 interface TbodyProps {
@@ -34,7 +34,7 @@ export default Table;
 function Thead({ data }: TheadProps) {
   return <thead>
     <tr>{
-      data[0].map((ele, j) => {
+      data.map((ele, j) => {
         if (typeof ele === 'string') {
           return <th className="z-th" key={j}><Latex>{ele}</Latex></th>;
         }

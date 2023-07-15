@@ -5,7 +5,7 @@ import "../styles/image.css";
 interface ImageProps {
   src: string;
   alt: string;
-  onClick: () => {};
+  onClick?: () => {};
   [key: string]: any;
 }
 

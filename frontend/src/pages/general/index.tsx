@@ -22,7 +22,7 @@ const GetStarted = () => {
 
       <section>
         <h2>功能介紹</h2>
-        <Image src={require("../../assets/pictures/general/index/layout.png")} width="90%" />
+        <Image src={require("../../assets/pictures/general/index/layout.png")} alt="功能介紹" width="90%" />
 
         <p>網站的左上角有一個六角形的按鈕，按下去之後會跳出文章列表，你可以快速跳轉到你想閱讀的文章；網站的右上角則是個人帳號的按鈕，點擊後會開啟下拉選單，你可以註冊／登入你的帳號，或是在登入狀態中察看帳號的狀態等等。</p>
 

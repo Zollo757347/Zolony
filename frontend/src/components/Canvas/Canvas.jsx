@@ -9,6 +9,11 @@ import Playground from "./Playground";
 
 import { useHook } from "../../hooks/useHook";
 
+/**
+ * 
+ * @param {any} param0 
+ * @returns 
+ */
 const Canvas = ({ canvasWidth, canvasHeight, xLen, yLen, zLen, storable, checkable, preLoadData }) => {
   const [shiftDown, setShiftDown] = useState(false);
   const [playground, setPlayground] = useState();

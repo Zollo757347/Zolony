@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import { useState } from 'react';
 
 import { useHook } from '../hooks/useHook';
@@ -122,19 +121,19 @@ const Info = () => {
   }
 
   return (
-    <ProfileWrapper>
-      <ProfileCard>
-        <ProfileInfo>
-          <Username>{user.username}</Username>
-          <Bio>{user.bio}</Bio>
-        </ProfileInfo>
-        <ProfileImageWrapper>
-          <ProfileImage src={user.avatar} alt='avatar' />
-        </ProfileImageWrapper>
-      </ProfileCard>
+    <div className="z-profile-wrapper">
+      <div className="z-profile-card">
+        <div className="z-profile-info">
+          <div className="z-profile-username">{user.username}</div>
+          <div className="z-profile-bio">{user.bio}</div>
+        </div>
+        <div className="z-profile-imagewrapper">
+          <img className="z-profile-img" src={user.avatar} alt='avatar' />
+        </div>
+      </div>
 
-      <ProfileMapWrapper>
-        <MapFunctions>
+      <div className="z-profile-wrapper">
+        <div className="z-profile-mapfunctions">
           <Select
             placeholder={user.maps.length ? "請選擇一張地圖" : "你還沒有任何地圖"}
             onChange={handleChange}
@@ -146,80 +145,14 @@ const Info = () => {
           <Button texture={ButtonTexture.Success} onClick={() => setModalCollapsed(false)}> 
             建立地圖
           </Button>
-        </MapFunctions>
-        <MapArea>
+        </div>
+        <div className="z-profile-maparea">
           {displayCanvas ?? <></>}
-        </MapArea>
-      </ProfileMapWrapper>
+        </div>
+      </div>
       <Modal collapsed={modalCollapsed} setCollapsed={setModalCollapsed} onConfirm={handleConfirm} items={createMapData.items} title={createMapData.title} />
-    </ProfileWrapper>
+    </div>
   );
 }
-
-const ProfileWrapper = styled.div`
-  width: 100%;
-  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const ProfileCard = styled.div`
-  width: 95%;
-  margin: 20px;
-  padding: 10px 10px 20px 10px;
-  border-bottom: 2px solid #B3A773;
-
-  display: flex;
-  justify-content: space-between;
-`;
-
-const ProfileInfo = styled.div`
-  padding-left: 20px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const Username = styled.div`
-  color: #883500;
-  font-size: 5em;
-  font-family: 'Trebuchet MS';
-`;
-
-const Bio = styled.div`
-  font-size: 1em;
-`;
-
-const ProfileImageWrapper = styled.div`
-  background-color: #EBEAB7;
-  width: 300px;
-  height: 300px;
-  border: 5px solid #EE8500;
-  border-radius: 50%;
-  overflow: hidden;
-`;
-
-const ProfileImage = styled.img`
-  height: 100%;
-`;
-
-const ProfileMapWrapper = styled.div`
-  padding: 10px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const MapFunctions = styled.div`
-  padding: 5px;
-`;
-
-const MapArea = styled.div`
-  height: 550px;
-  padding: 5px;
-`;
 
 export default Info;

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import "../styles/note.css";
 
 interface NoteProps {
-  type: 'normal' | 'success' | 'danger';
+  type?: 'normal' | 'success' | 'danger';
   children: React.ReactNode;
   [key: string]: any;
 }

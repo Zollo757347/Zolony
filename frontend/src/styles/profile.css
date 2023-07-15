@@ -1,0 +1,66 @@
+.z-profile-wrapper {
+  width: 100%;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.z-profile-card {
+  width: 95%;
+  margin: 20px;
+  padding: 10px 10px 20px 10px;
+  border-bottom: 2px solid #B3A773;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.z-profile-info {
+  padding-left: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.z-profile-username {
+  color: #883500;
+  font-size: 5em;
+  font-family: 'Trebuchet MS';
+}
+
+.z-profile-bio {
+  font-size: 1em;
+}
+
+.z-profile-imagewrapper {
+  background-color: #EBEAB7;
+  width: 300px;
+  height: 300px;
+  border: 5px solid #EE8500;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.z-profile-img {
+  height: 100%;
+}
+
+.z-profile-mapwrapper {
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.z-profile-mapfunctions {
+  padding: 5px;
+  
+}
+
+.z-profile-maparea {
+  height: 550px;
+  padding: 5px;
+}

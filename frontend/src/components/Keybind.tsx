@@ -2,8 +2,8 @@ import "../styles/keybind.css";
 
 interface KeybindProps {
   type: keyof typeof contentTable;
-  content: string;
-  keybind: string;
+  content?: string;
+  keybind?: string;
 }
 
 /**
