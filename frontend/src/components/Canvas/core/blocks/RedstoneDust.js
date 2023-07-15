@@ -119,7 +119,7 @@ class RedstoneDust extends Block {
    * @returns {{ strong: boolean, power: number }}
    */
   powerTowardsBlock(direction) {
-    return this.states[direction] ?
+    return this.states[direction] || direction === 'down' ?
       { strong: false, power: this.states.power } :
       { strong: false, power: 0 };
   }

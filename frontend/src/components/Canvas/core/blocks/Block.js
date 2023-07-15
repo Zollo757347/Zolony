@@ -186,7 +186,7 @@ class Block {
     
     this.PPUpdate();
     Maps.P6DArray.forEach(([dir, [x, y, z]]) => {
-      this.engine.block(this.x + x, this.y + y, this.z + z)?.PPUpdate(dir);
+      this.engine.block(this.x + x, this.y + y, this.z + z)?.PPUpdate();
     });
   }
 

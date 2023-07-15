@@ -65,7 +65,7 @@ class RedstoneLamp extends FullBlock {
 
     const litByPower = Maps.P6DArray.some(([dir, [x, y, z]]) => {
       const block = this.engine.block(this.x + x, this.y + y, this.z + z);
-      return block?.states.source;
+      return block?.states.power;
     });
     if (litByPower) return true;
   }

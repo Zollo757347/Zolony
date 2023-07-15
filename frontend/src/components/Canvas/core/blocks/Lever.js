@@ -51,8 +51,8 @@ class Lever extends Block {
     return (
       (this.states.face === 'ceiling' && direction === 'up') ||
       (this.states.face === 'floor' && direction === 'down') ||
-      (this.states.face === 'wall' && this.states.facing === direction)
-    ) ?
+      (this.states.face === 'wall' && this.states.facing === Maps.ReverseDir[direction])
+    ) && this.states.powered ?
     { strong: true, power: 15 } :
     { strong: false, power: 0 };
   }
