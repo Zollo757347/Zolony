@@ -168,7 +168,7 @@ function parseComponents({ elements, outlines, face, facing, prerotation }: Comp
       rotateOutlines(outlines, yRotate);
     });
 
-    if (f) data[f] = result as Record<FourFacings, WebGLData>;
+    if (face) data[f] = result as Record<FourFacings, WebGLData>;
     else return result as Record<FourFacings, WebGLData>;
   } while (faces.length);
 

@@ -207,7 +207,6 @@ class RedstoneDust extends Block {
   }
 }
 
-
 const _textureModel: {
   dot: WebGLTextureData[], 
   north: [WebGLTextureData[], WebGLTextureData[], WebGLTextureData[]], 
