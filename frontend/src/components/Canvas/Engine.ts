@@ -1,92 +1,46 @@
 import { sleep, strictEqual } from "../../utils";
-import { AirBlock, Block, BlockType, IronBlock } from "./core";
-
-/**
- * @typedef {{ leftClick: [number, number, number], rightClick: [number, number, number, boolean, symbol, symbol, new () => Block], torchUpdate: [number, number, number, boolean], repeaterUpdate: [number, number, number, boolean], comparatorUpdate: [number, number, number, number], lampUnlit: [number, number, number] }} TaskParams
- */
-
-/**
- * @typedef {{ [K in keyof TaskParams]: [K, TaskParams[K], number] }[keyof TaskParams]} Task 一項待辦工作
- */
-
-/**
- * @typedef MapData 地圖的數據
- * @type {object}
- * @property {number} xLen x 軸的長度
- * @property {number} yLen y 軸的長度
- * @property {number} zLen z 軸的長度
- * @property {string} mapName 地圖的名稱
- * @property {object?} validation 檢查條件
- * @property {(import("./core/blocks/Block").BlockData | null)[][][]} playground 地圖上所有方塊的狀態
- */
+import { AirBlock, Block, IronBlock, Lever, RedstoneLamp } from "./core";
+import { BlockConstructor, BlockType, Blocks, EngineOptions, EngineTask, FourFacings, MapData, ValidationData, Vector3 } from "./typings/types";
 
 class Engine {
-  constructor({ xLen, yLen, zLen, mapName, validation }) {
-    /**
-     * x 軸的長度
-     * @type {number}
-     */
+  public xLen: number;
+  public yLen: number;
+  public zLen: number;
+  public mapName: string;
+  public validation?: ValidationData;
+
+  public taskQueue: EngineTask[];
+
+  public needRender: boolean;
+
+  private _pg: Blocks[][][];
+
+  constructor({ xLen, yLen, zLen, mapName, validation }: EngineOptions) {
     this.xLen = xLen;
-
-    /**
-     * y 軸的長度
-     * @type {number}
-     */
     this.yLen = yLen;
-
-    /**
-     * z 軸的長度
-     * @type {number}
-     */
     this.zLen = zLen;
-
-    /**
-     * 地圖的名稱
-     * @type {string}
-     */
     this.mapName = mapName;
-
-    /**
-     * 檢查條件
-     * @type {object}
-     */
     this.validation = validation;
 
-    /**
-     * 工作佇列
-     * @type {Task[]}
-     */
     this.taskQueue = [];
 
-    /**
-     * 所有方塊
-     * @type {import("./core/blocks/Block").Block[][][]}
-     * @private
-     */
+    this.needRender = true;
+
     this._pg = Array.from({ length: xLen }, (_, x) => 
       Array.from({ length: yLen }, (_, y) => 
-        Array.from({ length: zLen }, (_, z) => y === 0 ? new IronBlock({ x, y, z, engine: this, breakable: false }) : new AirBlock({ x, y, z, engine: this }))
+        Array.from({ length: zLen }, (_, z) => y === 0 ?
+          new IronBlock({ x, y, z, engine: this, breakable: false }) :
+          new AirBlock({ x, y, z, engine: this }))
       )
     );
-
-    /**
-     * 此引擎是否被更新過，需要重新渲染至畫布上
-     * @type {boolean}
-     */
-    this.needRender = true;
   }
 
-  /**
-   * 用給定的地圖資料生出引擎
-   * @param {MapData} data
-   * @returns {Engine} 
-   */
-  static spawn({ xLen, yLen, zLen, mapName, playground, validation }) {
+  static spawn({ xLen, yLen, zLen, mapName, playground, validation }: MapData): Engine {
     const engine = new Engine({ xLen, yLen, zLen, mapName, validation });
     playground.forEach((layer, i) => {
       layer.forEach((line, j) => {
         line.forEach((block, k) => {
-          engine._pg[i][j][k] = block ? Block.spawn(engine, { ...block, x: i, y: j, z: k }) : new AirBlock({ x: i, y: j, z: k, engine });
+          engine._pg[i][j][k] = block ? Block.spawn({ ...block, x: i, y: j, z: k, engine }) : new AirBlock({ x: i, y: j, z: k, engine });
         })
       })
     });
@@ -95,10 +49,10 @@ class Engine {
 
   /**
    * 把一個引擎轉換成可儲存的資料形式
-   * @param {Engine} engine 
-   * @returns {MapData}
+   * @param engine 
+   * @returns 
    */
-  static extract(engine) {
+  static extract(engine: Engine): MapData {
     return {
       xLen: engine.xLen, 
       yLen: engine.yLen, 
@@ -114,21 +68,22 @@ class Engine {
 
   /**
    * 檢查控制感與紅石燈的關係是否符合給定布林表達式的要求
-   * @param {Engine} engine 
-   * @param {[number, number, number][]} levers 目標控制桿的位置
-   * @param {[number, number, number][]} lamps 目標紅石燈的位置
-   * @param {number[][][]} boolFuncs 每個紅石燈對應的布林表達式
-   * @param {number} timeout 每次對控制桿操作後要等待多久才判斷輸出的正確性
-   * @returns {Promise<boolean>}
+   * @param engine 
    */
-  static async validate(engine, ) {
-    const { levers, lamps, boolFuncs, timeout } = engine.validation;
-    const leverBlocks = [];
-    const lampBlocks = []
+  static async validate(engine: Engine): Promise<boolean> {
+    if (!engine.validation) {
+      throw new Error('This engine does not contain validation data.');
+    }
 
-    for (const [x, y, z] of levers) {
+    const { leverLocations, lampLocations, boolFuncs, timeout } = engine.validation;
+    const leverBlocks: Lever[] = [];
+    const lampBlocks: RedstoneLamp[] = []
+
+    for (const [x, y, z] of leverLocations) {
       const block = engine.block(x, y, z);
-      if (block?.type !== BlockType.Lever) {
+      if (!block) continue;
+
+      if (block.type !== BlockType.Lever) {
         throw new Error(`Position [${x}, ${y}, ${z}] is ${block.blockName}, not Lever.`);
       }
       if (block.states.powered) {
@@ -137,19 +92,21 @@ class Engine {
       leverBlocks.push(block);
     }
 
-    for (const [x, y, z] of lamps) {
+    for (const [x, y, z] of lampLocations) {
       const block = engine.block(x, y, z);
-      if (block?.type !== BlockType.RedstoneLamp) {
+      if (!block) continue;
+
+      if (block.type !== BlockType.RedstoneLamp) {
         throw new Error(`Position [${x}, ${y}, ${z}] is ${block.blockName}, not Redstone Lamp.`);
       }
       lampBlocks.push(block);
     }
 
-    const count = Math.round(2 ** levers.length);
+    const count = Math.round(2 ** leverLocations.length);
     let output = true;
     for (let i = 1; i <= count; i++) {
       let temp = 1, c = 0;
-      while (temp <= i && c < levers.length) {
+      while (temp <= i && c < leverLocations.length) {
         if (i % temp === 0) {
           leverBlocks[c].interact();
         }
@@ -162,7 +119,7 @@ class Engine {
       const leverStatus = leverBlocks.map(b => b.states.powered);
       const lampStatus = lampBlocks.map(b => b.states.lit);
 
-      for (let i = 0; i < lamps.length; i++) {
+      for (let i = 0; i < lampLocations.length; i++) {
         const func = boolFuncs[i];
 
         let ans = false;
@@ -194,34 +151,24 @@ class Engine {
 
   /**
    * 新增一項工作到工作佇列中
-   * @template {keyof TaskParams} K
-   * @param {K} name 工作名稱
-   * @param {TaskParams[K]} params 所需參數
-   * @param {number} tickAfter 幾刻後執行
-   * @returns 
    */
-  addTask(name, params, tickAfter = 0) {
+  addTask(task: EngineTask): void {
     // 忽略重複的工作
-    if (this.taskQueue.some(t => t[0] === name && t[2] === tickAfter && strictEqual(t[1], params))) return;
-
-    this.taskQueue.push([name, params, tickAfter]);
+    if (this.taskQueue.some(t => t[0] === task[0] && t[2] === task[2] && strictEqual(t[1], task[1]))) return;
+    this.taskQueue.push(task);
   }
 
   /**
    * 取得指定座標上的方塊
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} z 
-   * @returns {import("./core/blocks/Block").default | null}
    */
-  block(x, y, z) {
+  block(x: number, y: number, z: number): Blocks | null {
     return this._pg[x]?.[y]?.[z] ?? null;
   }
 
   /**
    * 不使用此引擎時必須呼叫此函式
    */
-  destroy() {
+  destroy(): void {
     if (this._interval) {
       clearInterval(this._interval);
       this._interval = null;
@@ -229,24 +176,19 @@ class Engine {
   }
 
 
-  /**
-   * 區間計時器
-   * @type {number | null}
-   * @private
-   */
-  _interval = null;
+  private _interval: NodeJS.Timer | null = null;
 
   /**
    * 開始模擬遊戲
    */
-  startTicking() {
+  startTicking(): void {
     if (this._interval) {
       clearInterval(this._interval);
       this._interval = null;
     }
 
     this._interval = setInterval(() => {
-      const nextQueue = [];
+      const nextQueue: EngineTask[] = [];
 
       while (this.taskQueue.length) {
         const task = this.taskQueue.shift();
@@ -255,7 +197,8 @@ class Engine {
         const [taskName, params, tickAfter] = task;
 
         if (tickAfter) {
-          nextQueue.push([taskName, params, tickAfter - 1]);
+          task[2]--;
+          nextQueue.push(task);
           continue;
         }
 
@@ -296,13 +239,8 @@ class Engine {
 
   /**
    * 破壞指定座標上的方塊
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} z 
-   * @returns {Block | null} 被破壞的方塊
-   * @private
    */
-  _leftClick(x, y, z) {
+  public _leftClick(x: number, y: number, z: number): Blocks | null {
     const block = this.block(x, y, z);
     if (!block?.breakable) return null;
 
@@ -313,21 +251,19 @@ class Engine {
 
   /**
    * 對指定方塊的指定面上按下使用鍵
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} z 
-   * @param {boolean} shiftDown 
-   * @param {string} normDir 指定面的法向量
-   * @param {string} facing 與觀察視角最接近的軸向量方向
-   * @param {new () => Block} B 在不觸發互動時所放下的方塊
-   * @private
+   * @param shiftDown 
+   * @param normDir 指定面的法向量
+   * @param facing 與觀察視角最接近的軸向量方向
+   * @param B 在不觸發互動時所放下的方塊
    */
-  _rightClick(x, y, z, shiftDown, normDir, facing, B) {
+  private _rightClick(
+    x: number, y: number, z: number, shiftDown: boolean, normDir: Vector3, facing: FourFacings, B: BlockConstructor
+  ): void {
     let block = this.block(x, y, z);
     if (!block) return;
 
     // 如果指向的方塊可以互動，就互動
-    if (!shiftDown && block.interactable) {
+    if (!shiftDown && 'interact' in block) {
       block.interact();
       return;
     }
@@ -347,7 +283,9 @@ class Engine {
       normDir[0] ? (normDir[0] === 1 ? 'east' : 'west') :
       normDir[1] ? (normDir[1] === 1 ? 'up' : 'down') :
       (normDir[2] === 1 ? 'south' : 'north');
-    newBlock.setFacing?.(face, facing);
+    if ('setFacing' in newBlock) {
+      newBlock.setFacing(face, facing);
+    }
 
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 
@@ -357,13 +295,10 @@ class Engine {
 
   /**
    * 更新指定位置上的紅石火把的明暗
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} z 
-   * @param {boolean} lit 新的明暗狀態
+   * @param lit 新的明暗狀態
    * @private
    */
-  _torchUpdate(x, y, z, lit) {
+  private _torchUpdate(x: number, y: number, z: number, lit: boolean): void {
     const block = this.block(x, y, z);
     if (block?.type !== BlockType.RedstoneTorch) return;
 
@@ -372,13 +307,10 @@ class Engine {
 
   /**
    * 更新指定位置上的紅石中繼器的觸發狀態
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} z 
-   * @param {boolean} powered 新的觸發狀態
+   * @param powered 新的觸發狀態
    * @private
    */
-  _repeaterUpdate(x, y, z, powered) {
+  private _repeaterUpdate(x: number, y: number, z: number, powered: boolean): void {
     const block = this.block(x, y, z);
     if (block?.type !== BlockType.RedstoneRepeater) return;
 
@@ -387,27 +319,20 @@ class Engine {
 
   /**
    * 更新指定位置上的紅石比較器的觸發強度
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} z 
-   * @param {number} power 新的觸發強度
+   * @param power 新的觸發強度
    * @private
    */
-  _comparatorUpdate(x, y, z, powered) {
+  private _comparatorUpdate(x: number, y: number, z: number, power: number): void {
     const block = this.block(x, y, z);
     if (block?.type !== BlockType.RedstoneComparator) return;
 
-    block.comparatorUpdate(powered);
+    block.comparatorUpdate(power);
   }
 
   /**
    * 關閉指定位置的紅石燈
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} z 
-   * @private
    */
-  _lampUnlit(x, y, z) {
+  private _lampUnlit(x: number, y: number, z: number): void {
     const block = this.block(x, y, z);
     if (block?.type !== BlockType.RedstoneLamp) return;
 

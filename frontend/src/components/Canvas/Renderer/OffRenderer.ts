@@ -1,13 +1,18 @@
+import Playground from "../Playground";
+import { Vector3, Vector6 } from "../typings/types";
+import DisplayRenderer from "./DisplayRenderer";
 import Renderer from "./Renderer";
 
 class OffRenderer extends Renderer {
-  constructor(playground, dimensions, mainRenderer) {
+  public mainRenderer: DisplayRenderer;
+
+  constructor(playground: Playground, dimensions: Vector3, mainRenderer: DisplayRenderer) {
     super(playground, dimensions);
 
     this.mainRenderer = mainRenderer;
   }
 
-  startRendering() {
+  startRendering(): void {
     if (!this.canvas) {
       throw new Error('The canvas has not been initialized.');
     }
@@ -19,8 +24,8 @@ class OffRenderer extends Renderer {
     const matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
     const matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
 
-    gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, this._viewMatrix);
-    gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, this._projMatrix);
+    gl.uniformMatrix4fv(matViewUniformLocation, false, this._viewMatrix);
+    gl.uniformMatrix4fv(matProjUniformLocation, false, this._projMatrix);
 
 
     const positionAttribLocation = gl.getAttribLocation(program, 'vertPosition');
@@ -31,7 +36,7 @@ class OffRenderer extends Renderer {
     
     let vertices;
     const draw = () => {
-      gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, this._worldMatrix);
+      gl.uniformMatrix4fv(matWorldUniformLocation, false, this._worldMatrix);
 
       gl.clearColor(0, 0, 0, 1);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -39,8 +44,8 @@ class OffRenderer extends Renderer {
       vertices = this._getBlockVertices();
       this._setupBuffer(gl, vertices, this.mainRenderer.indices);
 
-      gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
-      gl.vertexAttribPointer(surfaceAttribLocation, 3, gl.FLOAT, gl.FALSE, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+      gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 0);
+      gl.vertexAttribPointer(surfaceAttribLocation, 3, gl.FLOAT, false, 6 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
 
       gl.drawElements(gl.TRIANGLES, vertices.length >> 2, gl.UNSIGNED_SHORT, 0);
 
@@ -52,7 +57,9 @@ class OffRenderer extends Renderer {
     requestAnimationFrame(draw);
   }
 
-  getTarget(canvasX, canvasY) {
+  getTarget(canvasX: number, canvasY: number): Vector6 | null {
+    if (!this.gl) return null;
+    
     const repCode = new Uint8Array(4);
     this.gl.readPixels(canvasX, 500-canvasY, 1, 1, this.gl.RGBA, this.gl.UNSIGNED_BYTE, repCode);
 
@@ -72,8 +79,8 @@ class OffRenderer extends Renderer {
     ];
   }
 
-  _getBlockVertices() {
-    const result = [];
+  _getBlockVertices(): number[] {
+    const result: number[] = [];
     for (let i = 0; i < this.dimensions[0]; i++) {
       for (let j = 0; j < this.dimensions[1]; j++) {
         for (let k = 0; k < this.dimensions[2]; k++) {

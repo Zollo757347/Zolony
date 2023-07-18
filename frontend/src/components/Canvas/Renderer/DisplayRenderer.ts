@@ -1,34 +1,34 @@
-import { BlockType } from "../core";
+import Playground from "../Playground";
+import { Block } from "../core";
 import { Maps } from "../core/utils";
+import { BlockType, SixSides, Vector3, Vector6 } from "../typings/types";
 import OffRenderer from "./OffRenderer";
 import Renderer from "./Renderer";
 
 class DisplayRenderer extends Renderer {
-  constructor(playground, dimensions) {
+  public images: Map<string, HTMLImageElement>;
+  public indices: number[];
+  
+  private _devMode: boolean;
+  private _offRenderer: OffRenderer;
+
+  constructor(playground: Playground, dimensions: Vector3) {
     super(playground, dimensions);
 
     this.images = new Map();
-
-    this.indices = new Uint16Array(
-      Array.from(
-        { length: 8192 }, 
-        (_, i) => {
-          i <<= 2;
-          return [i, i + 1, i + 2, i, i + 2, i + 3];
-        }
-      ).flat()
-    );
+    this.indices = Array.from(
+      { length: 8192 }, 
+      (_, i) => {
+        i <<= 2;
+        return [i, i + 1, i + 2, i, i + 2, i + 3];
+      }
+    ).flat();
 
     this._devMode = false;
-
-    /**
-     * @type {OffRenderer}
-     * @private
-     */
     this._offRenderer = new OffRenderer(playground, dimensions, this);
   }
 
-  initialize(canvas) {
+  initialize(canvas: HTMLCanvasElement): void {
     ['iron_block', 'comparator', 'comparator_on', 'cobblestone', 'lever_on', 'lever', 'redstone_dust_dot', 'redstone_dust_line0', 'redstone_dust_line1', 'redstone_dust_overlay', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater_on', 'redstone_torch', 'redstone_torch_off', 'bedrock'].forEach(src => {
       const image = new Image();
       image.src = `/assets/minecraft/${src}.png`;
@@ -45,7 +45,7 @@ class DisplayRenderer extends Renderer {
     }
   }
 
-  startRendering() {
+  startRendering(): void {
     if (!this.canvas) {
       throw new Error('The canvas has not been initialized.');
     }
@@ -65,8 +65,8 @@ class DisplayRenderer extends Renderer {
     const matViewUniformLocation = gl.getUniformLocation(program, 'mView');
     const matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
 
-    gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, this._viewMatrix);
-    gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, this._projMatrix);
+    gl.uniformMatrix4fv(matViewUniformLocation, false, this._viewMatrix);
+    gl.uniformMatrix4fv(matProjUniformLocation, false, this._projMatrix);
 
     const ambientUniformLocation = gl.getUniformLocation(program, 'ambientIntensity');
     const lightColorUniformLocation = gl.getUniformLocation(program, 'lightColor');
@@ -90,7 +90,7 @@ class DisplayRenderer extends Renderer {
     
     const draw = () => {
       if (this._needRender) {
-        gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, this._worldMatrix);
+        gl.uniformMatrix4fv(matWorldUniformLocation, false, this._worldMatrix);
 
         gl.clearColor(1, 0.96, 0.66, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -98,13 +98,16 @@ class DisplayRenderer extends Renderer {
         for (const [image, { vertices }] of this._getBlockVertices()) {
           this._setupBuffer(gl, vertices, this.indices);
       
-          gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 0);
-          gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
-          gl.vertexAttribPointer(normalAttribLocation, 3, gl.FLOAT, gl.TRUE, 11 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
-          gl.vertexAttribPointer(colorMaskAttribLocation, 3, gl.FLOAT, gl.FALSE, 11 * Float32Array.BYTES_PER_ELEMENT, 8 * Float32Array.BYTES_PER_ELEMENT);
-    
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.images.get(image));
-          gl.drawElements(gl.TRIANGLES, vertices.length / 22 * 3, gl.UNSIGNED_SHORT, 0);
+          gl.vertexAttribPointer(positionAttribLocation, 3, gl.FLOAT, false, 11 * Float32Array.BYTES_PER_ELEMENT, 0);
+          gl.vertexAttribPointer(texCoordAttribLocation, 2, gl.FLOAT, false, 11 * Float32Array.BYTES_PER_ELEMENT, 3 * Float32Array.BYTES_PER_ELEMENT);
+          gl.vertexAttribPointer(normalAttribLocation, 3, gl.FLOAT, true, 11 * Float32Array.BYTES_PER_ELEMENT, 5 * Float32Array.BYTES_PER_ELEMENT);
+          gl.vertexAttribPointer(colorMaskAttribLocation, 3, gl.FLOAT, false, 11 * Float32Array.BYTES_PER_ELEMENT, 8 * Float32Array.BYTES_PER_ELEMENT);
+          
+          const img = this.images.get(image);
+          if (img) {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+            gl.drawElements(gl.TRIANGLES, vertices.length / 22 * 3, gl.UNSIGNED_SHORT, 0);
+          }
         }
 
         this._resetNeedRender();
@@ -118,11 +121,11 @@ class DisplayRenderer extends Renderer {
     requestAnimationFrame(draw);
   }
 
-  async getTarget(canvasX, canvasY) {
+  getTarget(canvasX: number, canvasY: number): Vector6 | null {
     return this._offRenderer.getTarget(canvasX, canvasY);
   }
 
-  _getBlockVertices() {
+  private _getBlockVertices(): Map<string, { vertices: number[], counter: number }> {
     const map = new Map();
     for (let i = 0; i < this.dimensions[0]; i++) {
       for (let j = 0; j < this.dimensions[1]; j++) {
@@ -133,11 +136,11 @@ class DisplayRenderer extends Renderer {
           const x = i - this.dimensions[0] / 2;
           const y = j - this.dimensions[1] / 2;
           const z = k - this.dimensions[2] / 2;
-          const color = (block.color ?? [255, 255, 255]).map(a => a / 255);
+          const color = 'color' in block ? block.color.map(a => a / 255) : [1, 1, 1];
 
           block.textures.forEach(texture => {
             for (const [dirName, data] of Object.entries(texture)) {
-              if (!data || !this._shouldRender(block, dirName)) continue;
+              if (!data || !this._shouldRender(block, dirName as SixSides)) continue;
               
               let storage = map.get(data.source);
               if (!storage) {
@@ -168,10 +171,10 @@ class DisplayRenderer extends Renderer {
     return map;
   }
 
-  _shouldRender(block, dir) {
+  private _shouldRender(block: Block, dir: SixSides) {
     if (block.type !== BlockType.IronBlock && block.type !== BlockType.GlassBlock) return true;
 
-    const [x, y, z] = Maps.P6DMap.get(dir);
+    const [x, y, z] = Maps.P6DMap[dir];
     const adjacentBlock = this.engine.block(block.x + x, block.y + y, block.z + z);
     if (!adjacentBlock) return true;
 
@@ -180,11 +183,11 @@ class DisplayRenderer extends Renderer {
   }
 
   get _needRender() {
-    return this.playground.updated || this.engine.needRender;
+    return this.playground.needRender || this.engine.needRender;
   }
 
   _resetNeedRender() {
-    this.playground.updated = false;
+    this.playground.needRender = false;
     this.engine.needRender = false;
   }
 

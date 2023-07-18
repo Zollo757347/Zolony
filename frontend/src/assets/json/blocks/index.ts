@@ -45,10 +45,10 @@ import _template_torch from "./template_torch.json";
 
 const _blockData = {
   block: _block,
-  comparator_on_subtract: _comparator_on_subtract,
-  comparator_on: _comparator_on,
-  comparator_subtract: _comparator_subtract,
-  comparator: _comparator,
+  comparator_on_subtract: _comparator_on_subtract, 
+  comparator_on: _comparator_on, 
+  comparator_subtract: _comparator_subtract, 
+  comparator: _comparator, 
   cube: _cube, 
   cube_all: _cube_all, 
   glass: _glass, 
@@ -56,7 +56,7 @@ const _blockData = {
   lever_on: _lever_on, 
   lever: _lever, 
   redstone_dust_dot: _redstone_dust_dot, 
-  redstone_dust_side_alt: _redstone_dust_side_alt,
+  redstone_dust_side_alt: _redstone_dust_side_alt, 
   redstone_dust_side_alt0: _redstone_dust_side_alt0, 
   redstone_dust_side_alt1: _redstone_dust_side_alt1, 
   redstone_dust_side: _redstone_dust_side, 
@@ -89,39 +89,39 @@ const _blockData = {
   template_torch: _template_torch
 };
 
-export const comparator_on_subtract = parseTexture(_blockData, 'comparator_on_subtract');
-export const comparator_on = parseTexture(_blockData, 'comparator_on');
-export const comparator_subtract = parseTexture(_blockData, 'comparator_subtract');
-export const comparator = parseTexture(_blockData, 'comparator');
-export const glass = parseTexture(_blockData, 'glass');
-export const iron_block = parseTexture(_blockData, 'iron_block');
-export const lever_on = parseTexture(_blockData, 'lever_on');
-export const lever = parseTexture(_blockData, 'lever');
-export const redstone_dust_dot = parseTexture(_blockData, 'redstone_dust_dot');
-export const redstone_dust_side_alt0 = parseTexture(_blockData, 'redstone_dust_side_alt0');
-export const redstone_dust_side_alt1 = parseTexture(_blockData, 'redstone_dust_side_alt1');
-export const redstone_dust_side0 = parseTexture(_blockData, 'redstone_dust_side0');
-export const redstone_dust_side1 = parseTexture(_blockData, 'redstone_dust_side1');
-export const redstone_dust_up = parseTexture(_blockData, 'redstone_dust_up');
-export const redstone_lamp_on = parseTexture(_blockData, 'redstone_lamp_on');
-export const redstone_lamp = parseTexture(_blockData, 'redstone_lamp');
-export const redstone_torch_off = parseTexture(_blockData, 'redstone_torch_off');
-export const redstone_torch = parseTexture(_blockData, 'redstone_torch');
-export const redstone_wall_torch_off = parseTexture(_blockData, 'redstone_wall_torch_off');
-export const redstone_wall_torch = parseTexture(_blockData, 'redstone_wall_torch');
-export const repeater_1tick_locked = parseTexture(_blockData, 'repeater_1tick_locked');
-export const repeater_1tick_on_locked = parseTexture(_blockData, 'repeater_1tick_on_locked');
-export const repeater_1tick_on = parseTexture(_blockData, 'repeater_1tick_on');
-export const repeater_1tick = parseTexture(_blockData, 'repeater_1tick');
-export const repeater_2tick_locked = parseTexture(_blockData, 'repeater_2tick_locked');
-export const repeater_2tick_on_locked = parseTexture(_blockData, 'repeater_2tick_on_locked');
-export const repeater_2tick_on = parseTexture(_blockData, 'repeater_2tick_on');
-export const repeater_2tick = parseTexture(_blockData, 'repeater_2tick');
-export const repeater_3tick_locked = parseTexture(_blockData, 'repeater_3tick_locked');
-export const repeater_3tick_on_locked = parseTexture(_blockData, 'repeater_3tick_on_locked');
-export const repeater_3tick_on = parseTexture(_blockData, 'repeater_3tick_on');
-export const repeater_3tick = parseTexture(_blockData, 'repeater_3tick');
-export const repeater_4tick_locked = parseTexture(_blockData, 'repeater_4tick_locked');
-export const repeater_4tick_on_locked = parseTexture(_blockData, 'repeater_4tick_on_locked');
-export const repeater_4tick_on = parseTexture(_blockData, 'repeater_4tick_on');
-export const repeater_4tick = parseTexture(_blockData, 'repeater_4tick');
+export const comparator_on_subtract   = parseTexture(_blockData, _blockData.comparator_on_subtract);
+export const comparator_on            = parseTexture(_blockData, _blockData.comparator_on);
+export const comparator_subtract      = parseTexture(_blockData, _blockData.comparator_subtract);
+export const comparator               = parseTexture(_blockData, _blockData.comparator);
+export const glass                    = parseTexture(_blockData, _blockData.glass);
+export const iron_block               = parseTexture(_blockData, _blockData.iron_block);
+export const lever_on                 = parseTexture(_blockData, _blockData.lever_on);
+export const lever                    = parseTexture(_blockData, _blockData.lever);
+export const redstone_dust_dot        = parseTexture(_blockData, _blockData.redstone_dust_dot);
+export const redstone_dust_side_alt0  = parseTexture(_blockData, _blockData.redstone_dust_side_alt0);
+export const redstone_dust_side_alt1  = parseTexture(_blockData, _blockData.redstone_dust_side_alt1);
+export const redstone_dust_side0      = parseTexture(_blockData, _blockData.redstone_dust_side0);
+export const redstone_dust_side1      = parseTexture(_blockData, _blockData.redstone_dust_side1);
+export const redstone_dust_up         = parseTexture(_blockData, _blockData.redstone_dust_up);
+export const redstone_lamp_on         = parseTexture(_blockData, _blockData.redstone_lamp_on);
+export const redstone_lamp            = parseTexture(_blockData, _blockData.redstone_lamp);
+export const redstone_torch_off       = parseTexture(_blockData, _blockData.redstone_torch_off);
+export const redstone_torch           = parseTexture(_blockData, _blockData.redstone_torch);
+export const redstone_wall_torch_off  = parseTexture(_blockData, _blockData.redstone_wall_torch_off);
+export const redstone_wall_torch      = parseTexture(_blockData, _blockData.redstone_wall_torch);
+export const repeater_1tick_locked    = parseTexture(_blockData, _blockData.repeater_1tick_locked);
+export const repeater_1tick_on_locked = parseTexture(_blockData, _blockData.repeater_1tick_on_locked);
+export const repeater_1tick_on        = parseTexture(_blockData, _blockData.repeater_1tick_on);
+export const repeater_1tick           = parseTexture(_blockData, _blockData.repeater_1tick);
+export const repeater_2tick_locked    = parseTexture(_blockData, _blockData.repeater_2tick_locked);
+export const repeater_2tick_on_locked = parseTexture(_blockData, _blockData.repeater_2tick_on_locked);
+export const repeater_2tick_on        = parseTexture(_blockData, _blockData.repeater_2tick_on);
+export const repeater_2tick           = parseTexture(_blockData, _blockData.repeater_2tick);
+export const repeater_3tick_locked    = parseTexture(_blockData, _blockData.repeater_3tick_locked);
+export const repeater_3tick_on_locked = parseTexture(_blockData, _blockData.repeater_3tick_on_locked);
+export const repeater_3tick_on        = parseTexture(_blockData, _blockData.repeater_3tick_on);
+export const repeater_3tick           = parseTexture(_blockData, _blockData.repeater_3tick);
+export const repeater_4tick_locked    = parseTexture(_blockData, _blockData.repeater_4tick_locked);
+export const repeater_4tick_on_locked = parseTexture(_blockData, _blockData.repeater_4tick_on_locked);
+export const repeater_4tick_on        = parseTexture(_blockData, _blockData.repeater_4tick_on);
+export const repeater_4tick           = parseTexture(_blockData, _blockData.repeater_4tick);

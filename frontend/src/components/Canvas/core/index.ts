@@ -1,5 +1,3 @@
-import BlockType from "./utils/BlockType";
-
 import {
   AirBlock, 
   Block, 
@@ -18,8 +16,6 @@ import {
 } from "./utils";
 
 export {
-  BlockType, 
-
   AirBlock, 
   Block, 
   IronBlock, 

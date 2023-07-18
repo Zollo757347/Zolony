@@ -1,12 +1,10 @@
-import { AirBlock, IronBlock, GlassBlock, Lever, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "../blocks";
-import BlockType from "./BlockType";
+import { BlockConstructor, BlockType } from "../../typings/types";
+import { AirBlock, IronBlock, GlassBlock, Lever, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, RedstoneComparator } from "../blocks";
 
 /**
  * 根據給定的方塊種類回傳對應的 constructor
- * @param {(typeof BlockType)[keyof typeof BlockType]} type 
- * @returns {new () => import("../blocks").Block}
  */
-function NewBlock(type) {
+function NewBlock(type: BlockType): BlockConstructor {
   switch (type) {
     case BlockType.AirBlock:
       return AirBlock;
@@ -29,11 +27,11 @@ function NewBlock(type) {
     case BlockType.RedstoneRepeater:
       return RedstoneRepeater;
       
+      case BlockType.RedstoneComparator:
+        return RedstoneComparator;
+      
     case BlockType.RedstoneTorch:
       return RedstoneTorch;
-
-    default: 
-      throw new Error(`Unknown block type ${type}`);
   }
 }
 

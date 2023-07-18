@@ -2,8 +2,9 @@ import Canvas from '../../components/Canvas';
 import Image from '../../components/Image';
 import Table from '../../components/Table';
 
-import data from "../../assets/json/levels/Official Map 5.json";
+import { Official_Map_5 } from "../../assets/json/levels";
 import tableData from "../../assets/json/tables/adder.json";
+
 
 const Adder = () => {
   return (
@@ -94,7 +95,7 @@ const Adder = () => {
     <section>
       <h2>隨堂不小考</h2>
         <p>在下面的模擬 Minecraft 中是一個全加器，這次的文章沒有小考，祝大家跟全加器玩得愉快！</p>
-        <Canvas canvasHeight={500} canvasWidth={500} preLoadData={data}></Canvas>
+        <Canvas canvasHeight={500} canvasWidth={500} preLoadData={Official_Map_5}></Canvas>
       </section>
   </article>
   );

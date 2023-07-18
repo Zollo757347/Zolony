@@ -8,23 +8,20 @@ import Playground from "./Playground";
 
 import { useHook } from "../../hooks/useHook";
 
+import { CanvasProps } from "./typings/types";
 import "../../styles/canvas.css";
 
-interface CanvasProps {
-  canvasWidth: number;
-  canvasHeight: number;
-  storable?: boolean;
-  checkable?: boolean;
-  xLen?: number;
-  yLen?: number;
-  zLen?: number;
-  preLoadData?: any;
-}
 
-const Canvas = ({ canvasHeight, canvasWidth, storable, checkable, xLen, yLen, zLen, preLoadData }: CanvasProps) => {
+const Canvas = ({ canvasHeight, canvasWidth, storable, checkable, ...props }: CanvasProps) => {
   const [shiftDown, setShiftDown] = useState(false);
   const [playground, setPlayground] = useState<Playground>();
   const [currentBlock, setCurrentBlock] = useState('');
+
+  const { current: xLen } = useRef('xLen' in props ? props.xLen : props.preLoadData.xLen);
+  const { current: yLen } = useRef('xLen' in props ? props.yLen : props.preLoadData.yLen);
+  const { current: zLen } = useRef('xLen' in props ? props.xLen : props.preLoadData.zLen);
+  const { current: mapName } = useRef('preLoadData' in props ? props.preLoadData.mapName : 'New Map');
+  const { current: preLoadData } = useRef('preLoadData' in props ? props.preLoadData : undefined);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const spanRef = useRef<HTMLSpanElement>(null);
@@ -32,13 +29,15 @@ const Canvas = ({ canvasHeight, canvasWidth, storable, checkable, xLen, yLen, zL
   const { editMap, user } = useHook();
 
   useEffect(() => {
-    const pg = new Playground({ xLen, yLen, zLen, preLoadData });
-    pg.initialize(canvasRef.current);
-    setPlayground(pg);
-    setCurrentBlock(pg.currentBlockName);
-    
+    const pg = new Playground({ xLen, yLen, zLen, mapName, preLoadData });
+    if (canvasRef.current) {
+      pg.initialize(canvasRef.current);
+      setPlayground(pg);
+      setCurrentBlock(pg.currentBlockName);
+    }
+
     return () => pg.destroy();
-  }, [xLen, yLen, zLen, preLoadData]);
+  }, [xLen, yLen, zLen, mapName, preLoadData]);
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLCanvasElement>) {
     setShiftDown(e.shiftKey);

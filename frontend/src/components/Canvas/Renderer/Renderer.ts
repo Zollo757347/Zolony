@@ -1,58 +1,41 @@
-/**
- * @abstract
- */
-class Renderer {
-  constructor(playground, dimensions) {
-    /**
-     * @type {import("../Playground").default}
-     */
+import Engine from "../Engine";
+import Playground from "../Playground";
+import { Vector3, Vector6 } from "../typings/types";
+
+abstract class Renderer {
+  public playground: Playground;
+  public dimensions: Vector3;
+
+  public engine: Engine;
+  public canvas?: HTMLCanvasElement | OffscreenCanvas;
+  public gl?: WebGLRenderingContext;
+
+  abstract startRendering(): void;
+  abstract getTarget(_canvasX: number, _canvasY: number): Vector6 | null;
+
+  constructor(playground: Playground, dimensions: Vector3) {
     this.playground = playground;
-
-    /**
-     * @type {import("../Engine").default}
-     */
-    this.engine = playground.engine;
-
-    /**
-     * @type {HTMLCanvasElement?}
-     */
-    this.canvas = null;
-
-    /**
-     * @type {WebGLRenderingContext?}
-     */
-    this.gl = null;
-
-    /**
-     * @type {[number, number, number]}
-     */
     this.dimensions = dimensions;
+    this.engine = playground.engine;
   }
 
-  initialize(canvas) {
+  /**
+   * 初始化
+   */
+  initialize(canvas: HTMLCanvasElement | OffscreenCanvas): void {
     this.canvas = canvas;
     this.startRendering();
   }
 
-  startRendering() {
-    throw new Error("Not implemented yet.");
-  }
-
-  async getTarget(canvasX, canvasY) {
-    throw new Error("Not implemented yet.");
-  }
-
-
   /**
    * 生成一個 OpenGL 環境
-   * @private
    */
-  _generateGl() {
+  protected _generateGl(): WebGLRenderingContext {
     if (!this.canvas) {
       throw new Error('The canvas has not been initialized.');
     }
 
-    const gl = this.gl = this.canvas.getContext('webgl', { alpha: false });
+    const gl = this.gl = this.canvas.getContext('webgl', { alpha: false }) ?? undefined;
     if (!gl) {
       throw new Error('Your browser does not support webgl canvas.');
     }
@@ -65,11 +48,8 @@ class Renderer {
 
   /**
    * 生成一個著色程式
-   * @param {WebGLRenderingContext} gl 
-   * @private
-   * @returns {WebGLProgram}
    */
-  _generateProgram(gl) {
+  protected _generateProgram(gl: WebGLRenderingContext): WebGLProgram {
     const vertexShader = this._loadShader(gl, gl.VERTEX_SHADER, this._vertexShaderSource);
     const fragmentShader = this._loadShader(gl, gl.FRAGMENT_SHADER, this._fragmentShaderSource);
     return this._loadProgram(gl, vertexShader, fragmentShader);
@@ -77,12 +57,8 @@ class Renderer {
 
   /**
    * 設置緩衝區的內容
-   * @param {WebGLRenderingContext} gl 
-   * @param {number[]} vertices 
-   * @param {number[]} indices 
-   * @private
    */
-  _setupBuffer(gl, vertices, indices) {
+  protected _setupBuffer(gl: WebGLRenderingContext, vertices: number[], indices: number[]): void {
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
@@ -92,20 +68,18 @@ class Renderer {
 
   /**
    * 載入指定類型的著色器
-   * @param {WebGLRenderingContext} gl 
-   * @param {number} type 
-   * @param {string} source 
-   * @private
-   * @return {WebGLShader}
    */
-  _loadShader(gl, type, source) {
+  protected _loadShader(gl: WebGLRenderingContext, type: number, source: string): WebGLShader {
     const shader = gl.createShader(type);
+    if (!shader) {
+      throw new Error('Failed to create shader.');
+    }
+
     gl.shaderSource(shader, source);
 
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.error('Shader Compilation Error\n', gl.getShaderInfoLog(shader));
-      return;
+      throw new Error('Shader Compilation Error\n' + gl.getShaderInfoLog(shader)?.toString());
     }
   
     return shader;
@@ -113,34 +87,31 @@ class Renderer {
 
   /**
    * 載入著色程式
-   * @param {WebGLRenderingContext} gl 
-   * @param {WebGLShader} vShader 
-   * @param {WebGLShader} fShader 
-   * @private
-   * @return {WebGLProgram} 
    */
-  _loadProgram(gl, vShader, fShader) {
+  protected _loadProgram(gl: WebGLRenderingContext, vShader: WebGLShader, fShader: WebGLShader): WebGLProgram {
     const program = gl.createProgram();
+    if (!program) {
+      throw new Error('Failed to create program.');
+    }
+
     gl.attachShader(program, vShader);
     gl.attachShader(program, fShader);
 
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error('Program Link Error\n', gl.getProgramInfoLog(program));
-      return;
+      throw new Error('Program Link Error\n' + gl.getProgramInfoLog(program)?.toString());
     }
 
     gl.validateProgram(program);
     if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-      console.error('Program Validate Error\n', gl.getProgramInfoLog(program));
-      return;
+      throw new Error('Program Validate Error\n' + gl.getProgramInfoLog(program)?.toString());
     }
 
     gl.useProgram(program);
     return program;
   }
 
-  get _worldMatrix() {
+  protected get _worldMatrix(): Float32Array {
     const { theta, phi } = this.playground.angles;
     const c1 = Math.cos(theta), s1 = Math.sin(theta);
     const c2 = Math.cos(phi), s2 = Math.sin(phi);
@@ -153,8 +124,8 @@ class Renderer {
     ]);
   }
 
-  __viewMatrix = null;
-  get _viewMatrix() {
+  private __viewMatrix: Float32Array | null = null;
+  protected get _viewMatrix() {
     if (this.__viewMatrix) return this.__viewMatrix;
 
     const a = 2.5 / Math.sqrt(Math.max(...this.dimensions));
@@ -167,16 +138,15 @@ class Renderer {
     return this.__viewMatrix;
   }
 
-  _projMatrix = new Float32Array([
+  protected _projMatrix = new Float32Array([
     2.414,     0,    0,  0, 
         0, 2.414,    0,  0, 
         0,     0,   -1, -1, 
         0,     0, -0.2,  0
   ]);
 
-  _vertexShaderSource = "";
-
-  _fragmentShaderSource = "";
+  protected _vertexShaderSource = "";
+  protected _fragmentShaderSource = "";
 }
 
 export default Renderer;

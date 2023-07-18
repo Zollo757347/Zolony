@@ -1,134 +1,71 @@
 import {
   redstone_dust_dot, redstone_dust_side0, redstone_dust_side1, redstone_dust_side_alt0, redstone_dust_side_alt1, redstone_dust_up
 } from "../../../../assets/json/blocks";
-import { BlockType, Maps } from "../utils";
+import { Maps } from "../utils";
 import Block from "./Block";
 import { strictEqual } from "../../../../utils";
-
-/**
- * @typedef _RedstoneDustStates
- * @type {object}
- * @property {number} east 紅石粉東側的連接狀態，0 為無，1 為有，2 為有且向上
- * @property {number} south 紅石粉南側的連接狀態，0 為無，1 為有，2 為有且向上
- * @property {number} west 紅石粉西側的連接狀態，0 為無，1 為有，2 為有且向上
- * @property {number} north 紅石粉北側的連接狀態，0 為無，1 為有，2 為有且向上
- * 
- * @typedef {import("./Block").BlockStates & _RedstoneDustStates} RedstoneDustStates
- */
+import { BlockOptions, BlockType, FourFacings, RedstoneDustStates, SixSides, WebGLTextureData } from "../../typings/types";
 
 /**
  * 代表一個紅石粉方塊
  */
 class RedstoneDust extends Block {
-  constructor(options) {
-    super({ type: BlockType.RedstoneDust, blockName: '紅石粉', needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
-    
-    /**
-     * 此紅石粉的狀態
-     * @type {RedstoneDustStates}
-     */
-    this.states = { ...(this.states ?? {}), east: 1, south: 1, west: 1, north: 1, power: 0 };
+  public type: BlockType.RedstoneDust;
+  public blockName: string;
+  public states: RedstoneDustStates;
 
-    /**
-     * 此紅石粉閒置時是否處於向四周充能的狀態
-     * @type {boolean}
-     */
+  public crossMode: boolean;
+
+  constructor(options: BlockOptions) {
+    super({ needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
+
+    this.type = BlockType.RedstoneDust;
+    this.blockName = '紅石粉';
+    this.states = { power: 0, source: false, east: 1, south: 1, west: 1, north: 1 };
+
+    /** 此紅石粉閒置時是否處於向四周充能的狀態 */
     this.crossMode = true;
-
-    this._textureModel = {
-      dot: redstone_dust_dot.textures, 
-      north: [
-        [], 
-        redstone_dust_side0.textures, 
-        redstone_dust_side0.textures.concat(redstone_dust_up.north.textures)
-      ], 
-      west: [
-        [], 
-        redstone_dust_side1.textures, 
-        redstone_dust_side1.textures.concat(redstone_dust_up.west.textures)
-      ], 
-      south: [
-        [], 
-        redstone_dust_side_alt0.textures, 
-        redstone_dust_side_alt0.textures.concat(redstone_dust_up.south.textures)
-      ], 
-      east: [
-        [], 
-        redstone_dust_side_alt1.textures, 
-        redstone_dust_side_alt1.textures.concat(redstone_dust_up.east.textures)
-      ]
-    };
-
-    this._outlineModel = {
-      dot: redstone_dust_dot.outlines, 
-      north: [
-        [], 
-        redstone_dust_side0.outlines, 
-        redstone_dust_side0.outlines.concat(redstone_dust_up.north.outlines)
-      ], 
-      west: [
-        [], 
-        redstone_dust_side1.outlines, 
-        redstone_dust_side1.outlines.concat(redstone_dust_up.west.outlines)
-      ], 
-      south: [
-        [], 
-        redstone_dust_side_alt0.outlines, 
-        redstone_dust_side_alt0.outlines.concat(redstone_dust_up.south.outlines)
-      ], 
-      east: [
-        [], 
-        redstone_dust_side_alt1.outlines, 
-        redstone_dust_side_alt1.outlines.concat(redstone_dust_up.east.outlines)
-      ]
-    };
   }
 
   get power() {
     return this.states.power;
   }
 
+  get color() {
+    return [105 + 10 * this.states.power, 0, 0];
+  }
+
   get textures() {
     const { east: e, west: w, south: s, north: n } = this.states;
     return [
-      ...this._textureModel.north[n], 
-      ...this._textureModel.west[w], 
-      ...this._textureModel.south[s], 
-      ...this._textureModel.east[e], 
-      ...(!s === !e || !n === !w || !n !== !s ? this._textureModel.dot : [])
+      ..._textureModel.north[n], 
+      ..._textureModel.west[w], 
+      ..._textureModel.south[s], 
+      ..._textureModel.east[e], 
+      ...(!s === !e || !n === !w || !n !== !s ? _textureModel.dot : [])
     ];
-  }
-
-  get color() {
-    return [105 + 10 * this.states.power, 0, 0];
   }
 
   get outlines() {
     const { east: e, west: w, south: s, north: n } = this.states;
     return [
-      ...this._outlineModel.north[n], 
-      ...this._outlineModel.west[w], 
-      ...this._outlineModel.south[s], 
-      ...this._outlineModel.east[e], 
-      ...(!s === !e || !n === !w || !n !== !s ? this._outlineModel.dot : [])
+      ..._outlineModel.north[n], 
+      ..._outlineModel.west[w], 
+      ..._outlineModel.south[s], 
+      ..._outlineModel.east[e], 
+      ...(!s === !e || !n === !w || !n !== !s ? _outlineModel.dot : [])
     ];
   }
 
-  /**
-   * @param {import("../utils/parseTexture").SixSides} direction
-   * @returns {{ strong: boolean, power: number }}
-   */
-  powerTowardsBlock(direction) {
-    return this.states[direction] || direction === 'down' ?
+  powerTowardsBlock(direction: SixSides): { strong: boolean, power: number } {
+    if (direction === 'up') return { strong: false, power: 0 };
+    return direction === 'down' || this.states[direction] ?
       { strong: false, power: this.states.power } :
       { strong: false, power: 0 };
   }
 
-  /**
-   * @param {import("../utils/parseTexture").SixSides} direction
-   * @returns {{ strong: strong, power: number }}
-   */
-  powerTowardsWire(direction) {
+  powerTowardsWire(direction: SixSides): { strong: boolean, power: number } {
+    if (direction === 'up' || direction === 'down') return { strong: false, power: 0 };
     return this.states[direction] ?
       { strong: true, power: this.states.power } :
       { strong: false, power: 0 };
@@ -148,10 +85,14 @@ class RedstoneDust extends Block {
     this.PPUpdate();
     Maps.P6DArray.forEach(([dir, [x, y, z]]) => {
       const target = this.engine.block(this.x + x, this.y + y, this.z + z);
-      target?.PPUpdate();
+      if (!target) return;
+
+      target.PPUpdate();
+
+      if (dir === 'up' || dir === 'down') return;
 
       // 如果有指向側邊，側邊的上下兩個方塊也要更新
-      if (this.states[dir] && target?.type !== BlockType.RedstoneDust) {
+      if (this.states[dir] && target.type !== BlockType.RedstoneDust) {
         this.engine.block(this.x + x, this.y + y - 1, this.z + z)?.PPUpdate();
         this.engine.block(this.x + x, this.y + y + 1, this.z + z)?.PPUpdate();
       }
@@ -169,9 +110,8 @@ class RedstoneDust extends Block {
 
   /**
    * 更新自身的指向
-   * @private
    */
-  _changeShape() {
+  private _changeShape() {
     const oldStates = JSON.parse(JSON.stringify(this.states));
 
     Maps.P4DArray.forEach(([dir, [dx, _, dz]]) => {
@@ -181,7 +121,13 @@ class RedstoneDust extends Block {
       const block = this.engine.block(x, this.y, z);
 
       if (block?.redstoneAutoConnect) {
-        if (block.redstoneAutoConnect === 'full' || (block.redstoneAutoConnect === 'lined' && [dir, rdir].includes(block.states.facing))) {
+        if (
+          block.redstoneAutoConnect === 'full' || (
+            block.redstoneAutoConnect === 'line' &&
+            'facing' in block.states &&
+            block.states.facing !== 'up' &&
+            [dir, rdir].includes(block.states.facing))
+        ) {
           this.states[dir] = 1;
         }
       }
@@ -194,9 +140,9 @@ class RedstoneDust extends Block {
       }
     });
 
-    const explicitDir = Object.entries(this.states)
-      .map(([dir, val]) => val ? dir : undefined)
-      .filter((dir) => dir && dir !== 'power' && dir !== 'source' && dir !== '__typename');
+    const explicitDir = Maps.P4DArray
+      .map(([dir]) => this.states[dir] ? dir : undefined)
+      .filter(a => a) as FourFacings[];
     
     if (explicitDir.length === 0) {
       if (this.crossMode) {
@@ -221,9 +167,8 @@ class RedstoneDust extends Block {
 
   /**
    * 更新自身的充能強度
-   * @private
    */
-  _changePower() {
+  private _changePower() {
     const oldPower = this.states.power;
     let newPower = 0;
 
@@ -261,5 +206,66 @@ class RedstoneDust extends Block {
     }
   }
 }
+
+
+const _textureModel: {
+  dot: WebGLTextureData[], 
+  north: [WebGLTextureData[], WebGLTextureData[], WebGLTextureData[]], 
+  west: [WebGLTextureData[], WebGLTextureData[], WebGLTextureData[]], 
+  south: [WebGLTextureData[], WebGLTextureData[], WebGLTextureData[]], 
+  east: [WebGLTextureData[], WebGLTextureData[], WebGLTextureData[]]
+} = {
+  dot: redstone_dust_dot.textures, 
+  north: [
+    [], 
+    redstone_dust_side0.textures, 
+    redstone_dust_side0.textures.concat(redstone_dust_up.north.textures)
+  ], 
+  west: [
+    [], 
+    redstone_dust_side1.textures, 
+    redstone_dust_side1.textures.concat(redstone_dust_up.west.textures)
+  ], 
+  south: [
+    [], 
+    redstone_dust_side_alt0.textures, 
+    redstone_dust_side_alt0.textures.concat(redstone_dust_up.south.textures)
+  ], 
+  east: [
+    [], 
+    redstone_dust_side_alt1.textures, 
+    redstone_dust_side_alt1.textures.concat(redstone_dust_up.east.textures)
+  ]
+};
+
+const _outlineModel: {
+  dot: number[], 
+  north: [number[], number[], number[]], 
+  west: [number[], number[], number[]], 
+  south: [number[], number[], number[]], 
+  east: [number[], number[], number[]]
+} = {
+  dot: redstone_dust_dot.outlines, 
+  north: [
+    [], 
+    redstone_dust_side0.outlines, 
+    redstone_dust_side0.outlines.concat(redstone_dust_up.north.outlines)
+  ], 
+  west: [
+    [], 
+    redstone_dust_side1.outlines, 
+    redstone_dust_side1.outlines.concat(redstone_dust_up.west.outlines)
+  ], 
+  south: [
+    [], 
+    redstone_dust_side_alt0.outlines, 
+    redstone_dust_side_alt0.outlines.concat(redstone_dust_up.south.outlines)
+  ], 
+  east: [
+    [], 
+    redstone_dust_side_alt1.outlines, 
+    redstone_dust_side_alt1.outlines.concat(redstone_dust_up.east.outlines)
+  ]
+};
 
 export default RedstoneDust;

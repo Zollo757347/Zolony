@@ -340,8 +340,8 @@
     ]
   ],
   "validation": {
-    "levers": [[0, 1, 4]], 
-    "lamps": [[4, 4, 0]], 
+    "leverLocations": [[0, 1, 4]], 
+    "lampLocations": [[4, 4, 0]], 
     "boolFuncs": [[[1]]], 
     "timeout": 500
   }

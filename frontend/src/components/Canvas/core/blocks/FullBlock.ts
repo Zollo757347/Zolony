@@ -1,12 +1,12 @@
+import { BlockOptions } from "../../typings/types";
 import { Maps } from "../utils";
 import Block from "./Block";
 
 /**
  * 代表一個單位方塊
- * @abstract
  */
-class FullBlock extends Block {
-  constructor(options) {
+abstract class FullBlock extends Block {
+  constructor(options: BlockOptions) {
     super({ fullBlock: true, fullSupport: true, ...options });
   }
 
