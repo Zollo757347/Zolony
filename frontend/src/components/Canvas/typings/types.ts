@@ -100,6 +100,12 @@ export interface BlockOptions {
 
   engine: Engine;
 
+  /** 放置方塊時依據的面的指向 */
+  normDir?: SixSides;
+
+  /** 與觀察視角最接近的軸向量方向 */
+  facingDir?: FourFacings;
+
   breakable?: boolean;
   interactable?: boolean;
 

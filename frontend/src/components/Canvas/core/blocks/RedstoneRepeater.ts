@@ -27,6 +27,8 @@ class RedstoneRepeater extends Block {
 
     /** 紅石中繼器一側的方向 */
     this._side = 'east';
+
+    this.setFacing(options.normDir, options.facingDir);
   }
 
   get power() {
@@ -66,7 +68,9 @@ class RedstoneRepeater extends Block {
    * @param normDir 指定面的法向量方向
    * @param facingDir 與觀察視角最接近的軸向量方向
    */
-  setFacing(_normDir: SixSides, facingDir: FourFacings) {
+  private setFacing(normDir?: SixSides, facingDir?: FourFacings) {
+    if (!normDir || !facingDir) return;
+
     this.states.facing = facingDir ?? 'north';
     this._side = ['north', 'south'].includes(facingDir) ? 'east' : 'south';
   }

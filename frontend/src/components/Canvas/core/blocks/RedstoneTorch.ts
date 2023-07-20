@@ -16,6 +16,8 @@ class RedstoneTorch extends Block {
     this.type = BlockType.RedstoneTorch;
     this.blockName = '紅石火把';
     this.states = { power: 0, source: true, lit: true, facing: 'up' };
+
+    this.setFacing(options.normDir, options.facingDir);
   }
 
   get power() {
@@ -49,7 +51,9 @@ class RedstoneTorch extends Block {
    * @param normDir 指定面的法向量方向
    * @param facingDir 與觀察視角最接近的軸向量方向
    */
-  setFacing(normDir: SixSides, _facingDir: FourFacings) {
+  private setFacing(normDir?: SixSides, facingDir?: FourFacings) {
+    if (!normDir || !facingDir) return;
+
     if (normDir === 'down') return;
     this.states.facing = normDir;
   }

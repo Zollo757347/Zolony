@@ -277,15 +277,12 @@ class Engine {
     // 不能超出範圍，且原位置必須為空
     if (!block || block.type !== 0) return;
 
-    const newBlock = new B({ x, y, z, engine: this });
 
     const face =
       normDir[0] ? (normDir[0] === 1 ? 'east' : 'west') :
       normDir[1] ? (normDir[1] === 1 ? 'up' : 'down') :
       (normDir[2] === 1 ? 'south' : 'north');
-    if ('setFacing' in newBlock) {
-      newBlock.setFacing(face, facing);
-    }
+    const newBlock = new B({ x, y, z, engine: this, normDir: face, facingDir: facing });
 
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 

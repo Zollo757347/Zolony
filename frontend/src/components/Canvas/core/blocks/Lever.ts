@@ -17,6 +17,7 @@ class Lever extends Block {
     this.type = BlockType.Lever;
     this.blockName = '控制桿';
     this.states = { power: 0, source: false, face: 'wall', facing: 'north', powered: false };
+    this.setFacing(options.normDir, options.facingDir);
   }
 
   get power() {
@@ -56,7 +57,9 @@ class Lever extends Block {
    * @param normDir 指定面的法向量方向
    * @param facingDir 與觀察視角最接近的軸向量方向
    */
-  setFacing(normDir: SixSides, facingDir: FourFacings) {
+  private setFacing(normDir?: SixSides, facingDir?: FourFacings) {
+    if (!normDir || !facingDir) return;
+
     if (normDir === 'up') {
       this.states.face = 'floor';
       this.states.facing = Maps.ReverseDir[facingDir];

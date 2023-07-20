@@ -24,6 +24,8 @@ class RedstoneComparator extends Block {
 
     /** 紅石比較器一側的方向 */
     this._side = 'east';
+
+    this.setFacing(options.normDir, options.facingDir);
   }
 
   get power() {
@@ -48,16 +50,6 @@ class RedstoneComparator extends Block {
     return this.states.powered && direction === this.states.facing ?
       { strong: true, power: this.states.power } :
       { strong: false, power: 0 };
-  }
-
-  /**
-   * 設定面向的方向
-   * @param normDir 指定面的法向量方向
-   * @param facingDir 與觀察視角最接近的軸向量方向
-   */
-  setFacing(_normDir: SixSides, facingDir: FourFacings) {
-    this.states.facing = facingDir ?? 'north';
-    this._side = ['north', 'south'].includes(facingDir) ? 'east' : 'south';
   }
 
   /**
@@ -146,6 +138,18 @@ class RedstoneComparator extends Block {
     this.states.power = power;
     this.states.powered = power > 0;
     this.sendPPUpdate();
+  }
+
+  /**
+   * 設定面向的方向
+   * @param normDir 指定面的法向量方向
+   * @param facingDir 與觀察視角最接近的軸向量方向
+   */
+  private setFacing(normDir?: SixSides, facingDir?: FourFacings) {
+    if (!normDir || !facingDir) return;
+    
+    this.states.facing = facingDir ?? 'north';
+    this._side = ['north', 'south'].includes(facingDir) ? 'east' : 'south';
   }
 }
 
