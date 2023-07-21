@@ -14,7 +14,6 @@ abstract class Block {
 
 
   public breakable: boolean;
-  public interactable: boolean;
 
   public transparent: boolean;
   public fullBlock: boolean;
@@ -41,7 +40,6 @@ abstract class Block {
     this.engine = options.engine;
 
     this.breakable = options.breakable || true;
-    this.interactable = options.interactable || false;
 
     this.transparent = options.transparent || false;
     this.fullBlock = options.fullBlock || false;

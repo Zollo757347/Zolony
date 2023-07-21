@@ -1,5 +1,6 @@
 import Engine from "../Engine";
 import { AirBlock, GlassBlock, IronBlock, Lever, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "../core";
+import RedstoneWallTorch from "../core/blocks/RedstoneWallTorch";
 
 export type VauleOf<T> = T[keyof T];
 
@@ -89,7 +90,7 @@ export enum BlockType {
 }
 
 
-export type Blocks = AirBlock | GlassBlock | IronBlock | Lever | RedstoneComparator | RedstoneDust | RedstoneLamp | RedstoneRepeater | RedstoneTorch;
+export type Blocks = AirBlock | GlassBlock | IronBlock | Lever | RedstoneComparator | RedstoneDust | RedstoneLamp | RedstoneRepeater | RedstoneTorch | RedstoneWallTorch;
 
 export type BlockConstructor = new (options: BlockOptions) => Blocks;
 
@@ -107,7 +108,6 @@ export interface BlockOptions {
   facingDir?: FourFacings;
 
   breakable?: boolean;
-  interactable?: boolean;
 
   transparent?: boolean;
   fullBlock?: boolean;
@@ -172,12 +172,16 @@ export interface RedstoneDustStates extends BlockStates {
   south: 0 | 1 | 2;
 }
 
-export interface RedstoneTorchStates extends BlockStates {
+export interface RedstoneTorchBaseStates extends BlockStates {
   /** 紅石火把是否被觸發 */
   lit: boolean;
+}
 
+export interface RedstoneTorchStates extends RedstoneTorchBaseStates {}
+
+export interface RedstoneWallTorchStates extends RedstoneTorchBaseStates {
   /** 紅石火把面向的方向 */
-  facing: FourFacings | 'up';
+  facing: FourFacings;
 }
 
 export interface RedstoneRepeaterStates extends BlockStates {

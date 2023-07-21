@@ -17,7 +17,7 @@ class RedstoneDust extends Block {
   public crossMode: boolean;
 
   constructor(options: BlockOptions) {
-    super({ needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
+    super({ needBottomSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
 
     this.type = BlockType.RedstoneDust;
     this.blockName = '紅石粉';
@@ -115,7 +115,6 @@ class RedstoneDust extends Block {
     const oldStates = JSON.parse(JSON.stringify(this.states));
 
     Maps.P4DArray.forEach(([dir, [dx, _, dz]]) => {
-      const rdir = Maps.ReverseDir[dir];
       this.states[dir] = 0;
       const x = this.x + dx, z = this.z + dz;
       const block = this.engine.block(x, this.y, z);
@@ -125,8 +124,8 @@ class RedstoneDust extends Block {
           block.redstoneAutoConnect === 'full' || (
             block.redstoneAutoConnect === 'line' &&
             'facing' in block.states &&
-            block.states.facing !== 'up' &&
-            [dir, rdir].includes(block.states.facing))
+            [dir, Maps.ReverseDir[dir]].includes(block.states.facing)
+          )
         ) {
           this.states[dir] = 1;
         }

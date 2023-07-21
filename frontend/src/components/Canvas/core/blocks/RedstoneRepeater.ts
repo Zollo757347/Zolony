@@ -19,7 +19,7 @@ class RedstoneRepeater extends Block {
   private _side: FourFacings;
 
   constructor(options: BlockOptions) {
-    super({ needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'line', ...options });
+    super({ needBottomSupport: true, transparent: true, redstoneAutoConnect: 'line', ...options });
     
     this.type = BlockType.RedstoneRepeater;
     this.blockName = '紅石中繼器';

@@ -12,7 +12,7 @@ class Lever extends Block {
   public states: LeverStates;
 
   constructor(options: BlockOptions) {
-    super({ transparent: true, needSupport: true, interactable: true, redstoneAutoConnect: 'full', ...options });
+    super({ transparent: true, needSupport: true, redstoneAutoConnect: 'full', ...options });
 
     this.type = BlockType.Lever;
     this.blockName = '控制桿';

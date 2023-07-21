@@ -16,7 +16,7 @@ class RedstoneComparator extends Block {
   private _side: FourFacings;
 
   constructor(options: BlockOptions) {
-    super({ needBottomSupport: true, interactable: true, transparent: true, redstoneAutoConnect: 'full', ...options });
+    super({ needBottomSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
 
     this.type = BlockType.RedstoneComparator;
     this.blockName = '紅石比較器';
