@@ -56,7 +56,7 @@ abstract class Block {
    * 用給定的方塊資料生出方塊
    */
   static spawn({ x, y, z, type, states, breakable, engine }: BlockSpawnOptions): Blocks {
-    const block = new (NewBlock(type))({ x, y, z, engine });
+    const block = NewBlock(type, { x, y, z, engine }, states);
     block.breakable = breakable || false;
     block.states = states;
     return block;

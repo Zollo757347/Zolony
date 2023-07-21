@@ -1,8 +1,8 @@
-import { AirBlock, IronBlock, GlassBlock, Lever, NewBlock, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "./core";
 import Engine from "./Engine";
 import Renderer from "./Renderer";
 
-import { BlockConstructor, FourFacings, PlaygroundAngles, PlaygroundOptions } from "./typings/types";
+import { BlockType, FourFacings, PlaygroundAngles, PlaygroundOptions } from "./typings/types";
+import blockNameTable from "./core/utils/blockNameTable";
 
 /**
  * 3D 渲染的邏輯實作
@@ -10,7 +10,7 @@ import { BlockConstructor, FourFacings, PlaygroundAngles, PlaygroundOptions } fr
 class Playground {
   public angles: PlaygroundAngles;
 
-  public hotbar: BlockConstructor[];
+  public hotbar: BlockType[];
   public hotbarNames: string[];
   public hotbarIndex: number;
 
@@ -23,9 +23,9 @@ class Playground {
   constructor({ xLen, yLen, zLen, mapName, preLoadData }: PlaygroundOptions) {
     this.angles = { theta: 0, phi: 0 };
 
-    this.hotbar = preLoadData?.availableBlocks?.map(t => NewBlock(t)) ??
-      [IronBlock, GlassBlock, RedstoneLamp, RedstoneDust, RedstoneTorch, RedstoneRepeater, RedstoneComparator, Lever];
-    this.hotbarNames = this.hotbar.map(B => new B({ x: 0, y: 0, z: 0, engine: this.engine }).blockName);
+    this.hotbar = preLoadData?.availableBlocks ??
+      [BlockType.AirBlock, BlockType.IronBlock, BlockType.GlassBlock, BlockType.RedstoneDust, BlockType.RedstoneTorch, BlockType.RedstoneRepeater, BlockType.RedstoneComparator, BlockType.RedstoneLamp, BlockType.Lever];
+    this.hotbarNames = this.hotbar.map(t => blockNameTable[t]);
     this.hotbarIndex = 0;
 
     this.engine = preLoadData ? Engine.spawn(preLoadData) : new Engine({ xLen, yLen, zLen, mapName });
@@ -118,7 +118,7 @@ class Playground {
     const facingArray: FourFacings[] = ['north', 'west', 'south', 'east', 'north'];
     const facing = facingArray[Math.round(this.angles.theta * 2 / Math.PI)];
     
-    this.engine.addTask(['rightClick', [x, y, z, shiftDown, normDir, facing, this.hotbar[this.hotbarIndex] ?? AirBlock], 0]);
+    this.engine.addTask(['rightClick', [x, y, z, shiftDown, normDir, facing, this.hotbar[this.hotbarIndex] ?? BlockType.AirBlock], 0]);
     this.needRender = true;
   }
 

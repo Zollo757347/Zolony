@@ -8,7 +8,8 @@ import {
   RedstoneDust, 
   RedstoneLamp, 
   RedstoneRepeater, 
-  RedstoneTorch
+  RedstoneTorch, 
+  RedstoneWallTorch
 } from "./blocks";
 
 import {
@@ -26,6 +27,7 @@ export {
   RedstoneLamp, 
   RedstoneRepeater, 
   RedstoneTorch, 
+  RedstoneWallTorch, 
   
   NewBlock
 };

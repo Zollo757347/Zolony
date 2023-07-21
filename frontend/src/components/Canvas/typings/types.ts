@@ -1,6 +1,5 @@
 import Engine from "../Engine";
-import { AirBlock, GlassBlock, IronBlock, Lever, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch } from "../core";
-import RedstoneWallTorch from "../core/blocks/RedstoneWallTorch";
+import { AirBlock, GlassBlock, IronBlock, Lever, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, RedstoneWallTorch } from "../core";
 
 export type VauleOf<T> = T[keyof T];
 
@@ -42,7 +41,7 @@ export interface EngineOptions {
 
 export type EngineTaskParams = {
   leftClick: [number, number, number], 
-  rightClick: [number, number, number, boolean, Vector3, FourFacings, BlockConstructor], 
+  rightClick: [number, number, number, boolean, Vector3, FourFacings, BlockType], 
   torchUpdate: [number, number, number, boolean], 
   repeaterUpdate: [number, number, number, boolean], 
   comparatorUpdate: [number, number, number, number], 

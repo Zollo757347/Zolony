@@ -8,6 +8,7 @@ import RedstoneDust from "./RedstoneDust";
 import RedstoneLamp from "./RedstoneLamp";
 import RedstoneRepeater from "./RedstoneRepeater";
 import RedstoneTorch from "./RedstoneTorch";
+import RedstoneWallTorch from "./RedstoneWallTorch";
 
 export {
   AirBlock, 
@@ -19,5 +20,6 @@ export {
   RedstoneDust, 
   RedstoneLamp, 
   RedstoneRepeater, 
-  RedstoneTorch
+  RedstoneTorch, 
+  RedstoneWallTorch
 };

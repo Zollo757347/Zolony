@@ -1,6 +1,6 @@
 import { sleep, strictEqual } from "../../utils";
-import { AirBlock, Block, IronBlock, Lever, RedstoneLamp } from "./core";
-import { BlockConstructor, BlockType, Blocks, EngineOptions, EngineTask, FourFacings, MapData, ValidationData, Vector3 } from "./typings/types";
+import { AirBlock, Block, IronBlock, Lever, NewBlock, RedstoneLamp } from "./core";
+import { BlockType, Blocks, EngineOptions, EngineTask, FourFacings, MapData, ValidationData, Vector3 } from "./typings/types";
 
 class Engine {
   public xLen: number;
@@ -254,10 +254,10 @@ class Engine {
    * @param shiftDown 
    * @param normDir 指定面的法向量
    * @param facing 與觀察視角最接近的軸向量方向
-   * @param B 在不觸發互動時所放下的方塊
+   * @param type 在不觸發互動時所放下的方塊
    */
   private _rightClick(
-    x: number, y: number, z: number, shiftDown: boolean, normDir: Vector3, facing: FourFacings, B: BlockConstructor
+    x: number, y: number, z: number, shiftDown: boolean, normDir: Vector3, facing: FourFacings, type: BlockType
   ): void {
     let block = this.block(x, y, z);
     if (!block) return;
@@ -282,7 +282,7 @@ class Engine {
       normDir[0] ? (normDir[0] === 1 ? 'east' : 'west') :
       normDir[1] ? (normDir[1] === 1 ? 'up' : 'down') :
       (normDir[2] === 1 ? 'south' : 'north');
-    const newBlock = new B({ x, y, z, engine: this, normDir: face, facingDir: facing });
+    const newBlock = NewBlock(type, { x, y, z, engine: this, normDir: face, facingDir: facing });
 
     if (newBlock.needBottomSupport && !this.block(x, y - 1, z)?.upperSupport) return;
 
