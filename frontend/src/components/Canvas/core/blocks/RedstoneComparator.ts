@@ -32,6 +32,10 @@ class RedstoneComparator extends Block {
     return 0;
   }
 
+  get supportingBlock() {
+    return this.engine.block(this.x, this.y - 1, this.z);
+  }
+
   get textures() {
     return _model[this.states.mode][this.states.powered ? 1 : 0][this.states.facing].textures;
   }

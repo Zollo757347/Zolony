@@ -1,5 +1,5 @@
 import { NewBlock, Maps } from "../utils";
-import { BlockData, BlockOptions, BlockSpawnOptions, BlockStates, BlockType, Blocks, FourFacings, PowerTransmission, SixSides, ThreeFaces, WebGLTextureData } from "../../typings/types";
+import { BlockData, BlockOptions, BlockSpawnOptions, BlockStates, BlockType, Blocks, PowerTransmission, SixSides, WebGLTextureData } from "../../typings/types";
 import Engine from "../../Engine";
 
 /**
@@ -12,11 +12,15 @@ abstract class Block {
 
   public engine: Engine;
 
-
+  /** 此方塊可否被破壞 */
   public breakable: boolean;
 
+  /** 此方塊是否為透光方塊 */
   public transparent: boolean;
+
+  /** 此方塊是否為完整方塊，用於加速渲染 */
   public fullBlock: boolean;
+
   public upperSupport: boolean;
   public bottomSupport: boolean;
   public sideSupport: boolean;
@@ -65,7 +69,7 @@ abstract class Block {
   /**
    * 把一個方塊轉換成可儲存的資料形式
    */
-  static extract(block: Block): BlockData {
+  static extract(block: Blocks): BlockData {
     const states = JSON.parse(JSON.stringify(block.states));
     delete states.__typename;
     return {
@@ -80,6 +84,13 @@ abstract class Block {
    */
   get power() {
     return this.states.power;
+  }
+
+  /**
+   * 取得此方塊的附著方塊，`undefined` 代表此方塊不需要附著方塊
+   */
+  get supportingBlock(): Blocks | null | undefined {
+    return undefined;
   }
 
   /**
@@ -113,50 +124,9 @@ abstract class Block {
    * @abstract
    */
   PPUpdate() {
-    if (this.needBottomSupport) {
-      if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
-        this.engine._leftClick(this.x, this.y, this.z);
-        return;
-      }
-    }
-
-    if (this.needSupport && 'face' in this.states && 'facing' in this.states) {
-      const face = this.states.face as ThreeFaces
-        ?? (this.states.facing === 'up' ? 'floor' : 'wall');
-      let broken = false;
-      switch (face) {
-        case 'ceiling':
-          if (!this.engine.block(this.x, this.y + 1, this.z)?.bottomSupport) {
-            broken = true;
-          }
-          break;
-  
-        case 'floor':
-          if (!this.engine.block(this.x, this.y - 1, this.z)?.upperSupport) {
-            broken = true;
-          }
-          break;
-  
-        case 'wall':
-          const facing = this.states.facing as FourFacings;
-          const dir = Maps.P4DMap[Maps.ReverseDir[facing]];
-          if (!dir) {
-            throw new Error(`${this.states.facing} is not a valid direction.`);
-          }
-  
-          const [x, , z] = dir;
-          if (!this.engine.block(this.x + x, this.y, this.z + z)?.sideSupport) {
-            broken = true;
-          }
-          break;
-  
-        default: break;
-      }
-
-      if (broken) {
-        this.engine._leftClick(this.x, this.y, this.z);
-        return;
-      }
+    if (this.supportingBlock === null || this.supportingBlock?.type === BlockType.AirBlock) {
+      this.engine._leftClick(this.x, this.y, this.z);
+      return;
     }
   }
 }

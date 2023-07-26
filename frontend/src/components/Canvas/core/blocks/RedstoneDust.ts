@@ -35,6 +35,10 @@ class RedstoneDust extends Block {
     return [105 + 10 * this.states.power, 0, 0];
   }
 
+  get supportingBlock() {
+    return this.engine.block(this.x, this.y - 1, this.z);
+  }
+
   get textures() {
     const { east: e, west: w, south: s, north: n } = this.states;
     return [

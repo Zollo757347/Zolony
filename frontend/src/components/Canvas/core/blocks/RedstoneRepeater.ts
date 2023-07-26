@@ -35,6 +35,10 @@ class RedstoneRepeater extends Block {
     return 0;
   }
 
+  get supportingBlock() {
+    return this.engine.block(this.x, this.y - 1, this.z);
+  }
+
   get textures() {
     const index = 
       (this.states.powered ? 8 : 0) +

@@ -15,6 +15,10 @@ class RedstoneTorch extends RedstoneTorchBase {
     return this.states.lit ? 15 : 0;
   }
 
+  get supportingBlock() {
+    return this.engine.block(this.x, this.y - 1, this.z);
+  }
+
   get textures() {
     return _model[+this.states.lit].textures;
   }

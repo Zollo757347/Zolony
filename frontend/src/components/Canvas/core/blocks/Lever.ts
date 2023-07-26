@@ -1,5 +1,5 @@
 import { lever, lever_on } from "../../../../assets/json/blocks";
-import { BlockOptions, BlockType, FourFacings, LeverStates, SixSides, ThreeFaces, WebGLData } from "../../typings/types";
+import { BlockOptions, BlockType, FourFacings, LeverStates, SixSides, ThreeFaces, Vector3, WebGLData } from "../../typings/types";
 import { Maps } from "../utils";
 import Block from "./Block";
 
@@ -22,6 +22,11 @@ class Lever extends Block {
 
   get power() {
     return this.states.powered ? 15 : 0;
+  }
+
+  get supportingBlock() {
+    const [x, y, z] = this.supportingBlockCoords;
+    return this.engine.block(x, y, z);
   }
 
   get textures() {
@@ -52,6 +57,9 @@ class Lever extends Block {
     this.sendPPUpdate();
   }
 
+
+  private supportingBlockCoords: Vector3 = [this.x, this.y, this.z + 1];
+
   /**
    * 設定面向的方向
    * @param normDir 指定面的法向量方向
@@ -63,14 +71,18 @@ class Lever extends Block {
     if (normDir === 'up') {
       this.states.face = 'floor';
       this.states.facing = Maps.ReverseDir[facingDir];
+      this.supportingBlockCoords = [this.x, this.y - 1, this.z];
     }
     else if (normDir === 'down') {
       this.states.face = 'ceiling';
       this.states.facing = Maps.ReverseDir[facingDir];
+      this.supportingBlockCoords = [this.x, this.y + 1, this.z];
     }
     else {
       this.states.face = 'wall';
       this.states.facing = normDir;
+      const [x, y, z] = Maps.P6DMap[normDir];
+      this.supportingBlockCoords = [this.x - x, this.y - y, this.z - z];
     }
   }
 }
