@@ -7,7 +7,6 @@ import { BlockOptions, BlockStates, BlockType, WebGLTextureData } from "../../ty
  */
 class IronBlock extends FullBlock {
   public type: BlockType.IronBlock;
-  public blockName: string;
   public states: BlockStates;
 
   public textures: WebGLTextureData[];
@@ -17,7 +16,6 @@ class IronBlock extends FullBlock {
     super(options);
 
     this.type = BlockType.IronBlock;
-    this.blockName = '鐵方塊';
     this.states = { power: 0, source: false };
 
     this.textures = iron_block.textures;

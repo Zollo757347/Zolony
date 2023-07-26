@@ -1,5 +1,6 @@
 import { sleep, strictEqual } from "../../utils";
 import { AirBlock, Block, IronBlock, Lever, NewBlock, RedstoneLamp } from "./core";
+import blockNameTable from "./core/utils/blockNameTable";
 import { BlockType, Blocks, EngineOptions, EngineTask, FourFacings, MapData, ValidationData, Vector3 } from "./typings/types";
 
 class Engine {
@@ -84,7 +85,7 @@ class Engine {
       if (!block) continue;
 
       if (block.type !== BlockType.Lever) {
-        throw new Error(`Position [${x}, ${y}, ${z}] is ${block.blockName}, not Lever.`);
+        throw new Error(`Position [${x}, ${y}, ${z}] is ${blockNameTable[block.type]}, not Lever.`);
       }
       if (block.states.powered) {
         block.interact();
@@ -97,7 +98,7 @@ class Engine {
       if (!block) continue;
 
       if (block.type !== BlockType.RedstoneLamp) {
-        throw new Error(`Position [${x}, ${y}, ${z}] is ${block.blockName}, not Redstone Lamp.`);
+        throw new Error(`Position [${x}, ${y}, ${z}] is ${blockNameTable[block.type]}, not Redstone Lamp.`);
       }
       lampBlocks.push(block);
     }

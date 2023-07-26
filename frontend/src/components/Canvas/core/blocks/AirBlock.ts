@@ -6,7 +6,6 @@ import Block from "./Block";
  */
 class AirBlock extends Block {
   public type: BlockType.AirBlock;
-  public blockName: string;
   public states: BlockStates;
 
   public textures: WebGLTextureData[];
@@ -16,7 +15,6 @@ class AirBlock extends Block {
     super({ transparent: true, ...options });
 
     this.type = BlockType.AirBlock;
-    this.blockName = '空氣';
     this.states = { power: 0, source: false };
 
     this.textures = [];

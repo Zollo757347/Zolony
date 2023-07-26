@@ -30,7 +30,6 @@ abstract class Block {
   public redstoneAutoConnect: "full" | "line" | "none";
 
   public abstract type: BlockType;
-  public abstract blockName: string;
   public abstract states: BlockStates;
 
   public abstract get textures(): WebGLTextureData[];

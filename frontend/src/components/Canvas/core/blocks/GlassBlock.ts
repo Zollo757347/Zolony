@@ -7,7 +7,6 @@ import { BlockOptions, BlockStates, BlockType, WebGLTextureData } from "../../ty
  */
 class GlassBlock extends FullBlock {
   public type: BlockType.GlassBlock;
-  public blockName: string;
   public states: BlockStates;
 
   public textures: WebGLTextureData[];
@@ -17,7 +16,6 @@ class GlassBlock extends FullBlock {
     super({ transparent: true, ...options });
 
     this.type = BlockType.GlassBlock;
-    this.blockName = '玻璃';
     this.states = { power: 0, source: false };
 
     this.textures = glass.textures;

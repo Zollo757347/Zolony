@@ -11,7 +11,6 @@ import { BlockOptions, BlockType, FourFacings, RedstoneDustStates, SixSides, Web
  */
 class RedstoneDust extends Block {
   public type: BlockType.RedstoneDust;
-  public blockName: string;
   public states: RedstoneDustStates;
 
   public crossMode: boolean;
@@ -20,7 +19,6 @@ class RedstoneDust extends Block {
     super({ needBottomSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
 
     this.type = BlockType.RedstoneDust;
-    this.blockName = '紅石粉';
     this.states = { power: 0, source: false, east: 1, south: 1, west: 1, north: 1 };
 
     /** 此紅石粉閒置時是否處於向四周充能的狀態 */

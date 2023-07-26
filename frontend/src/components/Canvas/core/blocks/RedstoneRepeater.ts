@@ -13,7 +13,6 @@ import Block from "./Block";
  */
 class RedstoneRepeater extends Block {
   public type: BlockType.RedstoneRepeater;
-  public blockName: string;
   public states: RedstoneRepeaterStates;
 
   private _side: FourFacings;
@@ -22,7 +21,6 @@ class RedstoneRepeater extends Block {
     super({ needBottomSupport: true, transparent: true, redstoneAutoConnect: 'line', ...options });
     
     this.type = BlockType.RedstoneRepeater;
-    this.blockName = '紅石中繼器';
     this.states = { power: 0, source: false, delay: 1, facing: 'north', locked: false, powered: false };
 
     /** 紅石中繼器一側的方向 */

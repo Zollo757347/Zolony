@@ -3,14 +3,12 @@ import Block from "./Block";
 
 abstract class RedstoneTorchBase extends Block {
   public type: BlockType.RedstoneTorch;
-  public blockName: string;
   public states: RedstoneTorchBaseStates;
 
   constructor(options: BlockOptions) {
     super({ needSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
 
     this.type = BlockType.RedstoneTorch;
-    this.blockName = '紅石火把';
     this.states = { power: 0, source: true, lit: true };
   }
 

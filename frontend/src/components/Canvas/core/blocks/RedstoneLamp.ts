@@ -9,14 +9,12 @@ import { BlockOptions, BlockType, RedstoneLampStates, WebGLData } from "../../ty
  */
 class RedstoneLamp extends FullBlock {
   public type: BlockType.RedstoneLamp;
-  public blockName: string;
   public states: RedstoneLampStates;
 
   constructor(options: BlockOptions) {
     super(options);
 
     this.type = BlockType.RedstoneLamp;
-    this.blockName = '紅石燈';
     this.states = { power: 0, source: false, lit: false };
   }
 

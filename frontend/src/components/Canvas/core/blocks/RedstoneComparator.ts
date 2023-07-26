@@ -10,7 +10,6 @@ import Block from "./Block";
  */
 class RedstoneComparator extends Block {
   public type: BlockType.RedstoneComparator;
-  public blockName: string;
   public states: RedstoneComparatorStates;
 
   private _side: FourFacings;
@@ -19,7 +18,6 @@ class RedstoneComparator extends Block {
     super({ needBottomSupport: true, transparent: true, redstoneAutoConnect: 'full', ...options });
 
     this.type = BlockType.RedstoneComparator;
-    this.blockName = '紅石比較器';
     this.states = { power: 0, source: false, facing: 'north', mode: 'compare', powered: false };
 
     /** 紅石比較器一側的方向 */
