@@ -104,24 +104,31 @@ class RedstoneDust extends Block {
   // temprarily take PP and NC update as the same
   PPUpdate() {
     super.PPUpdate();
+
+    const oldStates = JSON.parse(JSON.stringify(this.states)) as RedstoneDustStates;
+    this.states.power = this.states.east = this.states.west = this.states.south = this.states.north = 0;
     
-    this._changeShape();
-    this._changePower();
-  }
+    Maps.P6DArray.forEach(([dir, [dx, dy, dz]]) => {
+      const x = this.x + dx;
+      const y = this.y + dy;
+      const z = this.z + dz;
+      const block = this.engine.block(x, y, z);
+      if (!block) return;
 
+      // 相鄰方塊是強充能方塊則充能製相同等級
+      let { strong, power } = block.powerTowardsWire(Maps.ReverseDir[dir]);
+      if (strong) {
+        // 如果是紅石粉，訊號要遞減
+        if (block.type === BlockType.RedstoneDust) {
+          power--;
+        }
+        this.states.power = Math.max(this.states.power, power);
+      }
 
-  /**
-   * 更新自身的指向
-   */
-  private _changeShape() {
-    const oldStates = JSON.parse(JSON.stringify(this.states));
+      if (dir === 'up' || dir === 'down') return;
 
-    Maps.P4DArray.forEach(([dir, [dx, _, dz]]) => {
-      this.states[dir] = 0;
-      const x = this.x + dx, z = this.z + dz;
-      const block = this.engine.block(x, this.y, z);
-
-      if (block?.redstoneAutoConnect) {
+      // 四周方塊如果會連上紅石粉，就根據規則連上
+      if (block.redstoneAutoConnect) {
         if (
           block.redstoneAutoConnect === 'full' || (
             block.redstoneAutoConnect === 'line' &&
@@ -133,18 +140,27 @@ class RedstoneDust extends Block {
         }
       }
 
-      if (this.engine.block(x, this.y - 1, z)?.type === BlockType.RedstoneDust && this.engine.block(x, this.y, z)?.transparent) {
+      const sideDown = this.engine.block(x     , this.y - 1, z);
+      const sideUp   = this.engine.block(x     , this.y + 1, z);
+      const above    = this.engine.block(this.x, this.y + 1, this.z);
+
+      // 側下方的紅石粉
+      if (sideDown?.type === BlockType.RedstoneDust && block?.transparent) {
         this.states[dir] = 1;
+        this.states.power = Math.max(this.states.power, sideDown.power - 1);
       }
-      if (this.engine.block(x, this.y + 1, z)?.type === BlockType.RedstoneDust && this.engine.block(this.x, this.y + 1, this.z)?.transparent) {
+
+      // 側上方的紅石粉
+      if (sideUp?.type === BlockType.RedstoneDust && above?.transparent) {
         this.states[dir] = 2;
+        this.states.power = Math.max(this.states.power, sideUp.power - 1);
       }
     });
 
     const explicitDir = Maps.P4DArray
       .map(([dir]) => this.states[dir] ? dir : undefined)
       .filter(a => a) as FourFacings[];
-    
+  
     if (explicitDir.length === 0) {
       if (this.crossMode) {
         this.states.east = this.states.south = this.states.west = this.states.north = 1;
@@ -153,56 +169,11 @@ class RedstoneDust extends Block {
     else {
       this.crossMode = true;
       if (explicitDir.length === 1) {
-        const rdir = Maps.ReverseDir[explicitDir[0]];
-        if (!rdir) {
-          throw new Error(`${explicitDir[0]} is not a valid direction.`);
-        }
-        this.states[rdir] = 1;
+        this.states[Maps.ReverseDir[explicitDir[0]]] = 1;
       }
     }
 
     if (!strictEqual(oldStates, this.states)) {
-      this.sendPPUpdate();
-    }
-  }
-
-  /**
-   * 更新自身的充能強度
-   */
-  private _changePower() {
-    const oldPower = this.states.power;
-    let newPower = 0;
-
-    Maps.P6DArray.forEach(([dir, [x, y, z]]) => {
-      const block = this.engine.block(this.x + x, this.y + y, this.z + z);
-      if (!block) return;
-
-      let { strong, power } = block.powerTowardsWire(Maps.ReverseDir[dir]);
-      if (!strong) return;
-
-      if (block.type === BlockType.RedstoneDust) {
-        power--;
-      }
-      newPower = Math.max(newPower, power);
-    });
-
-    Maps.P4DArray.forEach(([_, [x, __, z]]) => {
-      const sideDown = this.engine.block(this.x + x, this.y - 1, this.z + z);
-      const sideHori = this.engine.block(this.x + x, this.y, this.z + z);
-      const sideUp = this.engine.block(this.x + x, this.y + 1, this.z + z);
-      const above = this.engine.block(this.x, this.y + 1, this.z);
-
-      if (sideHori?.transparent && sideDown?.type === BlockType.RedstoneDust) {
-        newPower = Math.max(newPower, sideDown.power - 1);
-      }
-
-      if (above?.transparent && sideUp?.type === BlockType.RedstoneDust) {
-        newPower = Math.max(newPower, sideUp.power - 1);
-      }
-    });
-
-    this.states.power = newPower;
-    if (oldPower !== newPower) {
       this.sendPPUpdate();
     }
   }

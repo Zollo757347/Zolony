@@ -31,22 +31,6 @@ class RedstoneWallTorch extends RedstoneTorchBase {
     return _model[+this.states.lit][this.states.facing].outlines;
   }
 
-  /**
-   * 根據 Post Placement Update 的來源方向更新自身狀態
-   */
-  PPUpdate() {
-    super.PPUpdate();
-    
-    const dir = Maps.P4DMap[Maps.ReverseDir[this.states.facing]];
-
-    const [x, , z] = dir;
-    const attachedBlock = this.engine.block(this.x + x, this.y, this.z + z);
-
-    if (!attachedBlock?.states.power !== this.states.lit) {
-      this.engine.addTask(['torchUpdate', [this.x, this.y, this.z, !attachedBlock?.states.power], 2]);
-    }
-  }
-
 
   private supportingBlockCoords: Vector3 = [this.x, this.y, this.z + 1];
 

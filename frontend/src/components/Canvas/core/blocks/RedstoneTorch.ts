@@ -26,28 +26,6 @@ class RedstoneTorch extends RedstoneTorchBase {
   get outlines() {
     return _model[+this.states.lit].outlines;
   }
-
-  /**
-   * 根據 Post Placement Update 的來源方向更新自身狀態
-   */
-  PPUpdate() {
-    super.PPUpdate();
-    
-    const attachedBlock = this.engine.block(this.x, this.y - 1, this.z);
-
-    if (!attachedBlock?.states.power !== this.states.lit) {
-      this.engine.addTask(['torchUpdate', [this.x, this.y, this.z, !attachedBlock?.states.power], 2]);
-    }
-  }
-
-  /**
-   * 更新此紅石火把的明暗狀態
-   */
-  torchUpdate(lit: boolean) {
-    this.states.lit = lit;
-    this.states.source = lit;
-    this.sendPPUpdate();
-  }
 }
 
 export default RedstoneTorch;
