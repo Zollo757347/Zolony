@@ -6,6 +6,7 @@ import _comparator_subtract from "./comparator_subtract.json";
 import _comparator from "./comparator.json";
 import _cube from "./cube.json";
 import _cube_all from "./cube_all.json";
+import _cube_column from "./cube_column.json";
 import _glass from "./glass.json";
 import _iron_block from "./iron_block.json";
 import _lever_on from "./lever_on.json";
@@ -40,6 +41,7 @@ import _repeater_4tick_locked from "./repeater_4tick_locked.json";
 import _repeater_4tick_on_locked from "./repeater_4tick_on_locked.json";
 import _repeater_4tick_on from "./repeater_4tick_on.json";
 import _repeater_4tick from "./repeater_4tick.json";
+import _target from "./target.json";
 import _template_torch_wall from "./template_torch_wall.json";
 import _template_torch from "./template_torch.json";
 
@@ -51,6 +53,7 @@ const _blockData = {
   comparator: _comparator, 
   cube: _cube, 
   cube_all: _cube_all, 
+  cube_column: _cube_column, 
   glass: _glass, 
   iron_block: _iron_block, 
   lever_on: _lever_on, 
@@ -85,6 +88,7 @@ const _blockData = {
   repeater_4tick_on_locked: _repeater_4tick_on_locked, 
   repeater_4tick_on: _repeater_4tick_on, 
   repeater_4tick: _repeater_4tick, 
+  target: _target, 
   template_torch_wall: _template_torch_wall, 
   template_torch: _template_torch
 };
@@ -125,3 +129,4 @@ export const repeater_4tick_locked    = parseTexture(_blockData, _blockData.repe
 export const repeater_4tick_on_locked = parseTexture(_blockData, _blockData.repeater_4tick_on_locked);
 export const repeater_4tick_on        = parseTexture(_blockData, _blockData.repeater_4tick_on);
 export const repeater_4tick           = parseTexture(_blockData, _blockData.repeater_4tick);
+export const target                   = parseTexture(_blockData, _blockData.target);

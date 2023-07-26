@@ -29,7 +29,7 @@ class DisplayRenderer extends Renderer {
   }
 
   initialize(canvas: HTMLCanvasElement): void {
-    ['iron_block', 'comparator', 'comparator_on', 'cobblestone', 'lever_on', 'lever', 'redstone_dust_dot', 'redstone_dust_line0', 'redstone_dust_line1', 'redstone_dust_overlay', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater_on', 'redstone_torch', 'redstone_torch_off', 'bedrock'].forEach(src => {
+    ['iron_block', 'comparator', 'comparator_on', 'cobblestone', 'lever_on', 'lever', 'redstone_dust_dot', 'redstone_dust_line0', 'redstone_dust_line1', 'redstone_dust_overlay', 'redstone_lamp', 'redstone_lamp_on', 'glass', 'repeater', 'smooth_stone', 'repeater_on', 'redstone_torch', 'redstone_torch_off', 'bedrock', 'target_top', 'target_side'].forEach(src => {
       const image = new Image();
       image.src = `/assets/minecraft/${src}.png`;
       this.images.set(src, image);

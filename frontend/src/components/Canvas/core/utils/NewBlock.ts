@@ -1,5 +1,5 @@
 import { BlockOptions, BlockStates, BlockType, Blocks, FourFacings, SixSides } from "../../typings/types";
-import { AirBlock, IronBlock, GlassBlock, Lever, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, RedstoneWallTorch } from "../blocks";
+import { AirBlock, IronBlock, GlassBlock, Lever, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, RedstoneWallTorch, Target } from "../blocks";
 
 /**
  * 根據給定的方塊種類與狀態，回傳對應的 constructor
@@ -53,6 +53,9 @@ function NewBlock<T extends BlockStates>(type: BlockType, options: BlockOptions,
       
     case BlockType.RedstoneComparator:
       return new RedstoneComparator(options);
+
+    case BlockType.Target:
+      return new Target(options);
   }
 }
 

@@ -1,5 +1,5 @@
 import Engine from "../Engine";
-import { AirBlock, GlassBlock, IronBlock, Lever, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, RedstoneWallTorch } from "../core";
+import { AirBlock, GlassBlock, IronBlock, Lever, RedstoneComparator, RedstoneDust, RedstoneLamp, RedstoneRepeater, RedstoneTorch, RedstoneWallTorch, Target } from "../core";
 
 export type VauleOf<T> = T[keyof T];
 
@@ -85,11 +85,12 @@ export enum BlockType {
   RedstoneRepeater = 102,
   RedstoneLamp = 103, 
   Lever = 104,
-  RedstoneComparator = 105
+  RedstoneComparator = 105, 
+  Target = 106
 }
 
 
-export type Blocks = AirBlock | GlassBlock | IronBlock | Lever | RedstoneComparator | RedstoneDust | RedstoneLamp | RedstoneRepeater | RedstoneTorch | RedstoneWallTorch;
+export type Blocks = AirBlock | GlassBlock | IronBlock | Lever | RedstoneComparator | RedstoneDust | RedstoneLamp | RedstoneRepeater | RedstoneTorch | RedstoneWallTorch | Target;
 
 export type BlockConstructor = new (options: BlockOptions) => Blocks;
 
@@ -211,6 +212,11 @@ export interface RedstoneComparatorStates extends BlockStates {
 export interface RedstoneLampStates extends BlockStates {
   /** 紅石燈是否被觸發 */
   lit: boolean;
+}
+
+export interface RedstoneTargetStates extends BlockStates {
+  /** 標靶散發的訊號等級 */
+  power: number;
 }
 
 
